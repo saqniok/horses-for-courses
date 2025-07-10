@@ -21,10 +21,10 @@ jobs:
         dotnet-version: 8.0.x 
 
     - name: Restore dependencies
-      run: dotnet restore VCardManager.sln
+      run: dotnet restore HorsesForCourses.sln
 
     - name: Build solution
-      run: dotnet build VCardManager.sln --no-restore --configuration Release
+      run: dotnet build HorsesForCourses.sln --no-restore --configuration Release
 
     - name: Run tests
-      run: dotnet test VCardManager.Tests/VCardManager.Tests.csproj --no-build --configuration Release --logger trx
+      run: dotnet test HorsesForCourses.Tests/HorsesForCourses.Tests.csproj --no-build --configuration Release --logger trx
