@@ -4,10 +4,10 @@ namespace HorsesForCourses.Core;
 public class TimeSlot
 {
     public WeekDay Day { get; }
-    public TimeSpan Start { get; }
-    public TimeSpan End { get; }
+    public int Start { get; }
+    public int End { get; }
 
-    public TimeSlot(WeekDay day, TimeSpan start, TimeSpan end)
+    public TimeSlot(WeekDay day, int start, int end)
     {
         Day = day;
         Start = start;
@@ -30,8 +30,8 @@ public class Period
         EndDate = end.Date;
     }
 
-    public bool OverlapsWith(Period other)
-    {
-        return StartDate <= other.EndDate && EndDate >= other.StartDate;
-    }
+    // public bool OverlapsWith(Period other)
+    // {
+    //     return StartDate <= other.EndDate && EndDate >= other.StartDate;
+    // }
 }

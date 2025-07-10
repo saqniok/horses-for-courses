@@ -4,18 +4,18 @@ namespace HorsesForCourses.Core
     public class Lesson
     {
         public WeekDay Day { get; private set; }
-        public TimeSpan StartTime { get; private set; }
-        public TimeSpan EndTime { get; private set; }
+        public int StartTime { get; private set; }
+        public int EndTime { get; private set; }
 
-        public Lesson(WeekDay day, TimeSpan startTime, TimeSpan endTime)
+        public Lesson(WeekDay day, int startTime, int endTime)
         {
-            if (startTime < TimeSpan.FromHours(9) || endTime > TimeSpan.FromHours(17))
+            if (startTime < 9 || endTime > 17)
                 throw new ArgumentException("Lesson time must be within working hours 9:00 - 17:00");
 
             if (endTime <= startTime)
                 throw new ArgumentException("Lesson end time must be after start time");
 
-            if (endTime - startTime < TimeSpan.FromHours(1))
+            if (endTime - startTime < 1)
                 throw new ArgumentException("Lesson duration must be at least 1 hour.");
 
             Day = day;
@@ -23,7 +23,7 @@ namespace HorsesForCourses.Core
             EndTime = endTime;
         }
 
-        public TimeSpan Duration => EndTime - StartTime;
+        public int Duration => EndTime - StartTime;
 
         public bool OverlapsWith(Lesson other)
         {
