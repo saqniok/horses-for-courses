@@ -5,7 +5,7 @@ namespace HorsesForCourses.Core
     {
         public string Title { get; } = title;
         public Period Period { get; } = period;
-        private readonly HashSet<string> _requiredSkills = [];
+        private readonly HashSet<string> _requiredSkills = new(StringComparer.OrdinalIgnoreCase);
         public IReadOnlyCollection<string> RequiredSkills => _requiredSkills;
         private readonly List<TimeSlot> _schedule = [];
         public IReadOnlyCollection<TimeSlot> Schedule => _schedule.AsReadOnly();
@@ -55,9 +55,9 @@ namespace HorsesForCourses.Core
 
             if (!coach.HasAllSkills(_requiredSkills)) throw new InvalidOperationException("Coach does not have all required skills.");
 
-            if (!coach.IsAvailableCoach()) throw new InvalidOperationException("Coach is not available for the scheduled time slots.");
+            if (coach.IsAvailableCoach()) AssignedCoach = coach;
 
-            AssignedCoach = coach;
+            
         }
     }
 }
