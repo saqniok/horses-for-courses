@@ -25,6 +25,9 @@ namespace HorsesForCourses.Core
 
         public int Duration => EndTime - StartTime;
 
+        // public bool LessonN()
+        // { if (Duration > 10) return; }
+
         public bool OverlapsWith(Lesson other)
         {
             if (Day != other.Day) return false;
