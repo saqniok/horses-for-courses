@@ -7,7 +7,7 @@ public class Coach
 {
     public string Name { get; }
     public string Email { get; }
-    public List<string> Skills { get; }
+    public HashSet<string> Skills { get; }
 
     public List<Course> AssignedCourses { get; }
 
@@ -15,24 +15,24 @@ public class Coach
     {
         Name = name;                        // ?? throw new ArgumentNullException(nameof(name));
         Email = email;                      // ?? throw new ArgumentNullException(nameof(email));
-        Skills = [];                        // ?? throw new ArgumentNullException(nameof(skills));
+        Skills = new HashSet<string>(StringComparer.OrdinalIgnoreCase);      // ?? throw new ArgumentNullException(nameof(skills));
         AssignedCourses = [];               // ?? throw new ArgumentNullException(nameof(assignedCourse));   
     }
 
     public void AddSkill(string skill)
     {
-        if (Skills.Contains(skill.ToLower()))
+        if (Skills.Contains(skill))
             throw new ArgumentException("Skill already added");
 
-        Skills.Add(skill.ToLower());
+        Skills.Add(skill);
     }
 
     public void RemoveSkill(string skill)
     {
-        if (!Skills.Contains(skill.ToLower()))
+        if (!Skills.Contains(skill))
             throw new ArgumentException("There is no skill in list");
 
-        Skills.Remove(skill.ToLower());
+        Skills.Remove(skill);
     }
 
 
@@ -41,7 +41,10 @@ public class Coach
 
     public void AssignCourse(Course course)
     {
-        if (!AssignedCourses.Contains(course)) AssignedCourses.Add(course);
+        if (AssignedCourses.Contains(course))
+            throw new ArgumentException("Course is already assinged");
+
+        AssignedCourses.Add(course);
     }
 
     // AI helped
@@ -55,7 +58,8 @@ public class Coach
         {
             for (int j = i + 1; j < allTimeSlots.Count; j++)
             {
-                if (AreTimeSlotsOverlapping(allTimeSlots[i], allTimeSlots[j])) return false;
+                if (AreTimeSlotsOverlapping(allTimeSlots[i], allTimeSlots[j]))
+                    throw new ArgumentException("Lesson time is overlapping");
             }
         }
 
@@ -64,9 +68,9 @@ public class Coach
 
     private bool AreTimeSlotsOverlapping(TimeSlot slot1, TimeSlot slot2)
     {
-        if (slot1.Day != slot2.Day) return false; 
+        if (slot1.Day != slot2.Day) return false;
 
-        return slot1.Start < slot2.End && slot1.End > slot2.Start;
+        return slot1.Start < slot2.End && slot1.End > slot2.Start;    
     }
 }
 
