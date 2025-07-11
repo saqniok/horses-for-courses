@@ -21,10 +21,20 @@ public class Coach
 
     public void AddSkill(string skill)
     {
-        if (!Skills.Contains(skill)) Skills.Add(skill);
+        if (Skills.Contains(skill.ToLower()))
+            throw new ArgumentException("Skill already added");
+
+        Skills.Add(skill.ToLower());
     }
 
-    public void RemoveSkill(string skill) => Skills.Remove(skill);
+    public void RemoveSkill(string skill)
+    {
+        if (!Skills.Contains(skill.ToLower()))
+            throw new ArgumentException("There is no skill in list");
+
+        Skills.Remove(skill.ToLower());
+    }
+
 
     public bool HasAllSkills(IEnumerable<string> requiredSkills)
         => requiredSkills.All(skill => Skills.Contains(skill));
