@@ -1,35 +1,35 @@
 
-namespace HorsesForCourses.Core
-{
-    public class Lesson
-    {
-        public WeekDay Day { get; private set; }
-        public int StartTime { get; private set; }
-        public int EndTime { get; private set; }
+// namespace HorsesForCourses.Core
+// {
+//     public class Lesson
+//     {
+//         public WeekDay Day { get; private set; }
+//         public int StartTime { get; private set; }
+//         public int EndTime { get; private set; }
 
-        public Lesson(WeekDay day, int startTime, int endTime)
-        {
-            if (startTime < 9 || endTime > 17)
-                throw new ArgumentException("Lesson time must be within working hours 9:00 - 17:00");
+//         public Lesson(TimeSlot timeslot)
+//         {
+//             if (timeslot.Start < 9 || timeslot.End > 17)
+//                 throw new ArgumentException("Lesson time must be within working hours 9:00 - 17:00");
 
-            if (endTime <= startTime)
-                throw new ArgumentException("Lesson end time must be after start time");
+//             if (timeslot.End <= timeslot.Start)
+//                 throw new ArgumentException("Lesson end time must be after start time");
 
-            if (endTime - startTime < 1)
-                throw new ArgumentException("Lesson duration must be at least 1 hour.");
+//             if (timeslot.End - timeslot.Start < 1)
+//                 throw new ArgumentException("Lesson duration must be at least 1 hour.");
 
-            Day = day;
-            StartTime = startTime;
-            EndTime = endTime;
-        }
+//             Day = day;
+//             StartTime = startTime;
+//             EndTime = endTime;
+//         }
 
-        public int Duration => EndTime - StartTime;
+//         public int Duration => EndTime - StartTime;
 
-        public bool OverlapsWith(Lesson other)
-        {
-            if (Day != other.Day) return false;
+//         public bool OverlapsWith(Lesson other)
+//         {
+//             if (Day != other.Day) return false;
 
-            return StartTime < other.EndTime && EndTime > other.StartTime;
-        }
-    }
-}
+//             return StartTime < other.EndTime && EndTime > other.StartTime;
+//         }
+//     }
+// }
