@@ -12,7 +12,7 @@ public class TimeSlot
         if (start < 9 || end > 17)
             throw new ArgumentException("Lesson time must be within working hours 9:00 - 17:00");
 
-        if (end <= start)
+        if (end < start)
             throw new ArgumentException("Lesson end time must be after start time");
 
         if (end - start < 1)
@@ -21,8 +21,6 @@ public class TimeSlot
         Day = day;
         Start = start;
         End = end;
-
-        if (End <= Start) throw new ArgumentException("You can't finish a course that hasn't started yet.");
     }
 
     public int Duration => End - Start;
@@ -44,7 +42,7 @@ public class Period
 
     public Period(DateTime start, DateTime end)
     {
-        if (start.Date > end.Date) throw new ArgumentException("Start date must be before or equal to end date.");
+        if (start.Date >= end.Date) throw new ArgumentException("Start date must be before or equal to end date.");
 
         StartDate = start.Date;
         EndDate = end.Date;
