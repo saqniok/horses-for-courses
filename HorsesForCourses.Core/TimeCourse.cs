@@ -29,9 +29,4 @@ public class Period
         StartDate = start.Date;
         EndDate = end.Date;
     }
-
-    // public bool OverlapsWith(Period other)
-    // {
-    //     return StartDate <= other.EndDate && EndDate >= other.StartDate;
-    // }
 }
