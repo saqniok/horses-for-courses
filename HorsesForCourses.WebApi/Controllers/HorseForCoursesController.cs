@@ -1,44 +1,45 @@
-using HorsesForCourses.Core;
 using Microsoft.AspNetCore.Mvc;
+using HorsesForCourses.Core;
 
-namespace HorsesForCourses.WebApi.Controllers
+[ApiController]
+[Route("coaches")]
+public class CoachController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class CoursesController : ControllerBase
+    private readonly InMemoryCoachRepository _repository;
+
+    public CoachController(InMemoryCoachRepository repository)
     {
-        private readonly ILogger<CoursesController> _logger;
-
-        // Для упрощения — в памяти, в реальном приложении будет репозиторий/БД
-        private static readonly List<Course> _courses = new();
-
-        public CoursesController(ILogger<CoursesController> logger)
-        {
-            _logger = logger;
-        }
-
-        [HttpPost]
-        public IActionResult CreateCourse([FromBody] CreateCourseRequest request)
-        {
-            var course = new Course(request.Title, request.Period);
-            _courses.Add(course);
-
-            _logger.LogInformation("Course created: {Title}", request.Title);
-
-            return CreatedAtAction(nameof(GetCourse), new { title = course.Title }, course);
-        }
-
-        [HttpGet("{title}")]
-        public IActionResult GetCourse(string title)
-        {
-            var course = _courses.FirstOrDefault(c => c.Title == title);
-            if (course == null) return NotFound();
-
-            return Ok(course);
-        }
-
-        // Добавь другие методы по необходимости...
+        _repository = repository;
     }
 
-    public record CreateCourseRequest(string Title, Period Period);
+    [HttpGet("{id}")]
+    public ActionResult<Coach> GetById(Guid id)
+    {
+        var coach = _repository.GetById(id);
+        if (coach == null) return NotFound();
+        return Ok(coach);
+    }
+
+    [HttpGet]
+    public ActionResult<IEnumerable<Coach>> GetAll()
+    {
+        var coaches = _repository.GetAll();
+        return Ok(coaches);
+    }
+
+    [HttpPost]
+    public ActionResult Add([FromBody] Coach coach)
+    {
+        _repository.Add(coach);
+        return CreatedAtAction(nameof(GetById), new { id = coach.Id }, coach);
+    }
+
+    [HttpDelete("{id}")]
+    public ActionResult Delete(Guid id)
+    {
+        if (!_repository.Remove(id))
+            return NotFound();
+
+        return NoContent();
+    }
 }

@@ -3,7 +3,6 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- Настройка Serilog ---
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .Enrich.FromLogContext()
@@ -14,6 +13,7 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<InMemoryCoachRepository>();
 
 var app = builder.Build();
 
