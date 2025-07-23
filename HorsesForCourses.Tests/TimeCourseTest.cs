@@ -42,7 +42,7 @@ public class TimeCourseTest
         Assert.True(Course2.OverlapsWith(Course3));
         Assert.False(Course1.OverlapsWith(Course2));
         Assert.False(Course1.OverlapsWith(Course3));
-        Assert.True(Course1.OverlapsWith(Course4));
+        Assert.False(Course1.OverlapsWith(Course4));
     }
 }
 
