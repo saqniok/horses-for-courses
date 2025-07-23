@@ -27,9 +27,9 @@ public class TimeSlot
 
     public bool OverlapsWith(TimeSlot other)
     {
-        if (Day != other.Day) return false;
+        if (Day != other.Day) return true;
 
-        return Start < other.End && End > other.Start;
+        return Start > other.End || End < other.Start;
     }
 }
 

@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using HorsesForCourses.Core;
 
 public class InMemoryCoachRepository

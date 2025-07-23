@@ -37,10 +37,12 @@ public class TimeCourseTest
         var Course1 = new TimeSlot(WeekDay.Monday, 9, 12);
         var Course2 = new TimeSlot(WeekDay.Monday, 9, 10);
         var Course3 = new TimeSlot(WeekDay.Monday, 11, 15);
+        var Course4 = new TimeSlot(WeekDay.Friday, 9, 17);
 
-        Assert.True(Course1.OverlapsWith(Course2));
-        Assert.True(Course1.OverlapsWith(Course3));
-        Assert.False(Course2.OverlapsWith(Course3));
+        Assert.True(Course2.OverlapsWith(Course3));
+        Assert.False(Course1.OverlapsWith(Course2));
+        Assert.False(Course1.OverlapsWith(Course3));
+        Assert.True(Course1.OverlapsWith(Course4));
     }
 }
 
