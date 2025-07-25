@@ -17,21 +17,25 @@ public class CoachController : ControllerBase
     {
         var coach = _repository.GetById(id);
         if (coach == null) return NotFound();
-        return Ok(coach);
+
+        return Ok(CoachMapper.ToDto(coach));    //fix
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Coach>> GetAll()
+    public ActionResult<IEnumerable<CoachDto>> GetAll()
     {
         var coaches = _repository.GetAll();
-        return Ok(coaches);
+
+        return Ok(coaches.Select(CoachMapper.ToDto));
     }
 
     [HttpPost]
-    public ActionResult Add([FromBody] Coach coach)
+    public ActionResult Add([FromBody] CoachDto dto)
     {
-        _repository.Add(coach);
-        return CreatedAtAction(nameof(GetById), new { id = coach.Id }, coach);
+        var coach = CoachMapper.ToDomain(dto);
+        _repository.Add(coach);     // fix
+
+        return CreatedAtAction(nameof(GetById), new { id = coach.Id }, CoachMapper.ToDto(coach));
     }
 
     [HttpDelete("{id}")]

@@ -1,4 +1,4 @@
-using HorsesForCourses.Core;
+namespace HorsesForCourses.Core;
 
 public class InMemoryCoachRepository
 {

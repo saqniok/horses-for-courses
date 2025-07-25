@@ -19,8 +19,8 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\HorsesForCourses.Core\HorsesForCourses.Core.csproj" />
-  </ItemGroup>
+<ItemGroup>
+  <ProjectReference Include="..\HorsesForCourses.WebApi\HorsesForCourses.WebApi.csproj" />
+</ItemGroup>
 
 </Project>

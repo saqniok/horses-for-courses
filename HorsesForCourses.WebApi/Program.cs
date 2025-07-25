@@ -1,5 +1,8 @@
+using HorsesForCourses.Core;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,4 +51,5 @@ app.UseAuthorization();
 app.MapControllers();
 app.Run();
 
-public partial class Program { } 
+public partial class Program { }
+
