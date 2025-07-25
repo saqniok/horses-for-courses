@@ -60,7 +60,6 @@ public void AssignCourse(Course course)
     AssignedCourses.Add(course);
 }
 
-
     // AI helped
     public bool IsAvailableCoach()
     {
