@@ -51,6 +51,7 @@ public static class CourseMapper
             course.Confirm();
         }
 
+        //TODO:
         // Назначение тренера по CoachId можно сделать отдельно, если есть доступ к репозиторию тренеров
 
         return course;
