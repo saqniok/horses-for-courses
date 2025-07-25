@@ -14,8 +14,8 @@ public static class CoachMapper
     {
         var coach = new Coach(dto.Name, dto.Email);
 
-        foreach (var skill in dto.Skills)
-            coach.AddSkill(skill);
+        // foreach (var skill in dto.Skills)        TESTING
+        //     coach.AddSkill(skill);
 
         return coach;
     }

@@ -57,8 +57,7 @@ namespace HorsesForCourses.Core
             if (!coach.HasAllSkills(_requiredSkills)) throw new InvalidOperationException("Coach does not have all required skills.");
 
             if (coach.IsAvailableCoach()) AssignedCoach = coach;
-
-            
+  
         }
     }
 }

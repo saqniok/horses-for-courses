@@ -7,8 +7,8 @@ public static class CourseMapper
         return new CourseDto(
             Id: course.Id,
             Title: course.Title,
-            PeriodStart: course.Period.StartDate.ToString("yyyy-MM-dd"),
-            PeriodEnd: course.Period.EndDate.ToString("yyyy-MM-dd"),
+            PeriodStart: course.Period.StartDate,
+            PeriodEnd: course.Period.EndDate,
             RequiredSkills: course.RequiredSkills.ToList(),
             IsConfirmed: course.IsConfirmed,
             CoachId: course.AssignedCoach?.Id,
@@ -23,5 +23,36 @@ public static class CourseMapper
             Start: ts.Start,
             End: ts.End
         );
+    }
+
+    public static Course ToDomain(CourseDto dto)
+    {
+        var period = new Period(dto.PeriodStart, dto.PeriodEnd);
+
+        var course = new Course(dto.Title, period);
+
+        if (dto.RequiredSkills != null)
+        {
+            foreach (var skill in dto.RequiredSkills)
+                course.AddRequiredSkill(skill);
+        }
+
+        if (dto.Schedule != null)
+        {
+            foreach (var tsDto in dto.Schedule)
+            {
+                var timeSlot = new TimeSlot(tsDto.Day, tsDto.Start, tsDto.End);
+                course.AddTimeSlot(timeSlot);
+            }
+        }
+
+        if (dto.IsConfirmed)
+        {
+            course.Confirm();
+        }
+
+        // Назначение тренера по CoachId можно сделать отдельно, если есть доступ к репозиторию тренеров
+
+        return course;
     }
 }

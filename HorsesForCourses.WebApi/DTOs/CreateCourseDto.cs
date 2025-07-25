@@ -1,18 +1,28 @@
+using System.ComponentModel.DataAnnotations;
+
 public record CreateCourseDto(
+    [Required, StringLength(100)]
     string Title,
+
+    [Required]
     DateTime PeriodStart,
-    DateTime PeriodEnd,
-    List<string> RequiredSkills,
-    List<TimeSlotDto> Schedule
+
+    [Required]
+    DateTime PeriodEnd
 );
-public record UpdateSkillsDto(
+
+
+public record UpdateCourseSkillsDto(
+    [Required]
     List<string> Skills
 );
 
-public record UpdateTimeSlotsDto(
+public record UpdateCourseScheduleDto(
+    [Required]
     List<TimeSlotDto> TimeSlots
 );
 
 public record AssignCoachDto(
+    [Required]
     Guid CoachId
 );

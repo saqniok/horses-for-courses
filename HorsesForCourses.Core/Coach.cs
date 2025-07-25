@@ -14,10 +14,10 @@ public class Coach
 
     public Coach(string name, string email)
     {
-        Name = name;                        // ?? throw new ArgumentNullException(nameof(name));
-        Email = email;                      // ?? throw new ArgumentNullException(nameof(email));
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Email = email ?? throw new ArgumentNullException(nameof(email));
         Skills = new HashSet<string>(StringComparer.OrdinalIgnoreCase);      // ?? throw new ArgumentNullException(nameof(skills));
-        AssignedCourses = [];               // ?? throw new ArgumentNullException(nameof(assignedCourse));   
+        AssignedCourses = new List<Course>();       // ?? throw new ArgumentNullException(nameof(assignedCourse));   
     }
 
     public void AddSkill(string skill)
@@ -43,7 +43,21 @@ public class Coach
     public void AssignCourse(Course course)
     {
         if (AssignedCourses.Contains(course))
-            throw new ArgumentException("Course is already assinged");
+            throw new ArgumentException("Course is already assigned");
+
+        // Создаем список всех таймслотов с новым курсом
+        var allTimeSlots = AssignedCourses.SelectMany(c => c.Schedule).ToList();
+        allTimeSlots.AddRange(course.Schedule);
+
+        // Проверяем пересечения
+        for (int i = 0; i < allTimeSlots.Count; i++)
+        {
+            for (int j = i + 1; j < allTimeSlots.Count; j++)
+            {
+                if (AreTimeSlotsOverlapping(allTimeSlots[i], allTimeSlots[j]))
+                    throw new ArgumentException("Lesson time is overlapping");
+            }
+        }
 
         AssignedCourses.Add(course);
     }
@@ -71,7 +85,7 @@ public class Coach
     {
         if (slot1.Day != slot2.Day) return false;
 
-        return slot1.Start < slot2.End && slot1.End > slot2.Start;    
+        return slot1.Start < slot2.End && slot1.End > slot2.Start;
     }
 }
 

@@ -25,17 +25,33 @@ public class CoachController : ControllerBase
     public ActionResult<IEnumerable<CoachDto>> GetAll()
     {
         var coaches = _repository.GetAll();
-
         return Ok(coaches.Select(CoachMapper.ToDto).ToList());
     }
 
-    [HttpPost]
-    public ActionResult Add([FromBody] CoachDto dto)
-    {
-        var coach = CoachMapper.ToDomain(dto);
-        _repository.Add(coach); 
+[HttpPost]
+public ActionResult Add([FromBody] CoachDto dto)
+{
+    var coach = new Coach(dto.Name, dto.Email);
+    _repository.Add(coach);
 
-        return CreatedAtAction(nameof(GetById), new { id = coach.Id }, CoachMapper.ToDto(coach));
+    return CreatedAtAction(nameof(GetById), new { id = coach.Id }, CoachMapper.ToDto(coach));
+}
+
+    [HttpPost("{id}/skills")]
+    public ActionResult UpdateCoachSkills(Guid id, [FromBody] UpdateCoachSkillsDto dto)
+    {
+        var coach = _repository.GetById(id);
+        if (coach == null) return NotFound();
+
+        // Удаляем текущие скиллы
+        foreach (var skill in coach.Skills.ToList())
+            coach.RemoveSkill(skill);
+
+        // Добавляем новые из запроса
+        foreach (var skill in dto.Skills)
+            coach.AddSkill(skill);
+
+        return NoContent();
     }
 
     [HttpDelete("{id}")]
@@ -46,6 +62,4 @@ public class CoachController : ControllerBase
 
         return NoContent();
     }
-
-    
 }

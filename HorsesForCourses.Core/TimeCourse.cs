@@ -29,7 +29,7 @@ public class TimeSlot
     {
         if (Day != other.Day) return false;
 
-        return Start > other.End || End < other.Start;
+        return Start <= other.End && End >= other.Start;
     }
 
 }

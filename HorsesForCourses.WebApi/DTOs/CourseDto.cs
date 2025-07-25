@@ -1,10 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
 public record CourseDto(
-    Guid Id,
-    string Title,
-    string PeriodStart,
-    string PeriodEnd,
-    List<string> RequiredSkills,
-    List<TimeSlotDto> Schedule,
-    bool IsConfirmed,
-    Guid? CoachId
+    [property: Required] string Title,
+    [property: Required] DateTime PeriodStart,
+    [property: Required] DateTime PeriodEnd,
+    Guid Id = default,
+    List<string>? RequiredSkills = null,
+    List<TimeSlotDto>? Schedule = null,
+    bool IsConfirmed = false,
+    Guid? CoachId = null
 );
+

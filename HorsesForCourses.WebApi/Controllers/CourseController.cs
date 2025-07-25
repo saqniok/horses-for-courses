@@ -14,7 +14,6 @@ public class CourseController : ControllerBase
         _coachRepository = coachRepository;
     }
 
-    // POST /courses - создать курс
     [HttpPost]
     public ActionResult<CourseDto> Create([FromBody] CreateCourseDto dto)
     {
@@ -26,6 +25,7 @@ public class CourseController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = course.Id }, CourseMapper.ToDto(course));
     }
 
+
     // GET /courses/{id}
     [HttpGet("{id}")]
     public ActionResult<CourseDto> GetById(Guid id)
@@ -36,9 +36,18 @@ public class CourseController : ControllerBase
         return Ok(CourseMapper.ToDto(course));
     }
 
+    // GET /courses
+    [HttpGet]
+    public ActionResult<List<CourseDto>> GetAll()
+    {
+        var courses = _repository.GetAll();
+        var dtoList = courses.Select(CourseMapper.ToDto).ToList();
+        return Ok(dtoList);
+    }
+
     // POST /courses/{id}/skills - обновить навыки
     [HttpPost("{id}/skills")]
-    public ActionResult UpdateSkills(Guid id, [FromBody] UpdateSkillsDto dto)
+    public ActionResult UpdateSkills(Guid id, [FromBody] UpdateCourseSkillsDto dto)
     {
         var course = _repository.GetById(id);
         if (course == null) return NotFound();
@@ -56,7 +65,7 @@ public class CourseController : ControllerBase
 
     // POST /courses/{id}/timeslots - обновить расписание
     [HttpPost("{id}/timeslots")]
-    public ActionResult UpdateTimeSlots(Guid id, [FromBody] UpdateTimeSlotsDto dto)
+    public ActionResult UpdateTimeSlots(Guid id, [FromBody] UpdateCourseScheduleDto dto)
     {
         var course = _repository.GetById(id);
         if (course == null) return NotFound();
@@ -65,9 +74,11 @@ public class CourseController : ControllerBase
         foreach (var ts in course.Schedule.ToList())
             course.RemoveTimeSlot(ts);
 
-        // Добавим из запроса
         foreach (var tsDto in dto.TimeSlots)
         {
+            if (!Enum.IsDefined(typeof(WeekDay), tsDto.Day))
+                return BadRequest($"Invalid day value: {tsDto.Day}");
+
             var timeSlot = new TimeSlot(tsDto.Day, tsDto.Start, tsDto.End);
             course.AddTimeSlot(timeSlot);
         }
@@ -107,8 +118,13 @@ public class CourseController : ControllerBase
         try
         {
             course.AssignCoach(coach);
+            coach.AssignCourse(course);
         }
         catch (InvalidOperationException e)
+        {
+            return BadRequest(e.Message);
+        }
+        catch (ArgumentException e)
         {
             return BadRequest(e.Message);
         }
