@@ -17,6 +17,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<InMemoryCoachRepository>();
+builder.Services.AddSingleton<InMemoryCourseRepository>();
+
 
 var app = builder.Build();
 

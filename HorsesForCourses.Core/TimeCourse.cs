@@ -31,6 +31,7 @@ public class TimeSlot
 
         return Start > other.End || End < other.Start;
     }
+
 }
 
 
