@@ -111,13 +111,8 @@ public class CourseController : ControllerBase
         try
         {
             course.AssignCoach(coach);
-            coach.AssignCourse(course);
         }
-        catch (InvalidOperationException e)
-        {
-            return BadRequest(e.Message);
-        }
-        catch (ArgumentException e)
+        catch (Exception e) when (e is InvalidOperationException || e is ArgumentException)
         {
             return BadRequest(e.Message);
         }

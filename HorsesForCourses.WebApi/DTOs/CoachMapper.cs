@@ -7,15 +7,20 @@ public static class CoachMapper
         Id = coach.Id,
         Name = coach.Name,
         Email = coach.Email,
-        Skills = coach.Skills.ToList()
+        Skills = coach.Skills.ToList(),
+        AssignedCourses = coach.AssignedCourses.Select(c => new CourseShortDto
+        {
+            Id = c.Id,
+            Title = c.Title
+        }).ToList()
     };
 
     public static Coach ToDomain(CoachDto dto)
     {
         var coach = new Coach(dto.Name, dto.Email);
 
-        // foreach (var skill in dto.Skills)        TESTING
-        //     coach.AddSkill(skill);
+        foreach (var skill in dto.Skills)
+            coach.AddSkill(skill);
 
         return coach;
     }

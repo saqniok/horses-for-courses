@@ -4,6 +4,7 @@ public class CoachDto
     public required string Name { get; set; }
     public required string Email { get; set; }
     public List<string> Skills { get; set; } = new();
+    public List<CourseShortDto> AssignedCourses { get; set; } = new();
 }
 
 public class UpdateCoachSkillsDto

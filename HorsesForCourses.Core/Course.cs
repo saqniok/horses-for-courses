@@ -52,12 +52,17 @@ namespace HorsesForCourses.Core
 
         public void AssignCoach(Coach coach)
         {
-            if (!IsConfirmed) throw new InvalidOperationException("Course must be confirmed before assigning a coach.");
+            if (!IsConfirmed)
+                throw new InvalidOperationException("Course must be confirmed before assigning a coach.");
 
-            if (!coach.HasAllSkills(_requiredSkills)) throw new InvalidOperationException("Coach does not have all required skills.");
+            if (!coach.HasAllSkills(_requiredSkills))
+                throw new InvalidOperationException("Coach does not have all required skills.");
 
-            if (coach.IsAvailableCoach()) AssignedCoach = coach;
-  
+            // Coach сам проверит, свободен ли он (по времени), и если нет — выбросит ошибку
+            coach.AssignCourse(this);
+
+            // Только если всё прошло, закрепляем коуча
+            AssignedCoach = coach;
         }
     }
 }

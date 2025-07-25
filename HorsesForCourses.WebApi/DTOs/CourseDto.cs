@@ -11,3 +11,9 @@ public record CourseDto(
     Guid? CoachId = null
 );
 
+public class CourseShortDto
+{
+    public Guid Id { get; set; }
+    public string Title { get; set; } = default!;
+}
+

@@ -47,18 +47,22 @@ public void AssignCourse(Course course)
 
     foreach (var existingCourse in AssignedCourses)
     {
-        foreach (var existingTs in existingCourse.Schedule)
+        if (course.Period.OverlapsWith(existingCourse.Period))
         {
-            foreach (var newTs in course.Schedule)
+            foreach (var newSlot in course.Schedule)
             {
-                if (AreTimeSlotsOverlapping(existingTs, newTs))
-                    throw new ArgumentException("Lesson time is overlapping");
+                foreach (var existingSlot in existingCourse.Schedule)
+                {
+                    if (newSlot.OverlapsWith(existingSlot))
+                        throw new ArgumentException("Lesson time is overlapping");
+                }
             }
         }
     }
 
     AssignedCourses.Add(course);
 }
+
 
     // AI helped
     public bool IsAvailableCoach()
