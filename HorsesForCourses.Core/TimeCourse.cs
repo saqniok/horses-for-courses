@@ -43,7 +43,7 @@ public class Period
 
     public Period(DateTime start, DateTime end)
     {
-        if (start.Date >= end.Date) throw new ArgumentException("Start date must be before or equal to end date.");
+        if (start.Date > end.Date) throw new ArgumentException("Start date must be before or equal to end date.");
 
         StartDate = start.Date;
         EndDate = end.Date;

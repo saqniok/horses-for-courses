@@ -13,12 +13,12 @@ public class CoachController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public ActionResult<Coach> GetById(Guid id)
+    public ActionResult<CoachDto> GetById(Guid id)
     {
         var coach = _repository.GetById(id);
         if (coach == null) return NotFound();
 
-        return Ok(CoachMapper.ToDto(coach));    //fix
+        return Ok(CoachMapper.ToDto(coach));
     }
 
     [HttpGet]
@@ -26,14 +26,14 @@ public class CoachController : ControllerBase
     {
         var coaches = _repository.GetAll();
 
-        return Ok(coaches.Select(CoachMapper.ToDto));
+        return Ok(coaches.Select(CoachMapper.ToDto).ToList());
     }
 
     [HttpPost]
     public ActionResult Add([FromBody] CoachDto dto)
     {
         var coach = CoachMapper.ToDomain(dto);
-        _repository.Add(coach);     // fix
+        _repository.Add(coach); 
 
         return CreatedAtAction(nameof(GetById), new { id = coach.Id }, CoachMapper.ToDto(coach));
     }
@@ -46,4 +46,6 @@ public class CoachController : ControllerBase
 
         return NoContent();
     }
+
+    
 }
