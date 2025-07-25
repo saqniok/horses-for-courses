@@ -66,7 +66,7 @@ public class CoachTests
         Assert.Contains(course, coach.AssignedCourses);
 
         var exc = Assert.Throws<ArgumentException>(() => coach.AssignCourse(course));
-        Assert.Equal("Course is already assinged", exc.Message);
+        Assert.Equal("Course is already assigned", exc.Message);
     }
 
     [Fact]

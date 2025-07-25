@@ -40,27 +40,26 @@ public class Coach
     public bool HasAllSkills(IEnumerable<string> requiredSkills)
         => requiredSkills.All(skill => Skills.Contains(skill));
 
-    public void AssignCourse(Course course)
+public void AssignCourse(Course course)
+{
+    if (AssignedCourses.Contains(course))
+        throw new ArgumentException("Course is already assigned");
+
+    foreach (var existingCourse in AssignedCourses)
     {
-        if (AssignedCourses.Contains(course))
-            throw new ArgumentException("Course is already assigned");
-
-        // Создаем список всех таймслотов с новым курсом
-        var allTimeSlots = AssignedCourses.SelectMany(c => c.Schedule).ToList();
-        allTimeSlots.AddRange(course.Schedule);
-
-        // Проверяем пересечения
-        for (int i = 0; i < allTimeSlots.Count; i++)
+        foreach (var existingTs in existingCourse.Schedule)
         {
-            for (int j = i + 1; j < allTimeSlots.Count; j++)
+            foreach (var newTs in course.Schedule)
             {
-                if (AreTimeSlotsOverlapping(allTimeSlots[i], allTimeSlots[j]))
+                if (AreTimeSlotsOverlapping(existingTs, newTs))
                     throw new ArgumentException("Lesson time is overlapping");
             }
         }
-
-        AssignedCourses.Add(course);
     }
+
+    AssignedCourses.Add(course);
+}
+
 
     // AI helped
     public bool IsAvailableCoach()
