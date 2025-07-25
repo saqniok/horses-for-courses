@@ -43,11 +43,9 @@ public ActionResult Add([FromBody] CoachDto dto)
         var coach = _repository.GetById(id);
         if (coach == null) return NotFound();
 
-        // Удаляем текущие скиллы
         foreach (var skill in coach.Skills.ToList())
             coach.RemoveSkill(skill);
 
-        // Добавляем новые из запроса
         foreach (var skill in dto.Skills)
             coach.AddSkill(skill);
 

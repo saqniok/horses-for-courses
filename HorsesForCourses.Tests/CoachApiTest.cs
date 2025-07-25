@@ -20,15 +20,14 @@ public class CoachApiTests : IClassFixture<CustomWebAppFactory>
         response.EnsureSuccessStatusCode();
 
         var body = await response.Content.ReadAsStringAsync();
-        Console.WriteLine(body); // Выведи тело в консоль, чтобы увидеть реальные данные
-
+        Console.WriteLine(body); 
         var coaches = JsonSerializer.Deserialize<List<CoachDto>>(body, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });
 
         Assert.NotNull(coaches);
-        Assert.NotEmpty(coaches); // Добавь проверку, что коллекция не пустая
+        Assert.NotEmpty(coaches); 
 
         Assert.Contains(coaches, c => c.Name == "John Doe");
     }

@@ -45,32 +45,27 @@ public class CourseController : ControllerBase
         return Ok(dtoList);
     }
 
-    // POST /courses/{id}/skills - обновить навыки
     [HttpPost("{id}/skills")]
     public ActionResult UpdateSkills(Guid id, [FromBody] UpdateCourseSkillsDto dto)
     {
         var course = _repository.GetById(id);
         if (course == null) return NotFound();
 
-        // Очистим текущие навыки
         foreach (var skill in course.RequiredSkills.ToList())
             course.RemoveRequiredSkill(skill);
 
-        // Добавим из запроса
         foreach (var skill in dto.Skills)
             course.AddRequiredSkill(skill);
 
         return NoContent();
     }
 
-    // POST /courses/{id}/timeslots - обновить расписание
     [HttpPost("{id}/timeslots")]
     public ActionResult UpdateTimeSlots(Guid id, [FromBody] UpdateCourseScheduleDto dto)
     {
         var course = _repository.GetById(id);
         if (course == null) return NotFound();
 
-        // Очистим текущее расписание
         foreach (var ts in course.Schedule.ToList())
             course.RemoveTimeSlot(ts);
 
@@ -86,7 +81,6 @@ public class CourseController : ControllerBase
         return NoContent();
     }
 
-    // POST /courses/{id}/confirm - подтвердить курс
     [HttpPost("{id}/confirm")]
     public ActionResult Confirm(Guid id)
     {
@@ -105,7 +99,6 @@ public class CourseController : ControllerBase
         return NoContent();
     }
 
-    // POST /courses/{id}/assign-coach - назначить тренера
     [HttpPost("{id}/assign-coach")]
     public ActionResult AssignCoach(Guid id, [FromBody] AssignCoachDto dto)
     {
