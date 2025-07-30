@@ -45,29 +45,21 @@ public void AssignCourse(Course course)
     if (AssignedCourses.Contains(course))
         throw new ArgumentException("Course is already assigned");
 
-        // foreach (var existingCourse in AssignedCourses)
-        // {
-        //     if (course.Period.OverlapsWith(existingCourse.Period))
-        //     {
-        //         foreach (var newSlot in course.Schedule)
-        //         {
-        //             foreach (var existingSlot in existingCourse.Schedule)
-        //             {
-        //                 if (newSlot.OverlapsWith(existingSlot))
-        //                     throw new ArgumentException("Lesson time is overlapping");
-        //             }
-        //         }
-        //     }
-        // }
-    if (AssignedCourses.Any(existingCourse =>
-        course.Period.OverlapsWith(existingCourse.Period) &&
-        course.Schedule.Any(newSlot =>
-            existingCourse.Schedule.Any(existingSlot =>
-                newSlot.OverlapsWith(existingSlot)))))
-    {
-        throw new ArgumentException("Lesson time is overlapping");
-    }
-
+        foreach (var existingCourse in AssignedCourses)
+        {
+            if (course.Period.OverlapsWith(existingCourse.Period))
+            {
+                foreach (var newSlot in course.Schedule)
+                {
+                    foreach (var existingSlot in existingCourse.Schedule)
+                    {
+                        if (newSlot.OverlapsWith(existingSlot))
+                            throw new ArgumentException("Lesson time is overlapping");
+                    }
+                }
+            }
+        }
+        
     AssignedCourses.Add(course);
 }
 
