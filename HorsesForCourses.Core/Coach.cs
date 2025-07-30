@@ -5,7 +5,6 @@ namespace HorsesForCourses.Core;
 
 public class Coach
 {
-    // public Guid Id { get; } = Guid.NewGuid();
     public int Id { get; set; }
     public string Name { get; }
     public string Email { get; }

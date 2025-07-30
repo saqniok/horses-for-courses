@@ -14,10 +14,11 @@ public class CourseController : ControllerBase
         _coachRepository = coachRepository;
     }
 
+    // POST course
     [HttpPost]
     public ActionResult<CourseDto> Create([FromBody] CreateCourseDto dto)
     {
-        var period = new Period(dto.PeriodStart, dto.PeriodEnd);
+        var period = new Period(dto.startDate.Date, dto.endDate.Date);
         var course = new Course(dto.Title, period);
 
         _repository.Add(course);
@@ -25,25 +26,7 @@ public class CourseController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = course.Id }, CourseMapper.ToDto(course));
     }
 
-
-    [HttpGet("{id}")]
-    public ActionResult<CourseDto> GetById(int id)
-    {
-        var course = _repository.GetById(id);
-        if (course == null) return NotFound();
-
-        return Ok(CourseMapper.ToDto(course));
-    }
-
-    // GET /courses
-    [HttpGet]
-    public ActionResult<List<CourseDto>> GetAll()
-    {
-        var courses = _repository.GetAll();
-        var dtoList = courses.Select(CourseMapper.ToDto).ToList();
-        return Ok(dtoList);
-    }
-
+    // POST skill in course
     [HttpPost("{id}/skills")]
     public ActionResult UpdateSkills(int id, [FromBody] UpdateCourseSkillsDto dto)
     {
@@ -59,6 +42,7 @@ public class CourseController : ControllerBase
         return NoContent();
     }
 
+    // POST TimeSlot
     [HttpPost("{id}/timeslots")]
     public ActionResult UpdateTimeSlots(int id, [FromBody] UpdateCourseScheduleDto dto)
     {
@@ -80,6 +64,7 @@ public class CourseController : ControllerBase
         return NoContent();
     }
 
+    // Confrim Course
     [HttpPost("{id}/confirm")]
     public ActionResult Confirm(int id)
     {
@@ -90,6 +75,7 @@ public class CourseController : ControllerBase
         return NoContent();
     }
 
+    // Asing coach
     [HttpPost("{id}/assign-coach")]
     public ActionResult AssignCoach(int id, [FromBody] AssignCoachDto dto)
     {
@@ -103,5 +89,29 @@ public class CourseController : ControllerBase
 
         return NoContent();
     }
+
+    // GET all courses
+    [HttpGet]
+    public ActionResult<List<CourseDto>> GetAll()
+    {
+        var courses = _repository.GetAll();
+        var dtoList = courses.Select(CourseMapper.ToDto).ToList();
+        return Ok(dtoList);
+    }
+
+    // GET by Id
+    [HttpGet("{id}")]
+    public ActionResult<CourseDto> GetById(int id)
+    {
+        var course = _repository.GetById(id);
+        if (course == null) return NotFound();
+
+        return Ok(CourseMapper.ToDto(course));
+    }
+
+
+
+
+
 }
 

@@ -22,7 +22,7 @@ public class CoachApiTests : IClassFixture<CustomWebAppFactory>
 
         var body = await response.Content.ReadAsStringAsync();
         Console.WriteLine(body);
-        var coaches = JsonSerializer.Deserialize<List<CoachDto>>(body, new JsonSerializerOptions
+        var coaches = JsonSerializer.Deserialize<List<CoachSummaryDto>>(body, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });

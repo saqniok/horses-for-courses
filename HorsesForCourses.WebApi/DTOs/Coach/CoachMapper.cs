@@ -44,10 +44,10 @@ public static class CoachMapper
         Courses = coach.AssignedCourses.Select(c => new CourseShortDto
         {
             Id = c.Id,
-            Title = c.Title
+            Name = c.Title
         }).ToList()
     };
-    
+
     // Маппинг для POST /coaches
     // Преобразует CreateCoachDto в Coach
     public static Coach ToDomain(CreateCoachDto createDto)
