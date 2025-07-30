@@ -3,10 +3,13 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using HorsesForCourses.Core;
 
+
 namespace HorsesForCourses.Tests;
 
 public class CustomWebAppFactory : WebApplicationFactory<Program>
 {
+
+    private InMemoryCoachRepository? _repository;
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Development");
@@ -18,12 +21,19 @@ public class CustomWebAppFactory : WebApplicationFactory<Program>
             if (descriptor != null)
                 services.Remove(descriptor);
 
-            var testRepo = new InMemoryCoachRepository();
-            testRepo.Add(new Coach("John Doe", "john@example.com"));
-            testRepo.Add(new Coach("Jane Smith", "jane@example.com"));
+            _repository = new InMemoryCoachRepository();
+            _repository.Add(new Coach("John Doe", "john@example.com"));
+            _repository.Add(new Coach("Jane Smith", "jane@example.com"));
 
-            services.AddSingleton<InMemoryCoachRepository>(testRepo);
+            services.AddSingleton<InMemoryCoachRepository>(_repository);
         });
 
+    }
+
+    public void ClearRepository()
+    {
+        _repository?.Clear();
+        _repository?.Add(new Coach("John Doe", "john@example.com"));
+        _repository?.Add(new Coach("Jane Smith", "jane@example.com"));
     }
 }

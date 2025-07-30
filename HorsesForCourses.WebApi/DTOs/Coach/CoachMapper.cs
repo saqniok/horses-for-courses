@@ -33,8 +33,7 @@ public static class CoachMapper
         NumberOfCoursesAssignedTo = coach.AssignedCourses.Count
     };
 
-    // Маппинг для GET /coaches/{id}
-    // Преобразует Coach в CoachDetailsDto
+
     public static CoachDetailsDto ToCoachDetailsDto(Coach coach) => new()
     {
         Id = coach.Id,
@@ -48,8 +47,6 @@ public static class CoachMapper
         }).ToList()
     };
 
-    // Маппинг для POST /coaches
-    // Преобразует CreateCoachDto в Coach
     public static Coach ToDomain(CreateCoachDto createDto)
     {
         return new Coach(createDto.Name, createDto.Email);

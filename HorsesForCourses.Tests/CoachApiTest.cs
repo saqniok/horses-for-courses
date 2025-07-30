@@ -31,7 +31,7 @@ public class CoachApiTests : IClassFixture<CustomWebAppFactory>
         Assert.NotEmpty(coaches);
 
         Assert.Contains(coaches, c => c.Name == "John Doe");
-        Assert.Contains(coaches, c => c.Name == "Jane Smith"); 
+        Assert.Contains(coaches, c => c.Name == "Jane Smith");
     }
 
     [Fact]
@@ -41,4 +41,6 @@ public class CoachApiTests : IClassFixture<CustomWebAppFactory>
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
+    
+    
 }

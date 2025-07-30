@@ -7,7 +7,7 @@ public class InMemoryCoachRepository
 
     public void Add(Coach coach)
     {
-            coach.Id = _nextId++;
+        coach.Id = _nextId++;
 
         _coaches[coach.Id] = coach;
     }
@@ -21,7 +21,7 @@ public class InMemoryCoachRepository
     {
         return _coaches.Values;
     }
-    
+
     public bool Remove(int id)
     {
         return _coaches.Remove(id);
@@ -30,5 +30,6 @@ public class InMemoryCoachRepository
     public void Clear()
     {
         _coaches.Clear();
+        _nextId = 1;
     }
 }
