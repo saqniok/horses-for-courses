@@ -2,14 +2,17 @@ namespace HorsesForCourses.Core;
 
 public class InMemoryCoachRepository
 {
-    private readonly Dictionary<Guid, Coach> _coaches = new();
+    private readonly Dictionary<int, Coach> _coaches = new();
+    private int _nextId = 1;
 
     public void Add(Coach coach)
     {
+            coach.Id = _nextId++;
+
         _coaches[coach.Id] = coach;
     }
 
-    public Coach? GetById(Guid id)
+    public Coach? GetById(int id)
     {
         return _coaches.TryGetValue(id, out var coach) ? coach : null;
     }
@@ -18,8 +21,8 @@ public class InMemoryCoachRepository
     {
         return _coaches.Values;
     }
-
-    public bool Remove(Guid id)
+    
+    public bool Remove(int id)
     {
         return _coaches.Remove(id);
     }

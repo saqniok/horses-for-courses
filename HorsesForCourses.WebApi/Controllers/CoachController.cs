@@ -12,33 +12,34 @@ public class CoachController : ControllerBase
         _repository = repository;
     }
 
+    [HttpPost]
+    public ActionResult Add([FromBody] CreateCoachDto dto)
+    {
+        var coach = new Coach(dto.Name, dto.Email);
+        _repository.Add(coach);
+
+        return CreatedAtAction(nameof(GetById), new { id = coach.Id }, CoachMapper.ToCoachDetailsDto(coach));
+    }
+
     [HttpGet("{id}")]
-    public ActionResult<CoachDto> GetById(Guid id)
+    public ActionResult<CoachDetailsDto> GetById(int id)
     {
         var coach = _repository.GetById(id);
         if (coach == null) return NotFound();
 
-        return Ok(CoachMapper.ToDto(coach));
+        return Ok(CoachMapper.ToCoachDetailsDto(coach));
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<CoachDto>> GetAll()
+    public ActionResult<IEnumerable<CoachSummaryDto>> GetAll()
     {
         var coaches = _repository.GetAll();
-        return Ok(coaches.Select(CoachMapper.ToDto).ToList());
+        return Ok(coaches.Select(CoachMapper.ToCoachSummaryDto).ToList());
     }
 
-[HttpPost]
-public ActionResult Add([FromBody] CoachDto dto)
-{
-    var coach = new Coach(dto.Name, dto.Email);
-    _repository.Add(coach);
-
-    return CreatedAtAction(nameof(GetById), new { id = coach.Id }, CoachMapper.ToDto(coach));
-}
 
     [HttpPost("{id}/skills")]
-    public ActionResult UpdateCoachSkills(Guid id, [FromBody] UpdateCoachSkillsDto dto)
+    public ActionResult UpdateCoachSkills(int id, [FromBody] UpdateCoachSkillsDto dto)
     {
         var coach = _repository.GetById(id);
         if (coach == null) return NotFound();
@@ -53,7 +54,7 @@ public ActionResult Add([FromBody] CoachDto dto)
     }
 
     [HttpDelete("{id}")]
-    public ActionResult Delete(Guid id)
+    public ActionResult Delete(int id)
     {
         if (!_repository.Remove(id))
             return NotFound();

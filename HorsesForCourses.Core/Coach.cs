@@ -5,7 +5,8 @@ namespace HorsesForCourses.Core;
 
 public class Coach
 {
-    public Guid Id { get; } = Guid.NewGuid();
+    // public Guid Id { get; } = Guid.NewGuid();
+    public int Id { get; set; }
     public string Name { get; }
     public string Email { get; }
     public HashSet<string> Skills { get; }
@@ -45,19 +46,27 @@ public void AssignCourse(Course course)
     if (AssignedCourses.Contains(course))
         throw new ArgumentException("Course is already assigned");
 
-    foreach (var existingCourse in AssignedCourses)
+        // foreach (var existingCourse in AssignedCourses)
+        // {
+        //     if (course.Period.OverlapsWith(existingCourse.Period))
+        //     {
+        //         foreach (var newSlot in course.Schedule)
+        //         {
+        //             foreach (var existingSlot in existingCourse.Schedule)
+        //             {
+        //                 if (newSlot.OverlapsWith(existingSlot))
+        //                     throw new ArgumentException("Lesson time is overlapping");
+        //             }
+        //         }
+        //     }
+        // }
+    if (AssignedCourses.Any(existingCourse =>
+        course.Period.OverlapsWith(existingCourse.Period) &&
+        course.Schedule.Any(newSlot =>
+            existingCourse.Schedule.Any(existingSlot =>
+                newSlot.OverlapsWith(existingSlot)))))
     {
-        if (course.Period.OverlapsWith(existingCourse.Period))
-        {
-            foreach (var newSlot in course.Schedule)
-            {
-                foreach (var existingSlot in existingCourse.Schedule)
-                {
-                    if (newSlot.OverlapsWith(existingSlot))
-                        throw new ArgumentException("Lesson time is overlapping");
-                }
-            }
-        }
+        throw new ArgumentException("Lesson time is overlapping");
     }
 
     AssignedCourses.Add(course);

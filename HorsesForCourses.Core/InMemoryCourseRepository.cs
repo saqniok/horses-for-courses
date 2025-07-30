@@ -6,7 +6,7 @@ public class InMemoryCourseRepository
 
     public IEnumerable<Course> GetAll() => _courses;
 
-    public Course? GetById(Guid id) => _courses.FirstOrDefault(c => c.Id == id);
+    public Course? GetById(int id) => _courses.FirstOrDefault(c => c.Id == id);
 
     public void Add(Course course) => _courses.Add(course);
 

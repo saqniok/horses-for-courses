@@ -24,5 +24,5 @@ public record UpdateCourseScheduleDto(
 
 public record AssignCoachDto(
     [Required]
-    Guid CoachId
+    int CoachId
 );

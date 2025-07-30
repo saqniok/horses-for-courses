@@ -3,7 +3,7 @@ namespace HorsesForCourses.Core
 {
     public class Course(string title, Period period)
     {
-        public Guid Id { get; } = Guid.NewGuid();
+        public int Id { get; }
         public string Title { get; } = title;
         public Period Period { get; } = period;
         private readonly HashSet<string> _requiredSkills = new(StringComparer.OrdinalIgnoreCase);

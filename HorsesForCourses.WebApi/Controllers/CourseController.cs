@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 public class CourseController : ControllerBase
 {
     private readonly InMemoryCourseRepository _repository;
-    private readonly InMemoryCoachRepository _coachRepository; // Для coach
+    private readonly InMemoryCoachRepository _coachRepository;
 
     public CourseController(InMemoryCourseRepository repository, InMemoryCoachRepository coachRepository)
     {
@@ -26,9 +26,8 @@ public class CourseController : ControllerBase
     }
 
 
-    // GET /courses/{id}
     [HttpGet("{id}")]
-    public ActionResult<CourseDto> GetById(Guid id)
+    public ActionResult<CourseDto> GetById(int id)
     {
         var course = _repository.GetById(id);
         if (course == null) return NotFound();
@@ -46,7 +45,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost("{id}/skills")]
-    public ActionResult UpdateSkills(Guid id, [FromBody] UpdateCourseSkillsDto dto)
+    public ActionResult UpdateSkills(int id, [FromBody] UpdateCourseSkillsDto dto)
     {
         var course = _repository.GetById(id);
         if (course == null) return NotFound();
@@ -61,7 +60,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost("{id}/timeslots")]
-    public ActionResult UpdateTimeSlots(Guid id, [FromBody] UpdateCourseScheduleDto dto)
+    public ActionResult UpdateTimeSlots(int id, [FromBody] UpdateCourseScheduleDto dto)
     {
         var course = _repository.GetById(id);
         if (course == null) return NotFound();
@@ -72,7 +71,7 @@ public class CourseController : ControllerBase
         foreach (var tsDto in dto.TimeSlots)
         {
             if (!Enum.IsDefined(typeof(WeekDay), tsDto.Day))
-                return BadRequest($"Invalid day value: {tsDto.Day}");
+                return BadRequest($"Invalid day value: {tsDto.Day}");       // Check solution for my own enum
 
             var timeSlot = new TimeSlot(tsDto.Day, tsDto.Start, tsDto.End);
             course.AddTimeSlot(timeSlot);
@@ -82,25 +81,17 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost("{id}/confirm")]
-    public ActionResult Confirm(Guid id)
+    public ActionResult Confirm(int id)
     {
         var course = _repository.GetById(id);
         if (course == null) return NotFound();
-
-        try
-        {
-            course.Confirm();
-        }
-        catch (InvalidOperationException e)
-        {
-            return BadRequest(e.Message);
-        }
+        course.Confirm();
 
         return NoContent();
     }
 
     [HttpPost("{id}/assign-coach")]
-    public ActionResult AssignCoach(Guid id, [FromBody] AssignCoachDto dto)
+    public ActionResult AssignCoach(int id, [FromBody] AssignCoachDto dto)
     {
         var course = _repository.GetById(id);
         if (course == null) return NotFound();
@@ -108,14 +99,7 @@ public class CourseController : ControllerBase
         var coach = _coachRepository.GetById(dto.CoachId);
         if (coach == null) return NotFound("Coach not found.");
 
-        try
-        {
-            course.AssignCoach(coach);
-        }
-        catch (Exception e) when (e is InvalidOperationException || e is ArgumentException)
-        {
-            return BadRequest(e.Message);
-        }
+        course.AssignCoach(coach);
 
         return NoContent();
     }
