@@ -64,6 +64,7 @@ public void AssignCourse(Course course)
 }
 
 
+    // AI helped
     public bool IsAvailableCoach()
     {
         if (!AssignedCourses.Any()) return true;
