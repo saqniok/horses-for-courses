@@ -16,8 +16,8 @@ public class Coach
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Email = email ?? throw new ArgumentNullException(nameof(email));
-        Skills = new HashSet<string>(StringComparer.OrdinalIgnoreCase);      // ?? throw new ArgumentNullException(nameof(skills));
-        AssignedCourses = new List<Course>();       // ?? throw new ArgumentNullException(nameof(assignedCourse));   
+        Skills = new HashSet<string>(StringComparer.OrdinalIgnoreCase);      
+        AssignedCourses = new List<Course>();                              
     }
 
     public void AddSkill(string skill)
@@ -59,7 +59,7 @@ public void AssignCourse(Course course)
                 }
             }
         }
-        
+
     AssignedCourses.Add(course);
 }
 

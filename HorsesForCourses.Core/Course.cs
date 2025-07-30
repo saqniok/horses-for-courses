@@ -58,10 +58,8 @@ namespace HorsesForCourses.Core
             if (!coach.HasAllSkills(_requiredSkills))
                 throw new InvalidOperationException("Coach does not have all required skills.");
 
-            // Coach сам проверит, свободен ли он (по времени), и если нет — выбросит ошибку
             coach.AssignCourse(this);
 
-            // Только если всё прошло, закрепляем коуча
             AssignedCoach = coach;
         }
     }
