@@ -2,11 +2,11 @@ using System.Net;
 
 namespace HorsesForCourses.Tests;
 
-public class ApiSmokeTests : IClassFixture<CustomWebAppFactory>
+public class ApiSmokeTests : IClassFixture<CustomWebApiFactory>
 {
     private readonly HttpClient _client;
 
-    public ApiSmokeTests(CustomWebAppFactory factory)
+    public ApiSmokeTests(CustomWebApiFactory factory)
     {
         _client = factory.CreateClient();
     }

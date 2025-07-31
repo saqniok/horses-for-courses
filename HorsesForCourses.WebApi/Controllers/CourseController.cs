@@ -7,11 +7,13 @@ public class CourseController : ControllerBase
 {
     private readonly InMemoryCourseRepository _repository;
     private readonly InMemoryCoachRepository _coachRepository;
+    private readonly CourseScheduler _courseScheduler;
 
-    public CourseController(InMemoryCourseRepository repository, InMemoryCoachRepository coachRepository)
+    public CourseController(InMemoryCourseRepository repository, InMemoryCoachRepository coachRepository, CourseScheduler courseScheduler)
     {
         _repository = repository;
         _coachRepository = coachRepository;
+        _courseScheduler = courseScheduler;
     }
 
     // POST course
@@ -33,11 +35,7 @@ public class CourseController : ControllerBase
         var course = _repository.GetById(id);
         if (course == null) return NotFound();
 
-        foreach (var skill in course.RequiredSkills.ToList())
-            course.RemoveRequiredSkill(skill);
-
-        foreach (var skill in dto.Skills)
-            course.AddRequiredSkill(skill);
+        course.UpdateRequiredSkills(dto.Skills);
 
         return NoContent();
     }
@@ -47,19 +45,14 @@ public class CourseController : ControllerBase
     public ActionResult UpdateTimeSlots(int id, [FromBody] UpdateCourseScheduleDto dto)
     {
         var course = _repository.GetById(id);
-        if (course == null) return NotFound();
 
-        foreach (var ts in course.Schedule.ToList())
-            course.RemoveTimeSlot(ts);
+        if (course == null)
+            return NotFound();
 
-        foreach (var tsDto in dto.TimeSlots)
-        {
-            if (!Enum.IsDefined(typeof(WeekDay), tsDto.Day))
-                return BadRequest($"Invalid day value: {tsDto.Day}");       // Check solution for my own enum
+        var (success, error) = _courseScheduler.UpdateSchedule(course, dto.TimeSlots);
 
-            var timeSlot = new TimeSlot(tsDto.Day, tsDto.Start, tsDto.End);
-            course.AddTimeSlot(timeSlot);
-        }
+        if (!success)
+            return BadRequest(error);
 
         return NoContent();
     }
@@ -69,7 +62,10 @@ public class CourseController : ControllerBase
     public ActionResult Confirm(int id)
     {
         var course = _repository.GetById(id);
-        if (course == null) return NotFound();
+
+        if (course == null)
+            return NotFound();
+
         course.Confirm();
 
         return NoContent();
@@ -80,10 +76,14 @@ public class CourseController : ControllerBase
     public ActionResult AssignCoach(int id, [FromBody] AssignCoachDto dto)
     {
         var course = _repository.GetById(id);
-        if (course == null) return NotFound();
+
+        if (course == null)
+            return NotFound("There is no course");
 
         var coach = _coachRepository.GetById(dto.CoachId);
-        if (coach == null) return NotFound("Coach not found.");
+
+        if (coach == null)
+            return NotFound("Coach not found.");
 
         course.AssignCoach(coach);
 
@@ -104,7 +104,9 @@ public class CourseController : ControllerBase
     public ActionResult<CourseDto> GetById(int id)
     {
         var course = _repository.GetById(id);
-        if (course == null) return NotFound();
+
+        if (course == null)
+            return NotFound();
 
         return Ok(CourseMapper.ToDto(course));
     }

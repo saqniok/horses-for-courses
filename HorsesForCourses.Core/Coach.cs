@@ -16,8 +16,8 @@ public class Coach
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Email = email ?? throw new ArgumentNullException(nameof(email));
-        Skills = new HashSet<string>(StringComparer.OrdinalIgnoreCase);      
-        AssignedCourses = new List<Course>();                              
+        Skills = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        AssignedCourses = new List<Course>();
     }
 
     public void AddSkill(string skill)
@@ -36,14 +36,21 @@ public class Coach
         Skills.Remove(skill);
     }
 
+    public void UpdateSkills(IEnumerable<string> newSkills)
+    {
+        Skills.Clear();
+
+        foreach (var skill in newSkills)
+            AddSkill(skill);
+    }
 
     public bool HasAllSkills(IEnumerable<string> requiredSkills)
         => requiredSkills.All(skill => Skills.Contains(skill));
 
-public void AssignCourse(Course course)
-{
-    if (AssignedCourses.Contains(course))
-        throw new ArgumentException("Course is already assigned");
+    public void AssignCourse(Course course)
+    {
+        if (AssignedCourses.Contains(course))
+            throw new ArgumentException("Course is already assigned");
 
         foreach (var existingCourse in AssignedCourses)
         {
@@ -60,8 +67,8 @@ public void AssignCourse(Course course)
             }
         }
 
-    AssignedCourses.Add(course);
-}
+        AssignedCourses.Add(course);
+    }
 
 
     // AI helped

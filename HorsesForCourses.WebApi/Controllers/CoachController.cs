@@ -25,7 +25,9 @@ public class CoachController : ControllerBase
     public ActionResult<CoachDetailsDto> GetById(int id)
     {
         var coach = _repository.GetById(id);
-        if (coach == null) return NotFound();
+
+        if (coach == null)
+            return NotFound();
 
         return Ok(CoachMapper.ToCoachDetailsDto(coach));
     }
@@ -34,6 +36,7 @@ public class CoachController : ControllerBase
     public ActionResult<IEnumerable<CoachSummaryDto>> GetAll()
     {
         var coaches = _repository.GetAll();
+
         return Ok(coaches.Select(CoachMapper.ToCoachSummaryDto).ToList());
     }
 
@@ -42,13 +45,11 @@ public class CoachController : ControllerBase
     public ActionResult UpdateCoachSkills(int id, [FromBody] UpdateCoachSkillsDto dto)
     {
         var coach = _repository.GetById(id);
-        if (coach == null) return NotFound();
 
-        foreach (var skill in coach.Skills.ToList())
-            coach.RemoveSkill(skill);
+        if (coach == null)
+            return NotFound();
 
-        foreach (var skill in dto.Skills)
-            coach.AddSkill(skill);
+        coach.UpdateSkills(dto.Skills);
 
         return NoContent();
     }

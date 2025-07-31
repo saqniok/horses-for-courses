@@ -23,7 +23,8 @@ namespace HorsesForCourses.Core
 
         private void ConfirmConfrimation()
         {
-            if (IsConfirmed) throw new InvalidOperationException("Cannot modify course after it has been confirmed.");
+            if (IsConfirmed)
+                throw new InvalidOperationException("Cannot modify course after it has been confirmed.");
         }
 
         public void AddRequiredSkill(string skill)
@@ -32,10 +33,24 @@ namespace HorsesForCourses.Core
             _requiredSkills.Add(skill);
         }
 
+        public void ClearSchedule()
+        {
+            _schedule.Clear();
+        }
+
         public void RemoveRequiredSkill(string skill)
         {
             ConfirmConfrimation();
             _requiredSkills.Remove(skill);
+        }
+
+        public void UpdateRequiredSkills(IEnumerable<string> newSkills)
+        {
+            ConfirmConfrimation();
+            _requiredSkills.Clear();
+
+            foreach (var skill in newSkills)
+                AddRequiredSkill(skill);
         }
 
         public void AddTimeSlot(TimeSlot timeSlot)
@@ -48,6 +63,14 @@ namespace HorsesForCourses.Core
         {
             ConfirmConfrimation();
             _schedule.Remove(timeSlot);
+        }
+
+        public void UpdateTimeSlot(IEnumerable<TimeSlot> newTimeSlots)
+        {
+            ClearSchedule();
+
+            foreach (var timeSlot in newTimeSlots)
+                AddTimeSlot(timeSlot);
         }
 
         public void AssignCoach(Coach coach)

@@ -6,15 +6,15 @@ using System.Text;
 
 namespace HorsesForCourses.Tests.Integration;
 
-public class CoachControllerIntegrationTests : IClassFixture<CustomWebAppFactory>, IAsyncLifetime
+public class CoachControllerIntegrationTests : IClassFixture<CustomWebApiFactory>, IAsyncLifetime
 {
     private readonly HttpClient _client;
-    private readonly CustomWebAppFactory _factory;
+    private readonly CustomWebApiFactory _factory;
 
-    public CoachControllerIntegrationTests(CustomWebAppFactory factory)
+    public CoachControllerIntegrationTests(CustomWebApiFactory factory)
     {
-        _factory = factory; 
-        _client = factory.CreateClient(); 
+        _factory = factory;
+        _client = factory.CreateClient();
     }
 
     public async Task InitializeAsync()
@@ -170,8 +170,8 @@ public class CoachControllerIntegrationTests : IClassFixture<CustomWebAppFactory
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
         );
         Assert.NotNull(remainingCoaches);
-        Assert.Single(remainingCoaches); 
-        Assert.Equal("Jane Smith", remainingCoaches.First().Name); 
+        Assert.Single(remainingCoaches);
+        Assert.Equal("Jane Smith", remainingCoaches.First().Name);
     }
 
     [Fact]

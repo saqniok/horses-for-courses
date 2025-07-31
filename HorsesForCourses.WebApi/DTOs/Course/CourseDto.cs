@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 public record CourseDto(
     int Id,
-    [property: Required] string Title,
-    [property: Required] DateTime startDate,
-    [property: Required] DateTime endDate,
+    [Required] string Title,
+    [Required] DateTime startDate,
+    [Required] DateTime endDate,
     List<string>? RequiredSkills = null,
     List<TimeSlotDto>? Schedule = null,
     bool IsConfirmed = false,

@@ -5,11 +5,11 @@ using HorsesForCourses.Core;
 
 namespace HorsesForCourses.Tests.Integration;
 
-public class CoachApiTests : IClassFixture<CustomWebAppFactory>
+public class CoachApiTests : IClassFixture<CustomWebApiFactory>
 {
     private readonly HttpClient _client;
 
-    public CoachApiTests(CustomWebAppFactory factory)
+    public CoachApiTests(CustomWebApiFactory factory)
     {
         _client = factory.CreateClient();
     }
@@ -41,6 +41,6 @@ public class CoachApiTests : IClassFixture<CustomWebAppFactory>
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
-    
-    
+
+
 }
