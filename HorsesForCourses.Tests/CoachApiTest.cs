@@ -21,7 +21,7 @@ public class CoachApiTests : IClassFixture<CustomWebApiFactory>
         response.EnsureSuccessStatusCode();
 
         var body = await response.Content.ReadAsStringAsync();
-        Console.WriteLine(body);
+
         var coaches = JsonSerializer.Deserialize<List<CoachSummaryDto>>(body, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
