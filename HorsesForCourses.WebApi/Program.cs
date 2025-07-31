@@ -19,12 +19,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<InMemoryCoachRepository>();
 builder.Services.AddSingleton<InMemoryCourseRepository>();
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(
         new JsonStringEnumConverter(null, allowIntegerValues: false));
 });
 builder.Services.AddScoped<CourseScheduler>();
+
+// builder.Services.Configure<JsonOptions>(options =>
+// {
+//     options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+// });
 
 var app = builder.Build();
 

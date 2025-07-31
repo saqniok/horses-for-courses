@@ -17,7 +17,7 @@ namespace HorsesForCourses.Tests
         [Fact]
         public async Task CreateCourse_ReturnsCreatedCourse()
         {
-            var createDto = new CreateCourseDto("Test Course", DateTime.Today, DateTime.Today.AddDays(2));
+            var createDto = new CreateCourseDto("Test Course", DateTime.Today.ToString("yyyy-MM-dd"), DateTime.Today.AddDays(2).ToString("yyyy-MM-dd"));
 
             var response = await _client.PostAsJsonAsync("/courses", createDto);
 
@@ -33,7 +33,7 @@ namespace HorsesForCourses.Tests
         [Fact]
         public async Task GetAllCourses_ReturnsNonEmptyList()
         {
-            var createDto = new CreateCourseDto("Test2 Course", DateTime.Today, DateTime.Today.AddDays(1)); ;
+            var createDto = new CreateCourseDto("Test2 Course", DateTime.Today.ToString("yyyy-MM-dd"), DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")); ;
 
             await _client.PostAsJsonAsync("/courses", createDto);
 
@@ -50,7 +50,7 @@ namespace HorsesForCourses.Tests
         [Fact]
         public async Task UpdateSkills_ExistingCourse_ReturnsNoContent()
         {
-            var createDto = new CreateCourseDto("Test3 Course", DateTime.Today, DateTime.Today.AddDays(3));
+            var createDto = new CreateCourseDto("Test3 Course", DateTime.Today.ToString("yyyy-MM-dd"), DateTime.Today.AddDays(3).ToString("yyyy-MM-dd"));
 
             var createResponse = await _client.PostAsJsonAsync("/courses", createDto);
             var createdCourse = await createResponse.Content.ReadFromJsonAsync<CourseDto>();

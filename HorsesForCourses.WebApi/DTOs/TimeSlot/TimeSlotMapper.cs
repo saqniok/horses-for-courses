@@ -1,14 +1,9 @@
 using HorsesForCourses.Core;
 
-namespace HorsesForCourses.Application.Mappers;
-
 public static class TimeSlotMapper
 {
     public static TimeSlot ToDomain(this TimeSlotDto dto)
     {
-        if (!Enum.IsDefined(typeof(WeekDay), dto.Day))
-            throw new ArgumentException($"Invalid day value: {dto.Day}");
-
         return new TimeSlot(dto.Day, dto.Start, dto.End);
     }
 

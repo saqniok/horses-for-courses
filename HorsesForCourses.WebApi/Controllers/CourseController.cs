@@ -20,7 +20,7 @@ public class CourseController : ControllerBase
     [HttpPost]
     public ActionResult<CourseDto> Create([FromBody] CreateCourseDto dto)
     {
-        var period = new Period(dto.startDate.Date, dto.endDate.Date);
+        var period = new Period(DateTime.Parse(dto.startDate), DateTime.Parse(dto.endDate));
         var course = new Course(dto.Title, period);
 
         _repository.Add(course);
@@ -33,7 +33,9 @@ public class CourseController : ControllerBase
     public ActionResult UpdateSkills(int id, [FromBody] UpdateCourseSkillsDto dto)
     {
         var course = _repository.GetById(id);
-        if (course == null) return NotFound();
+
+        if (course == null)
+            return NotFound();
 
         course.UpdateRequiredSkills(dto.Skills);
 
@@ -49,13 +51,16 @@ public class CourseController : ControllerBase
         if (course == null)
             return NotFound();
 
-        var (success, error) = _courseScheduler.UpdateSchedule(course, dto.TimeSlots);
+        var timeSlots = dto.TimeSlots.ToDomain();
+
+        var (success, error) = _courseScheduler.UpdateSchedule(course, timeSlots);
 
         if (!success)
             return BadRequest(error);
 
         return NoContent();
     }
+
 
     // Confrim Course
     [HttpPost("{id}/confirm")]

@@ -2,7 +2,7 @@ namespace HorsesForCourses.Core;
 
 public class CourseScheduler
 {
-    public (bool success, string errorMessage) UpdateSchedule(Course course, IEnumerable<TimeSlotDto> newTimeSlotDtos)
+    public (bool success, string errorMessage) UpdateSchedule(Course course, IEnumerable<TimeSlot> newTimeSlotDtos)
     {
         if (newTimeSlotDtos.Any(tsDto => !Enum.IsDefined(typeof(WeekDay), tsDto.Day)))
             return (false, "One or more day values are invalid.");

@@ -4,8 +4,8 @@ using System.ComponentModel.DataAnnotations;
 public record CourseDto(
     int Id,
     [Required] string Title,
-    [Required] DateTime startDate,
-    [Required] DateTime endDate,
+    [Required] string startDate,
+    [Required] string endDate,
     List<string>? RequiredSkills = null,
     List<TimeSlotDto>? Schedule = null,
     bool IsConfirmed = false,
@@ -23,10 +23,10 @@ public record CreateCourseDto(
     string Title,
 
     [Required]
-    DateTime startDate,
+    string startDate,
 
     [Required]
-    DateTime endDate
+    string endDate
 );
 
 
