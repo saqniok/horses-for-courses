@@ -57,8 +57,8 @@ public class CoachTests
     {
         Coach coach = new("Ban", "email");
 
-        var start = new DateTime(2025, 5, 1);
-        var end = new DateTime(2025, 6, 1);
+        var start = new DateOnly(2025, 5, 1);
+        var end = new DateOnly(2025, 6, 1);
         var course = new Course("Math", new Period(start, end));
 
         coach.AssignCourse(course);
@@ -74,8 +74,8 @@ public class CoachTests
     {
         Coach coach = new("Ban", "email");
 
-        DateTime start = new(2025, 5, 1);
-        DateTime end = new(2025, 6, 1);
+        DateOnly start = new(2025, 5, 1);
+        DateOnly end = new(2025, 6, 1);
 
 
         TimeSlot time1 = new(WeekDay.Monday, 10, 12);

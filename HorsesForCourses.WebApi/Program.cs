@@ -27,10 +27,10 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 builder.Services.AddScoped<CourseScheduler>();
 
-// builder.Services.Configure<JsonOptions>(options =>
-// {
-//     options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
-// });
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+});
 
 var app = builder.Build();
 

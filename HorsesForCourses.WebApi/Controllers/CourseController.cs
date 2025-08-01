@@ -20,7 +20,9 @@ public class CourseController : ControllerBase
     [HttpPost]
     public ActionResult<CourseDto> Create([FromBody] CreateCourseDto dto)
     {
-        var period = new Period(DateTime.Parse(dto.startDate), DateTime.Parse(dto.endDate));
+        var start = new DateOnly(2025, 8, 1);
+        var end = new DateOnly(2025, 8, 31);   
+        var period = new Period(start, end);
         var course = new Course(dto.Title, period);
 
         _repository.Add(course);

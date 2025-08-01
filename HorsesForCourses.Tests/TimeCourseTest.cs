@@ -51,14 +51,14 @@ public class PeriodTest
     [Fact]
     public void PeriodTest_Constructor()
     {
-        var start = new DateTime(2025, 6, 1);
-        var end = new DateTime(2025, 6, 7);
+        var start = new DateOnly(2025, 6, 1);
+        var end = new DateOnly(2025, 6, 7);
         var date = new Period(start, end);
 
-        Assert.Equal(start.Date, date.StartDate);
-        Assert.Equal(end.Date, date.EndDate);
+        Assert.Equal(start, date.StartDate);
+        Assert.Equal(end, date.EndDate);
 
-        var test = new DateTime(2024, 6, 7);
+        var test = new DateOnly(2024, 6, 7);
         var exception = Assert.Throws<ArgumentException>(() => new Period(start, test));
 
         Assert.Equal("Start date must be before or equal to end date.", exception.Message);

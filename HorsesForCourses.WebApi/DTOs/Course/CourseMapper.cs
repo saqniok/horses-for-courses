@@ -7,11 +7,13 @@ public static class CourseMapper
         return new CourseDto(
             Id: course.Id,
             Title: course.Title,
-            startDate: course.Period.StartDate.ToString("yyyy-MM-dd"),
-            endDate: course.Period.EndDate.ToString("yyyy-MM-dd"),
+            startDate: course.Period.StartDate,
+            endDate: course.Period.EndDate,
             RequiredSkills: course.RequiredSkills.ToList(),
             IsConfirmed: course.IsConfirmed,
-            Coach: course.AssignedCoach != null ? new CoachShortDto(course.AssignedCoach.Id, course.AssignedCoach.Name) : null,
+            Coach: course.AssignedCoach != null
+                ? new CoachShortDto(course.AssignedCoach.Id, course.AssignedCoach.Name)
+                : null,
             Schedule: course.Schedule.Select(ts => ToTimeSlotDto(ts)).ToList()
         );
     }
@@ -27,7 +29,9 @@ public static class CourseMapper
 
     public static Course ToDomain(CourseDto dto)
     {
-        var period = new Period(DateTime.Parse(dto.startDate), DateTime.Parse(dto.endDate));
+        var start = new DateOnly(2025, 8, 1);
+        var end = new DateOnly(2025, 8, 31);
+        var period = new Period(start, end);
 
         var course = new Course(dto.Title, period);
 
