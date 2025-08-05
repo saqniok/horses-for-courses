@@ -47,29 +47,42 @@ public class Coach
     public bool HasAllSkills(IEnumerable<string> requiredSkills)
         => requiredSkills.All(skill => Skills.Contains(skill));
 
+    #region Assign Course
     public void AssignCourse(Course course)
     {
-        if (AssignedCourses.Contains(course))
-            throw new ArgumentException("Course is already assigned");
-
-        foreach (var existingCourse in AssignedCourses)
-        {
-            if (course.Period.OverlapsWith(existingCourse.Period))
-            {
-                foreach (var newSlot in course.Schedule)
-                {
-                    foreach (var existingSlot in existingCourse.Schedule)
-                    {
-                        if (newSlot.OverlapsWith(existingSlot))
-                            throw new ArgumentException("Lesson time is overlapping");
-                    }
-                }
-            }
-        }
+        EnsureCourseNotAlreadyAssigned(course);
+        EnsureNoPeriodOverlap(course);
 
         AssignedCourses.Add(course);
     }
 
+    private void EnsureCourseNotAlreadyAssigned(Course course)
+    {
+        if (AssignedCourses.Contains(course))
+            throw new ArgumentException("Course is already assigned");
+    }
+
+    private void EnsureNoPeriodOverlap(Course course)
+    {
+        foreach (var existingCourse in AssignedCourses)
+        {
+            if (!course.Period.OverlapsWith(existingCourse.Period))
+                continue;
+
+            EnsureNoScheduleOverlap(course, existingCourse);
+        }
+    }
+
+    private void EnsureNoScheduleOverlap(Course newCourse, Course existingCourse)
+    {
+        bool overlapExists = newCourse.Schedule
+            .Any(newSlot => existingCourse.Schedule
+                .Any(existingSlot => newSlot.OverlapsWith(existingSlot)));
+
+        if (overlapExists)
+            throw new ArgumentException("Lesson time is overlapping");
+    }
+    #endregion
 
     // AI helped
     public bool IsAvailableCoach()
