@@ -3,14 +3,16 @@
 namespace HorsesForCourses.Core;
 
 
-public class Coach
-{
-    public int Id { get; set; }
-    public string Name { get; }
-    public string Email { get; }
-    public HashSet<string> Skills { get; }
+    public class Coach
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public HashSet<string> Skills { get; private set; } = new();
+        public List<Course> AssignedCourses { get; private set; } = new();
 
-    public List<Course> AssignedCourses { get; }
+        // Для EF
+        protected Coach() { }
 
     public Coach(string name, string email)
     {

@@ -14,23 +14,21 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(
+        new JsonStringEnumConverter(null, allowIntegerValues: false));
+
+    options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+});
+//builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<InMemoryCoachRepository>();
 builder.Services.AddSingleton<InMemoryCourseRepository>();
 
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.Converters.Add(
-        new JsonStringEnumConverter(null, allowIntegerValues: false));
-});
-builder.Services.AddScoped<CourseScheduler>();
 
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
-});
+builder.Services.AddScoped<CourseScheduler>();
 
 var app = builder.Build();
 

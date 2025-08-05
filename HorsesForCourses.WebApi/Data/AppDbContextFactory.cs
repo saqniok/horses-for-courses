@@ -9,7 +9,6 @@ namespace HorsesForCourses.WebApi.Data
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
-            // Поменяй на свою строку подключения к БД
             optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=HorsesForCoursesDb;Trusted_Connection=True;");
 
             return new AppDbContext(optionsBuilder.Options);
