@@ -82,7 +82,6 @@ public class Coach
         if (overlapExists)
             throw new ArgumentException("Lesson time is overlapping");
     }
-    #endregion
 
     // AI helped
     public bool IsAvailableCoach()
@@ -109,6 +108,7 @@ public class Coach
 
         return slot1.Start < slot2.End && slot1.End > slot2.Start;
     }
+    #endregion
 }
 
 
