@@ -9,7 +9,12 @@ public class CourseController : ControllerBase
     private readonly InMemoryCoachRepository _coachRepository;
     private readonly CourseScheduler _courseScheduler;
 
-    public CourseController(InMemoryCourseRepository repository, InMemoryCoachRepository coachRepository, CourseScheduler courseScheduler)
+    // add EFCourseRepository 
+    public CourseController(
+        // add it here first and switch step by step
+        InMemoryCourseRepository repository,
+        InMemoryCoachRepository coachRepository,
+        CourseScheduler courseScheduler)
     {
         _repository = repository;
         _coachRepository = coachRepository;
@@ -18,14 +23,14 @@ public class CourseController : ControllerBase
 
     // POST course
     [HttpPost]
-    public ActionResult<CourseDto> Create([FromBody] CreateCourseDto dto)
+    public ActionResult<CourseDto> Create([FromBody] CreateCourseDto dto) // needs to be Task (async)
     {
         var start = new DateOnly(2025, 8, 1);
-        var end = new DateOnly(2025, 8, 31);   
+        var end = new DateOnly(2025, 8, 31);
         var period = new Period(start, end);
         var course = new Course(dto.Title, period);
 
-        _repository.Add(course);
+        _repository.Add(course); // switch this to new EF Repo
 
         return CreatedAtAction(nameof(GetById), new { id = course.Id }, CourseMapper.ToDto(course));
     }
@@ -48,7 +53,7 @@ public class CourseController : ControllerBase
     [HttpPost("{id}/timeslots")]
     public ActionResult UpdateTimeSlots(int id, [FromBody] UpdateCourseScheduleDto dto)
     {
-        var course = _repository.GetById(id);
+        var course = _repository.GetById(id); // take this second
 
         if (course == null)
             return NotFound();

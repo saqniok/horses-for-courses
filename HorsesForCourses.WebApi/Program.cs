@@ -27,6 +27,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<InMemoryCoachRepository>();
 builder.Services.AddSingleton<InMemoryCourseRepository>();
 
+// also register dbcontext singleton
+// builder.Services.AddScoped<EFRepos>();
+
 
 builder.Services.AddScoped<CourseScheduler>();
 
