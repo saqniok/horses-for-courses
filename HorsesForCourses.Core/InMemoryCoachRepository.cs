@@ -1,6 +1,6 @@
 namespace HorsesForCourses.Core;
 
-public class InMemoryCoachRepository
+public class InMemoryCoachRepository : ICoachRepository
 {
     private readonly Dictionary<int, Coach> _coaches = new();
     private int _nextId = 1;

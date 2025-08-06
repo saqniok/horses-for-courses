@@ -3,7 +3,6 @@ namespace HorsesForCourses.Core
 {
     public class Course
     {
-        // Конструктор для приложения
         public Course(string title, Period period)
         {
             Title = title;
@@ -12,7 +11,6 @@ namespace HorsesForCourses.Core
             _schedule = new List<TimeSlot>();
         }
 
-        // Для EF Core
         protected Course()
         {
             _requiredSkills = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -20,24 +18,15 @@ namespace HorsesForCourses.Core
         }
 
         public int Id { get; set; }
-
-        // Сделал private set, чтобы EF мог присвоить значение при materialization
         public string Title { get; private set; } = null!;
-
-        // Если Period — value object, лучше настроить Owned mapping в OnModelCreating.
         public Period Period { get; private set; } = null!;
-
-        // Поле, которое ты маппишь через Converters.HashSetToString()
         private readonly HashSet<string> _requiredSkills;
         public IReadOnlyCollection<string> RequiredSkills => _requiredSkills;
-
-        // Список уроков; ты игнорируешь Schedule в OnModelCreating, но поле должно быть валидным.
         private readonly List<TimeSlot> _schedule;
         public IReadOnlyCollection<TimeSlot> Schedule => _schedule.AsReadOnly();
 
         public bool IsConfirmed { get; private set; } = false;
 
-        // Навигация к тренеру — private set подходит EF
         public Coach? AssignedCoach { get; private set; } = null;
 
 
