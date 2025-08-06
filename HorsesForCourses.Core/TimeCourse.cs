@@ -41,6 +41,8 @@ public class Period
     public DateOnly StartDate { get; private set; }
     public DateOnly EndDate { get; private set; }
 
+    protected Period() { }
+
     public Period(DateOnly start, DateOnly end)
     {
         if (start > end) throw new ArgumentException("Start date must be before or equal to end date.");
