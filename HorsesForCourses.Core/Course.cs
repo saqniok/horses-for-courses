@@ -3,10 +3,6 @@ namespace HorsesForCourses.Core
 {
     public class Course
     {
-<<<<<<< HEAD
-=======
-        // Конструктор для приложения
->>>>>>> 96c2a38ef056f390fdc560d2d12134bc2a3c073f
         public Course(string title, Period period)
         {
             Title = title;
@@ -15,10 +11,6 @@ namespace HorsesForCourses.Core
             _schedule = new List<TimeSlot>();
         }
 
-<<<<<<< HEAD
-=======
-        // Для EF Core
->>>>>>> 96c2a38ef056f390fdc560d2d12134bc2a3c073f
         protected Course()
         {
             _requiredSkills = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -26,34 +18,15 @@ namespace HorsesForCourses.Core
         }
 
         public int Id { get; set; }
-<<<<<<< HEAD
         public string Title { get; private set; } = null!;
         public Period Period { get; private set; } = null!;
         private readonly HashSet<string> _requiredSkills;
         public IReadOnlyCollection<string> RequiredSkills => _requiredSkills;
-=======
-
-        // Сделал private set, чтобы EF мог присвоить значение при materialization
-        public string Title { get; private set; } = null!;
-
-        // Если Period — value object, лучше настроить Owned mapping в OnModelCreating.
-        public Period Period { get; private set; } = null!;
-
-        // Поле, которое ты маппишь через Converters.HashSetToString()
-        private readonly HashSet<string> _requiredSkills;
-        public IReadOnlyCollection<string> RequiredSkills => _requiredSkills;
-
-        // Список уроков; ты игнорируешь Schedule в OnModelCreating, но поле должно быть валидным.
->>>>>>> 96c2a38ef056f390fdc560d2d12134bc2a3c073f
         private readonly List<TimeSlot> _schedule;
         public IReadOnlyCollection<TimeSlot> Schedule => _schedule.AsReadOnly();
 
         public bool IsConfirmed { get; private set; } = false;
 
-<<<<<<< HEAD
-=======
-        // Навигация к тренеру — private set подходит EF
->>>>>>> 96c2a38ef056f390fdc560d2d12134bc2a3c073f
         public Coach? AssignedCoach { get; private set; } = null;
 
 
