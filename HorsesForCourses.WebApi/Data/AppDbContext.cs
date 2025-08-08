@@ -36,6 +36,8 @@ public class AppDbContext : DbContext
                 .WithOne(c => c.AssignedCoach)
                 .HasForeignKey("AssignedCoachId")  // Shadow property
                 .OnDelete(DeleteBehavior.Cascade);
+
+                
         });
 
         modelBuilder.Entity<Course>(entity =>
@@ -61,9 +63,42 @@ public class AppDbContext : DbContext
                 .HasConversion(Converters.HashSetToString())
                 .Metadata.SetValueComparer(Converters.HashSetComparer());
 
-            entity.Ignore(c => c.Schedule);
+            entity.OwnsMany(c => c.Schedule, ts =>
+            {
+                ts.HasKey("Id");
+                ts.WithOwner().HasForeignKey("CourseId");
 
-            entity.Property<int?>("AssignedCoachId").IsRequired(false);
+                ts.Property(t => t.Day)
+                    .HasConversion(
+                        v => v.ToString(),
+                        v => Enum.Parse<WeekDay>(v))
+                    .HasColumnName("Day");
+
+                ts.Property(t => t.Start).HasColumnName("Start");
+                ts.Property(t => t.End).HasColumnName("End");
+
+                // ts.HasKey("BookingId", "Day", "Start", "End");
+                // ts.ToTable("BookingTimeslots");
+            });
+
+            // ts.WithOwner().HasForeignKey("BookingId");
+
+            //         ts.Property(t => t.Day)
+            //             .HasConversion(
+            //                 v => v.ToString(),
+            //                 v => Enum.Parse<DayOfWeek>(v))
+            //             .HasColumnName("Day");
+
+            //         ts.Property(t => t.Start).HasColumnName("Start");
+            //         ts.Property(t => t.End).HasColumnName("End");
+
+            //         ts.HasKey("BookingId", "Day", "Start", "End");
+            //         ts.ToTable("BookingTimeslots");
+
+            // entity.HasOne(c => c.AssignedCoach)
+            //     .WithMany()
+            //     .HasForeignKey("CoachId")
+            //     .IsRequired(false);
         });
     }
 }

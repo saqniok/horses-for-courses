@@ -17,4 +17,9 @@ public class InMemoryCourseRepository : ICourseRepository
 
 
     public void Clear() => _courses.Clear();
+
+    public void SaveChanges()
+    {
+
+    }
 }

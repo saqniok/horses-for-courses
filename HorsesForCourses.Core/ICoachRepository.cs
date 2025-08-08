@@ -7,4 +7,5 @@ public interface ICoachRepository
     IEnumerable<Coach> GetAll();
     bool Remove(int id);
     void Clear();
+    void SaveChanges();
 }

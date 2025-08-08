@@ -14,7 +14,6 @@ namespace HorsesForCourses.WebApi.Data
         public void Add(Coach coach)
         {
             _context.Coaches.Add(coach);
-            _context.SaveChanges();
         }
 
         public Coach? GetById(int id)
@@ -35,14 +34,23 @@ namespace HorsesForCourses.WebApi.Data
                 return false;
             }
             _context.Coaches.Remove(coach);
-            _context.SaveChanges();
             return true;
         }
 
         public void Clear()
         {
             _context.Coaches.RemoveRange(_context.Coaches);
-            _context.SaveChanges();
+        }
+
+        // public void Update(Coach coach)
+        // {
+        //     _context.Coaches.Update(coach);
+
+        // }
+
+        public void SaveChanges()
+        {
+             _context.SaveChanges();
         }
     }
 }

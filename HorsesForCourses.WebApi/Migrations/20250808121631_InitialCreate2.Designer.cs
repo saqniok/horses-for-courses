@@ -3,6 +3,7 @@ using System;
 using HorsesForCourses.WebApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HorsesForCourses.WebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250808121631_InitialCreate2")]
+    partial class InitialCreate2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
@@ -51,9 +54,6 @@ namespace HorsesForCourses.WebApi.Migrations
                     b.Property<int?>("AssignedCoachId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("CoachId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsConfirmed")
                         .HasColumnType("INTEGER");
 
@@ -70,21 +70,15 @@ namespace HorsesForCourses.WebApi.Migrations
 
                     b.HasIndex("AssignedCoachId");
 
-                    b.HasIndex("CoachId");
-
                     b.ToTable("Courses");
                 });
 
             modelBuilder.Entity("HorsesForCourses.Core.Course", b =>
                 {
                     b.HasOne("HorsesForCourses.Core.Coach", "AssignedCoach")
-                        .WithMany()
+                        .WithMany("AssignedCourses")
                         .HasForeignKey("AssignedCoachId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("HorsesForCourses.Core.Coach", null)
-                        .WithMany("AssignedCourses")
-                        .HasForeignKey("CoachId");
 
                     b.OwnsOne("HorsesForCourses.Core.Period", "Period", b1 =>
                         {

@@ -15,18 +15,34 @@ namespace HorsesForCourses.WebApi.Data
         public void Add(Course course)
         {
             _context.Courses.Add(course);
-            _context.SaveChanges();
         }
 
         public Course? GetById(int id)
         {
-            return _context.Courses.Include(c => c.Schedule).FirstOrDefault(c => c.Id == id);
+            return _context.Courses.FirstOrDefault(c => c.Id == id);
         }
 
         public IEnumerable<Course> GetAll()
         {
-            return _context.Courses.Include(c => c.Schedule).ToList();
+            return _context.Courses.ToList();
         }
+
+        public void Clear()
+        {
+            _context.Courses.RemoveRange(_context.Courses);
+        }
+
+        // public void Update(Course course)
+        // {
+        //     _context.Courses.Update(course);
+        //     _context.SaveChanges();
+        // }
+
+        public void SaveChanges()
+        {
+            _context.SaveChanges();
+        }
+
     }
 }
 

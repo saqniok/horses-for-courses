@@ -101,6 +101,7 @@ namespace HorsesForCourses.Core
 
             AssignedCoach = coach;
         }
+
     }
 }
 

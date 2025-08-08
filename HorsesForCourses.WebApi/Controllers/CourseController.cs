@@ -1,5 +1,6 @@
 using HorsesForCourses.Core;
 using Microsoft.AspNetCore.Mvc;
+using QuickPulse.Show;
 
 [ApiController]
 [Route("courses")]
@@ -31,6 +32,8 @@ public class CourseController : ControllerBase
         var course = new Course(dto.Title, period);
 
         _repository.Add(course); // switch this to new EF Repo
+        
+        _repository.SaveChanges();
 
         return CreatedAtAction(nameof(GetById), new { id = course.Id }, CourseMapper.ToDto(course));
     }
@@ -45,6 +48,8 @@ public class CourseController : ControllerBase
             return NotFound();
 
         course.UpdateRequiredSkills(dto.Skills);
+
+        _repository.SaveChanges();
 
         return NoContent();
     }
@@ -65,6 +70,8 @@ public class CourseController : ControllerBase
         if (!success)
             return BadRequest(error);
 
+        _repository.SaveChanges();
+
         return NoContent();
     }
 
@@ -79,6 +86,7 @@ public class CourseController : ControllerBase
             return NotFound();
 
         course.Confirm();
+        _repository.SaveChanges();
 
         return NoContent();
     }
@@ -98,6 +106,7 @@ public class CourseController : ControllerBase
             return NotFound("Coach not found.");
 
         course.AssignCoach(coach);
+        _repository.SaveChanges();
 
         return NoContent();
     }

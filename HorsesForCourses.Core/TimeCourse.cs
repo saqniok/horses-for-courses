@@ -6,6 +6,8 @@ public class TimeSlot
     public WeekDay Day { get; }
     public int Start { get; }
     public int End { get; }
+    
+    private TimeSlot() { }
 
     public TimeSlot(WeekDay day, int start, int end)
     {

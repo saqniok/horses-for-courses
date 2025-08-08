@@ -18,6 +18,8 @@ public class CoachController : ControllerBase
         var coach = new Coach(dto.Name, dto.Email);
         _repository.Add(coach);
 
+        _repository.SaveChanges();
+
         return CreatedAtAction(nameof(GetById), new { id = coach.Id }, CoachMapper.ToCoachDetailsDto(coach));
     }
 
@@ -51,6 +53,8 @@ public class CoachController : ControllerBase
 
         coach.UpdateSkills(dto.Skills);
 
+        _repository.SaveChanges();
+
         return NoContent();
     }
 
@@ -60,6 +64,10 @@ public class CoachController : ControllerBase
         if (!_repository.Remove(id))
             return NotFound();
 
+        _repository.SaveChanges();
+
         return NoContent();
     }
 }
+
+

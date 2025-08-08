@@ -1,11 +1,12 @@
 
-namespace HorsesForCourses.Core
+namespace HorsesForCourses.Core;
+
+public interface ICourseRepository
 {
-    public interface ICourseRepository
-    {
-        void Add(Course course);
-        Course? GetById(int id);
-        IEnumerable<Course> GetAll();
+    void Add(Course course);
+    Course? GetById(int id);
+    IEnumerable<Course> GetAll();
+    void Clear();
+    void SaveChanges();
     }
-}
 
