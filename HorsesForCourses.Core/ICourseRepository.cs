@@ -1,7 +1,4 @@
 
-
-using System.Collections.Generic;
-
 namespace HorsesForCourses.Core
 {
     public interface ICourseRepository

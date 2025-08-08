@@ -2,13 +2,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using HorsesForCourses.Core;
+using Humanizer;
 
 namespace HorsesForCourses.Tests
 {
     public class CustomWebApiFactory : WebApplicationFactory<Program>
     {
-        private readonly InMemoryCoachRepository _coachRepository = new();
-        private readonly InMemoryCourseRepository _courseRepository = new();
+        private readonly ICoachRepository _coachRepository = new InMemoryCoachRepository();
+        private readonly ICourseRepository _courseRepository = new InMemoryCourseRepository();
         private readonly CourseScheduler _courseScheduler;
 
         public CustomWebApiFactory()
@@ -52,7 +53,7 @@ namespace HorsesForCourses.Tests
             _coachRepository.Add(new Coach("John Doe", "john@example.com"));
             _coachRepository.Add(new Coach("Jane Smith", "jane@example.com"));
 
-            _courseRepository.Clear();
+            ((InMemoryCourseRepository)_courseRepository).Clear();
         }
     }
 }

@@ -1,6 +1,4 @@
 using HorsesForCourses.Core;
-using HorsesForCourses.WebApi.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace HorsesForCourses.WebApi.Data
 {

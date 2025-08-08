@@ -5,15 +5,15 @@ using Microsoft.AspNetCore.Mvc;
 [Route("courses")]
 public class CourseController : ControllerBase
 {
-    private readonly InMemoryCourseRepository _repository;
-    private readonly InMemoryCoachRepository _coachRepository;
+    private readonly ICourseRepository _repository;
+    private readonly ICoachRepository _coachRepository;
     private readonly CourseScheduler _courseScheduler;
 
     // add EFCourseRepository 
     public CourseController(
         // add it here first and switch step by step
-        InMemoryCourseRepository repository,
-        InMemoryCoachRepository coachRepository,
+        ICourseRepository repository,
+        ICoachRepository coachRepository,
         CourseScheduler courseScheduler)
     {
         _repository = repository;

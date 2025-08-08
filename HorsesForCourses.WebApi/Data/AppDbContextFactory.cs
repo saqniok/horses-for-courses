@@ -3,15 +3,14 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace HorsesForCourses.WebApi.Data
 {
-    public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+{
+    public AppDbContext CreateDbContext(string[] args)
     {
-        public AppDbContext CreateDbContext(string[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+        optionsBuilder.UseSqlite("Data Source=hourseforcourses.db");
 
-            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=HorsesForCoursesDb;Trusted_Connection=True;");
-
-            return new AppDbContext(optionsBuilder.Options);
-        }
+        return new AppDbContext(optionsBuilder.Options);
     }
+}
 }

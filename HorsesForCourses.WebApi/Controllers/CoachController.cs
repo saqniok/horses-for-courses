@@ -5,9 +5,9 @@ using HorsesForCourses.Core;
 [Route("coaches")]
 public class CoachController : ControllerBase
 {
-    private readonly InMemoryCoachRepository _repository;
+    private readonly ICoachRepository _repository;
 
-    public CoachController(InMemoryCoachRepository repository)
+    public CoachController(ICoachRepository repository)
     {
         _repository = repository;
     }
