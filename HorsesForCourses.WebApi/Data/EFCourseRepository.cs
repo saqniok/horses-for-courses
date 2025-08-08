@@ -19,12 +19,12 @@ namespace HorsesForCourses.WebApi.Data
 
         public Course? GetById(int id)
         {
-            return _context.Courses.FirstOrDefault(c => c.Id == id);
+            return _context.Courses.Include(c => c.AssignedCoach).FirstOrDefault(c => c.Id == id);
         }
 
         public IEnumerable<Course> GetAll()
         {
-            return _context.Courses.ToList();
+            return _context.Courses.Include(c => c.AssignedCoach).ToList();
         }
 
         public void Clear()

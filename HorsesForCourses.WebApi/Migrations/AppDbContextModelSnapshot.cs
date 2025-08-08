@@ -48,9 +48,6 @@ namespace HorsesForCourses.WebApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("AssignedCoachId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int?>("CoachId")
                         .HasColumnType("INTEGER");
 
@@ -68,8 +65,6 @@ namespace HorsesForCourses.WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssignedCoachId");
-
                     b.HasIndex("CoachId");
 
                     b.ToTable("Courses");
@@ -78,11 +73,6 @@ namespace HorsesForCourses.WebApi.Migrations
             modelBuilder.Entity("HorsesForCourses.Core.Course", b =>
                 {
                     b.HasOne("HorsesForCourses.Core.Coach", "AssignedCoach")
-                        .WithMany()
-                        .HasForeignKey("AssignedCoachId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("HorsesForCourses.Core.Coach", null)
                         .WithMany("AssignedCourses")
                         .HasForeignKey("CoachId");
 

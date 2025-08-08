@@ -32,14 +32,16 @@ public class AppDbContext : DbContext
                 .HasConversion(Converters.HashSetToString())
                 .Metadata.SetValueComparer(Converters.HashSetComparer());
 
-            entity.HasMany(c => c.AssignedCourses)
-                .WithOne(c => c.AssignedCoach)
-                .HasForeignKey("AssignedCoachId")  // Shadow property
-                .OnDelete(DeleteBehavior.Cascade);
+            // entity.HasMany(c => c.AssignedCourses)
+            //     .WithOne(c => c.AssignedCoach)
+            //     .HasForeignKey("AssignedCoachId")  // Shadow property
+            //     .OnDelete(DeleteBehavior.Cascade); 
 
                 
         });
 
+
+        // Course
         modelBuilder.Entity<Course>(entity =>
         {
             entity.HasKey(c => c.Id);
@@ -95,10 +97,10 @@ public class AppDbContext : DbContext
             //         ts.HasKey("BookingId", "Day", "Start", "End");
             //         ts.ToTable("BookingTimeslots");
 
-            // entity.HasOne(c => c.AssignedCoach)
-            //     .WithMany()
-            //     .HasForeignKey("CoachId")
-            //     .IsRequired(false);
+            entity.HasOne(c => c.AssignedCoach)
+                .WithMany(c => c.AssignedCourses)
+                .HasForeignKey("CoachId")
+                .IsRequired(false);
         });
     }
 }

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HorsesForCourses.WebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250808123249_InitialCreate22")]
-    partial class InitialCreate22
+    [Migration("20250808135157_InitialCreatу")]
+    partial class InitialCreatу
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,9 +51,6 @@ namespace HorsesForCourses.WebApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("AssignedCoachId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int?>("CoachId")
                         .HasColumnType("INTEGER");
 
@@ -71,8 +68,6 @@ namespace HorsesForCourses.WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssignedCoachId");
-
                     b.HasIndex("CoachId");
 
                     b.ToTable("Courses");
@@ -81,11 +76,6 @@ namespace HorsesForCourses.WebApi.Migrations
             modelBuilder.Entity("HorsesForCourses.Core.Course", b =>
                 {
                     b.HasOne("HorsesForCourses.Core.Coach", "AssignedCoach")
-                        .WithMany()
-                        .HasForeignKey("AssignedCoachId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("HorsesForCourses.Core.Coach", null)
                         .WithMany("AssignedCourses")
                         .HasForeignKey("CoachId");
 

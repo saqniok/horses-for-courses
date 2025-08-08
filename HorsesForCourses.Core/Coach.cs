@@ -3,16 +3,16 @@
 namespace HorsesForCourses.Core;
 
 
-    public class Coach
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = null!;
-        public string Email { get; set; } = null!;
-        public HashSet<string> Skills { get; private set; } = new();
-        public List<Course> AssignedCourses { get; private set; } = new();
+public class Coach
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+    public string Email { get; set; } = null!;
+    public HashSet<string> Skills { get; private set; } = new();
+    public List<Course> AssignedCourses { get; private set; } = new();
 
-        // Для EF
-        protected Coach() { }
+    // Для EF
+    protected Coach() { }
 
     public Coach(string name, string email)
     {
@@ -66,11 +66,11 @@ namespace HorsesForCourses.Core;
 
     private void EnsureNoPeriodOverlap(Course course)
     {
-        foreach (var existingCourse in AssignedCourses)
-        {
-            if (!course.Period.OverlapsWith(existingCourse.Period))
-                continue;
+        var overlappingCourses = AssignedCourses
+            .Where(existing => course.Period.OverlapsWith(existing.Period));
 
+        foreach (var existingCourse in overlappingCourses)
+        {
             EnsureNoScheduleOverlap(course, existingCourse);
         }
     }
@@ -78,8 +78,9 @@ namespace HorsesForCourses.Core;
     private void EnsureNoScheduleOverlap(Course newCourse, Course existingCourse)
     {
         bool overlapExists = newCourse.Schedule
-            .Any(newSlot => existingCourse.Schedule
-                .Any(existingSlot => newSlot.OverlapsWith(existingSlot)));
+            .SelectMany(newSlot => existingCourse.Schedule,
+                (newSlot, existingSlot) => newSlot.OverlapsWith(existingSlot))
+            .Any(result => result);
 
         if (overlapExists)
             throw new ArgumentException("Lesson time is overlapping");

@@ -107,6 +107,7 @@ public class CourseController : ControllerBase
 
         course.AssignCoach(coach);
         _repository.SaveChanges();
+        _coachRepository.SaveChanges();
 
         return NoContent();
     }
