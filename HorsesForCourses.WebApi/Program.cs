@@ -28,14 +28,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=horsesforcourses.db"));
 
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddScoped<ICoachRepository, EFCoachRepository>();
 builder.Services.AddScoped<ICourseRepository, EFCourseRepository>();
-
-// also register dbcontext singleton
-// builder.Services.AddScoped<EFRepos>();
-
-
 builder.Services.AddScoped<CourseScheduler>();
 
 var app = builder.Build();

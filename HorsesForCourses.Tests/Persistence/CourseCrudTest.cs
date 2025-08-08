@@ -27,7 +27,7 @@ public class CourseCrudTest : CrudTestBase<AppDbContext, Course>
 
     protected override Course CreateEntity()
     {
-        return new Course("my course", new Period(new DateOnly(2025, 8, 1), new DateOnly(2025, 8, 31)));
+        return new Course("my course", new TimeDay(new DateOnly(2025, 8, 1), new DateOnly(2025, 8, 31)));
     }
 
     protected override Task ModifyEntityAsync(Course entity, AppDbContext context)

@@ -10,8 +10,8 @@ public class CourseTests
     public void Confirm_ShouldThrow_WhenNoLessons()
     {
         var start = new DateOnly(2025, 8, 1);
-        var end = new DateOnly(2025, 8, 31);   
-        var period = new Period(start, end);
+        var end = new DateOnly(2025, 8, 31);
+        var period = new TimeDay(start, end);
         var course = new Course("Math", period);
 
         var ex = Assert.Throws<InvalidOperationException>(() => course.Confirm());
@@ -22,8 +22,8 @@ public class CourseTests
     public void ConfimedChecker()
     {
         var start = new DateOnly(2025, 8, 1);
-        var end = new DateOnly(2025, 8, 31);   
-        var period = new Period(start, end);
+        var end = new DateOnly(2025, 8, 31);
+        var period = new TimeDay(start, end);
         var course = new Course("Math", period);
 
         course.AddTimeSlot(new TimeSlot(WeekDay.Monday, 10, 12));
@@ -39,8 +39,8 @@ public class CourseTests
         coach.AddSkill("Physics");
 
         var start = new DateOnly(2025, 8, 1);
-        var end = new DateOnly(2025, 8, 31);   
-        var period = new Period(start, end);
+        var end = new DateOnly(2025, 8, 31);
+        var period = new TimeDay(start, end);
         var course = new Course("Math", period);
 
         course.AddRequiredSkill("Physics");
@@ -56,8 +56,8 @@ public class CourseTests
     public void AssignCoach_ShouldThrow_IfNotConfirmed()
     {
         var start = new DateOnly(2025, 8, 1);
-        var end = new DateOnly(2025, 8, 31);   
-        var period = new Period(start, end);
+        var end = new DateOnly(2025, 8, 31);
+        var period = new TimeDay(start, end);
         var course = new Course("Math", period);
         course.AddRequiredSkill("Math");
 
@@ -71,8 +71,8 @@ public class CourseTests
     public void AssignCoach_ShouldThrow_IfCoachHasNotAllSkills()
     {
         var start = new DateOnly(2025, 8, 1);
-        var end = new DateOnly(2025, 8, 31);   
-        var period = new Period(start, end);
+        var end = new DateOnly(2025, 8, 31);
+        var period = new TimeDay(start, end);
         var course = new Course("Math", period);
         course.AddRequiredSkill("Math");
         course.AddTimeSlot(new TimeSlot(WeekDay.Friday, 9, 12));
@@ -88,8 +88,8 @@ public class CourseTests
     public void AssignCoach_ShoudlAssingCoach()
     {
         var start = new DateOnly(2025, 8, 1);
-        var end = new DateOnly(2025, 8, 31);   
-        var period = new Period(start, end);
+        var end = new DateOnly(2025, 8, 31);
+        var period = new TimeDay(start, end);
         var course = new Course("Math", period);
         course.AddRequiredSkill("Math");
         course.AddTimeSlot(new TimeSlot(WeekDay.Friday, 9, 12));

@@ -33,10 +33,10 @@ public class InMemoryCoachRepository : ICoachRepository
         _nextId = 1;
     }
 
-    public void Update(Coach coach)
-    {
-        _coaches[coach.Id] = coach;
-    }
+    // public void Update(Coach coach)
+    // {
+    //     _coaches[coach.Id] = coach;
+    // }
 
     public void SaveChanges()
     {

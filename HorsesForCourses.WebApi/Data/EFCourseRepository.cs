@@ -32,12 +32,6 @@ namespace HorsesForCourses.WebApi.Data
             _context.Courses.RemoveRange(_context.Courses);
         }
 
-        // public void Update(Course course)
-        // {
-        //     _context.Courses.Update(course);
-        //     _context.SaveChanges();
-        // }
-
         public void SaveChanges()
         {
             _context.SaveChanges();

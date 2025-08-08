@@ -28,11 +28,11 @@ public class CourseController : ControllerBase
     {
         var start = new DateOnly(2025, 8, 1);
         var end = new DateOnly(2025, 8, 31);
-        var period = new Period(start, end);
+        var period = new TimeDay(start, end);
         var course = new Course(dto.Title, period);
 
         _repository.Add(course); // switch this to new EF Repo
-        
+
         _repository.SaveChanges();
 
         return CreatedAtAction(nameof(GetById), new { id = course.Id }, CourseMapper.ToDto(course));

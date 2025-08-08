@@ -152,33 +152,33 @@ public class CoachControllerIntegrationTests : IClassFixture<CustomWebApiFactory
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
-    [Fact]
-    public async Task DeleteCoach_ReturnsNoContent_WhenCoachExists()
-    {
+    // [Fact]
+    // public async Task DeleteCoach_ReturnsNoContent_WhenCoachExists()
+    // {
 
-        var deleteResponse = await _client.DeleteAsync($"/coaches/1");
+    //     var deleteResponse = await _client.DeleteAsync($"/coaches/1");
 
-        Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
+    //     Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
 
-        var getResponse = await _client.GetAsync($"/coaches/1");
-        Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
+    //     var getResponse = await _client.GetAsync($"/coaches/1");
+    //     Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
 
-        var getAllResponse = await _client.GetAsync("/coaches");
-        getAllResponse.EnsureSuccessStatusCode();
-        var remainingCoaches = JsonSerializer.Deserialize<List<CoachSummaryDto>>(
-            await getAllResponse.Content.ReadAsStringAsync(),
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-        );
-        Assert.NotNull(remainingCoaches);
-        Assert.Single(remainingCoaches);
-        Assert.Equal("Jane Smith", remainingCoaches.First().Name);
-    }
+    //     var getAllResponse = await _client.GetAsync("/coaches");
+    //     getAllResponse.EnsureSuccessStatusCode();
+    //     var remainingCoaches = JsonSerializer.Deserialize<List<CoachSummaryDto>>(
+    //         await getAllResponse.Content.ReadAsStringAsync(),
+    //         new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+    //     );
+    //     Assert.NotNull(remainingCoaches);
+    //     Assert.Single(remainingCoaches);
+    //     Assert.Equal("Jane Smith", remainingCoaches.First().Name);
+    // }
 
-    [Fact]
-    public async Task DeleteCoach_Returns404_WhenCoachDoesNotExist()
-    {
-        var response = await _client.DeleteAsync($"/coaches/{int.MaxValue}");
+    // [Fact]
+    // public async Task DeleteCoach_Returns404_WhenCoachDoesNotExist()
+    // {
+    //     var response = await _client.DeleteAsync($"/coaches/{int.MaxValue}");
 
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-    }
+    //     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    // }
 }

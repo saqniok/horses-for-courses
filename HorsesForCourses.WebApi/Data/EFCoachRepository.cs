@@ -29,10 +29,10 @@ namespace HorsesForCourses.WebApi.Data
         public bool Remove(int id)
         {
             var coach = _context.Coaches.Find(id);
+            
             if (coach == null)
-            {
                 return false;
-            }
+
             _context.Coaches.Remove(coach);
             return true;
         }
@@ -41,12 +41,6 @@ namespace HorsesForCourses.WebApi.Data
         {
             _context.Coaches.RemoveRange(_context.Coaches);
         }
-
-        // public void Update(Coach coach)
-        // {
-        //     _context.Coaches.Update(coach);
-
-        // }
 
         public void SaveChanges()
         {

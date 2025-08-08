@@ -53,13 +53,13 @@ public class PeriodTest
     {
         var start = new DateOnly(2025, 6, 1);
         var end = new DateOnly(2025, 6, 7);
-        var date = new Period(start, end);
+        var date = new TimeDay(start, end);
 
         Assert.Equal(start, date.StartDate);
         Assert.Equal(end, date.EndDate);
 
         var test = new DateOnly(2024, 6, 7);
-        var exception = Assert.Throws<ArgumentException>(() => new Period(start, test));
+        var exception = Assert.Throws<ArgumentException>(() => new TimeDay(start, test));
 
         Assert.Equal("Start date must be before or equal to end date.", exception.Message);
     }

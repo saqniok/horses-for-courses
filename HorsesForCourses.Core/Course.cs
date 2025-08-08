@@ -3,7 +3,7 @@ namespace HorsesForCourses.Core
 {
     public class Course
     {
-        public Course(string title, Period period)
+        public Course(string title, TimeDay period)
         {
             Title = title;
             Period = period;
@@ -19,7 +19,7 @@ namespace HorsesForCourses.Core
 
         public int Id { get; set; }
         public string Title { get; private set; } = null!;
-        public Period Period { get; private set; } = null!;
+        public TimeDay Period { get; private set; } = null!;
         private readonly HashSet<string> _requiredSkills;
         public IReadOnlyCollection<string> RequiredSkills => _requiredSkills;
         private readonly List<TimeSlot> _schedule;
@@ -32,7 +32,8 @@ namespace HorsesForCourses.Core
 
         public void Confirm()
         {
-            if (!_schedule.Any()) throw new InvalidOperationException("Cannot confirm course without any lessons.");
+            if (!_schedule.Any())
+                throw new InvalidOperationException("Cannot confirm course without any lessons.");
 
             IsConfirmed = true;
         }
@@ -65,8 +66,9 @@ namespace HorsesForCourses.Core
             ConfirmConfrimation();
             _requiredSkills.Clear();
 
-            foreach (var skill in newSkills)
-                AddRequiredSkill(skill);
+            newSkills.ToList().ForEach(skill => AddRequiredSkill(skill));
+            // foreach (var skill in newSkills)
+            //     AddRequiredSkill(skill);
         }
 
         public void AddTimeSlot(TimeSlot timeSlot)
@@ -85,8 +87,9 @@ namespace HorsesForCourses.Core
         {
             ClearSchedule();
 
-            foreach (var timeSlot in newTimeSlots)
-                AddTimeSlot(timeSlot);
+            newTimeSlots.ToList().ForEach(ts => AddTimeSlot(ts));
+            // foreach (var timeSlot in newTimeSlots)
+            //     AddTimeSlot(timeSlot);
         }
 
         public void AssignCoach(Coach coach)

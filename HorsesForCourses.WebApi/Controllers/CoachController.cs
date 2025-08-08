@@ -58,16 +58,16 @@ public class CoachController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
-    public ActionResult Delete(int id)
-    {
-        if (!_repository.Remove(id))
-            return NotFound();
+    // [HttpDelete("{id}")]
+    // public ActionResult Delete(int id)
+    // {
+    //     if (!_repository.Remove(id))
+    //         return NotFound();
 
-        _repository.SaveChanges();
+    //     _repository.SaveChanges();
 
-        return NoContent();
-    }
+    //     return NoContent();
+    // }
 }
 
 
