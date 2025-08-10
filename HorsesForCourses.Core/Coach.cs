@@ -30,20 +30,11 @@ public class Coach
         Skills.Add(skill);
     }
 
-    // public void RemoveSkill(string skill)
-    // {
-    //     if (!Skills.Contains(skill.ToLower()))
-    //         throw new ArgumentException("There is no skill in list");
-
-    //     Skills.Remove(skill);
-    // }
-
     public void UpdateSkills(IEnumerable<string> newSkills)
     {
         Skills.Clear();
 
-        foreach (var skill in newSkills)
-            Skills.Add(skill); ;
+        newSkills.ToList().ForEach(skill => Skills.Add((skill)));
     }
 
     public bool HasAllSkills(IEnumerable<string> requiredSkills)
@@ -66,11 +57,27 @@ public class Coach
     private bool isOverlappingTime(Course course)
     {
         return AssignedCourses
-            .Where(existing => course.Period.OverlapsWith(existing.Period))
+            .Where(existing => course.Period.OverlapsWith(existing.Period))         // check if date is overlaping
             .Any(existing => course.Schedule
                 .Any(newSlot => existing.Schedule
                     .Any(existingSlot => AreTimeSlotsOverlapping(newSlot, existingSlot))));
     }
+
+
+    private bool AreTimeSlotsOverlapping(TimeSlot slot1, TimeSlot slot2)
+    {
+        if (slot1.Day != slot2.Day) return false;
+
+        return slot1.Start < slot2.End && slot1.End > slot2.Start;
+    }
+    #endregion
+    // public void RemoveSkill(string skill)
+    // {
+    //     if (!Skills.Contains(skill.ToLower()))
+    //         throw new ArgumentException("There is no skill in list");
+
+    //     Skills.Remove(skill);
+    // }
 
     // private void EnsureCourseNotAlreadyAssigned(Course course)
     // {
@@ -122,13 +129,6 @@ public class Coach
     //     return true;
     // }
 
-    private bool AreTimeSlotsOverlapping(TimeSlot slot1, TimeSlot slot2)
-    {
-        if (slot1.Day != slot2.Day) return false;
-
-        return slot1.Start < slot2.End && slot1.End > slot2.Start;
-    }
-    #endregion
 }
 
 

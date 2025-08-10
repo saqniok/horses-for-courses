@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 public record CourseDto(
     int Id,
-    [Required] string Title,
-    [Required] DateOnly startDate,
-    [Required] DateOnly endDate,
+    string Title,
+    DateOnly StartDate,
+    DateOnly EndDate,
     List<string>? RequiredSkills = null,
     List<TimeSlotDto>? Schedule = null,
     bool IsConfirmed = false,
@@ -15,7 +15,7 @@ public record CourseDto(
 public class CourseShortDto
 {
     public int Id { get; set; }
-    public string Name { get; set; } = default!;
+    public required string Title { get; set; }
 }
 
 public record CreateCourseDto(
@@ -46,8 +46,8 @@ public record AssignCoachDto(
 );
 
 public record CoachShortDto(
-    [property: Required] int Id,
-    [property: Required] string Name
+    int Id,
+    string Name
 );
 
 /**

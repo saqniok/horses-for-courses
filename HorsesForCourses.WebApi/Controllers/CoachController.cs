@@ -1,32 +1,40 @@
 using Microsoft.AspNetCore.Mvc;
 using HorsesForCourses.Core;
 
+public interface ICoachService
+{
+    IEnumerable<Coach> GetAll();
+    Coach? GetById(int id);
+    void Create(Coach coach);
+    void Update(Coach coach);
+    // и т.д.
+}
+
 [ApiController]
 [Route("coaches")]
 public class CoachController : ControllerBase
 {
-    private readonly ICoachRepository _repository;
+    private readonly ICoachService _coachService;
 
-    public CoachController(ICoachRepository repository)
+    public CoachController(ICoachService coachService)
     {
-        _repository = repository;
+        _coachService = coachService;
     }
 
     [HttpPost]
     public ActionResult Add([FromBody] CreateCoachDto dto)
     {
-        var coach = new Coach(dto.Name, dto.Email);
-        _repository.Add(coach);
+        var coach = CoachMapper.ToDomain(dto);
+        _coachService.Create(coach);
 
-        _repository.SaveChanges();
-
-        return CreatedAtAction(nameof(GetById), new { id = coach.Id }, CoachMapper.ToCoachDetailsDto(coach));
+        var result = CoachMapper.ToCoachSummaryDto(coach);
+        return CreatedAtAction(nameof(GetById), new { id = coach.Id }, result);
     }
 
     [HttpGet("{id}")]
     public ActionResult<CoachDetailsDto> GetById(int id)
     {
-        var coach = _repository.GetById(id);
+        var coach = _coachService.GetById(id);
 
         if (coach == null)
             return NotFound();
@@ -37,37 +45,23 @@ public class CoachController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<CoachSummaryDto>> GetAll()
     {
-        var coaches = _repository.GetAll();
+        var coaches = _coachService.GetAll();
 
-        return Ok(coaches.Select(CoachMapper.ToCoachSummaryDto).ToList());
+        return Ok(coaches.Select(CoachMapper.ToCoachSummaryDto));
     }
 
 
     [HttpPost("{id}/skills")]
     public ActionResult UpdateCoachSkills(int id, [FromBody] UpdateCoachSkillsDto dto)
     {
-        var coach = _repository.GetById(id);
+        var coach = _coachService.GetById(id);
 
         if (coach == null)
             return NotFound();
 
-        coach.UpdateSkills(dto.Skills);
-
-        _repository.SaveChanges();
+        CoachMapper.UpdateSkills(coach, dto);
+        _coachService.Update(coach);
 
         return NoContent();
     }
-
-    // [HttpDelete("{id}")]
-    // public ActionResult Delete(int id)
-    // {
-    //     if (!_repository.Remove(id))
-    //         return NotFound();
-
-    //     _repository.SaveChanges();
-
-    //     return NoContent();
-    // }
 }
-
-

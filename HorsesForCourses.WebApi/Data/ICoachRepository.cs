@@ -2,10 +2,10 @@ namespace HorsesForCourses.Core;
 
 public interface ICoachRepository
 {
-    void Add(Coach coach);
-    Coach? GetById(int id);
-    IEnumerable<Coach> GetAll();
-    bool Remove(int id);
+    Task AddAsync(Coach coach);
+    Task<Coach?> GetByIdAsync(int id);
+    Task<IEnumerable<Coach>> GetAllAsync();
+    void Remove(Coach coach);
     void Clear();
-    void SaveChanges();
+    Task SaveChangesAsync();
 }

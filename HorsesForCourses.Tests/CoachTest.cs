@@ -19,7 +19,7 @@ public class CoachTests
     }
 
     [Fact]
-    public void AddAndRemoveSkills()
+    public void AddSkills()
     {
         var coach = new Coach("Makaka", "Email@mail.com");
 
@@ -31,13 +31,20 @@ public class CoachTests
         var addSameSkill = Assert.Throws<ArgumentException>(() => coach.AddSkill("Dancing"));
         Assert.Equal("Skill already added", addSameSkill.Message);
 
-        // // Remove skill
-        // coach.RemoveSkill("Dancing");
-        // Assert.Empty(coach.Skills);
+    }
 
-        // // Remove wrong skill
-        // var wrongSkill = Assert.Throws<ArgumentException>(() => coach.RemoveSkill("Sing"));
-        // Assert.Equal("There is no skill in list", wrongSkill.Message);
+    [Fact]
+    public void UpdateSkills_ShouldReplaceAllSkills()
+    {
+        var coach = new Coach("John", "john@example.com");
+        coach.AddSkill("C#");
+
+        coach.UpdateSkills(new List<string> { "Java", "Python" });
+
+        Assert.DoesNotContain("C#", coach.Skills);
+        Assert.Contains("Java", coach.Skills);
+        Assert.Contains("Python", coach.Skills);
+        Assert.Equal(2, coach.Skills.Count);
     }
 
     [Fact]
@@ -80,21 +87,16 @@ public class CoachTests
 
         TimeSlot time1 = new(WeekDay.Monday, 10, 12);
         TimeSlot time2 = new(WeekDay.Monday, 10, 17);
-        TimeSlot time3 = new(WeekDay.Friday, 15, 17);
 
         Course course = new("Math", new TimeDay(start, end));
+        Course course1 = new("NotMath", new TimeDay(start, end));
         course.AddTimeSlot(time1);
-        course.AddTimeSlot(time2);
+        course1.AddTimeSlot(time2);
+
 
         coach.AssignCourse(course);
 
-        // var exception = Assert.Throws<ArgumentException>(() => coach.AssignCourse(course));
-        // Assert.Equal("Lesson time is overlapping", exception.Message);
-
-        //Remove OverlapingTime and add another
-        // course.RemoveTimeSlot(time2);
-        // course.AddTimeSlot(time3);
-
-        // Assert.True(coach.IsAvailableCoach());
+        var exception = Assert.Throws<ArgumentException>(() => coach.AssignCourse(course1));
+        Assert.Equal("Lesson time is overlapping", exception.Message);
     }
 }

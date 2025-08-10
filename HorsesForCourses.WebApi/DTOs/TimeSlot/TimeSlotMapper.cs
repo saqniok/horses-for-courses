@@ -9,7 +9,11 @@ public static class TimeSlotMapper
 
     public static TimeSlotDto ToDto(this TimeSlot timeSlot)
     {
-        return new TimeSlotDto(timeSlot.Day, timeSlot.Start, timeSlot.End);
+        return new TimeSlotDto {
+            Day = timeSlot.Day,
+            Start = timeSlot.Start,
+            End = timeSlot.End
+        };
     }
 
     public static IEnumerable<TimeSlot> ToDomain(this IEnumerable<TimeSlotDto> dtos)

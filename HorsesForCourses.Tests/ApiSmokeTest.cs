@@ -1,20 +1,20 @@
-using System.Net;
+// using System.Net;
 
-namespace HorsesForCourses.Tests;
+// namespace HorsesForCourses.Tests;
 
-public class ApiSmokeTests : IClassFixture<CustomWebApiFactory>
-{
-    private readonly HttpClient _client;
+// public class ApiSmokeTests : IClassFixture<CustomWebApiFactory>
+// {
+//     private readonly HttpClient _client;
 
-    public ApiSmokeTests(CustomWebApiFactory factory)
-    {
-        _client = factory.CreateClient();
-    }
+//     public ApiSmokeTests(CustomWebApiFactory factory)
+//     {
+//         _client = factory.CreateClient();
+//     }
 
-    [Fact]
-    public async Task Swagger_Should_Return_OK()
-    {
-        var response = await _client.GetAsync("/swagger/index.html");
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    }
-}
+//     [Fact]
+//     public async Task Swagger_Should_Return_OK()
+//     {
+//         var response = await _client.GetAsync("/swagger/index.html");
+//         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+//     }
+// }

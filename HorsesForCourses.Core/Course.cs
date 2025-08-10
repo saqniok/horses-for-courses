@@ -67,8 +67,6 @@ namespace HorsesForCourses.Core
             _requiredSkills.Clear();
 
             newSkills.ToList().ForEach(skill => AddRequiredSkill(skill));
-            // foreach (var skill in newSkills)
-            //     AddRequiredSkill(skill);
         }
 
         public void AddTimeSlot(TimeSlot timeSlot)
@@ -88,8 +86,8 @@ namespace HorsesForCourses.Core
             ClearSchedule();
 
             newTimeSlots.ToList().ForEach(ts => AddTimeSlot(ts));
-            // foreach (var timeSlot in newTimeSlots)
-            //     AddTimeSlot(timeSlot);
+            // foreach (var ts in newTimeSlots)
+            //     AddTimeSlot(ts);
         }
 
         public void AssignCoach(Coach coach)

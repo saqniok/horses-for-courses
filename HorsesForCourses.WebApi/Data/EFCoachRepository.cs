@@ -1,4 +1,5 @@
 using HorsesForCourses.Core;
+using Microsoft.EntityFrameworkCore;
 
 namespace HorsesForCourses.WebApi.Data
 {
@@ -11,30 +12,31 @@ namespace HorsesForCourses.WebApi.Data
             _context = context;
         }
 
-        public void Add(Coach coach)
+        async void AddAsync(Coach coach)
         {
-            _context.Coaches.Add(coach);
+            await _context.Coaches.AddAsync(coach);
         }
 
-        public Coach? GetById(int id)
+        public async Task<Coach?> GetByIdAsync(int id)
         {
-            return _context.Coaches.Find(id);
+            return await _context.Coaches
+                .Include(c => c.AssignedCourses)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public IEnumerable<Coach> GetAll()
+        public async Task<IEnumerable<Coach>> GetAllAsync()
         {
-            return _context.Coaches.ToList();
+            return await _context.Coaches.ToListAsync();
         }
 
-        public bool Remove(int id)
+        public void Remove(int id)
         {
             var coach = _context.Coaches.Find(id);
-            
+
             if (coach == null)
-                return false;
+                return;
 
             _context.Coaches.Remove(coach);
-            return true;
         }
 
         public void Clear()
@@ -42,9 +44,19 @@ namespace HorsesForCourses.WebApi.Data
             _context.Coaches.RemoveRange(_context.Coaches);
         }
 
-        public void SaveChanges()
+        public async Task SaveChangesAsync()
         {
-             _context.SaveChanges();
+            await _context.SaveChangesAsync();
+        }
+
+        Task ICoachRepository.AddAsync(Coach coach)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Remove(Coach coach)
+        {
+            throw new NotImplementedException();
         }
     }
 }

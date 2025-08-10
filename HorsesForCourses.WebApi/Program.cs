@@ -33,7 +33,6 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ICoachRepository, EFCoachRepository>();
 builder.Services.AddScoped<ICourseRepository, EFCourseRepository>();
-builder.Services.AddScoped<CourseScheduler>();
 
 var app = builder.Build();
 
