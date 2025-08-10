@@ -1,137 +1,53 @@
-using HorsesForCourses.Core;
 using Microsoft.AspNetCore.Mvc;
-
-public interface ICourseService
-{
-    IEnumerable<Course> GetAll();
-    Course? GetById(int id);
-    void Create(Course course);
-    void Update(Course course);
-    void Delete(int id);
-}
+using HorsesForCourses.Core;
+using HorsesForCourses.WebApi.Service;
+using HorsesForCourses.WebApi.DTOs;
 
 [ApiController]
-[Route("api/courses")]
+[Route("courses")]
 public class CourseController : ControllerBase
 {
     private readonly ICourseService _courseService;
-    private readonly ICoachService _coachService;
 
-    public CourseController(ICourseService courseService, ICoachService coachService)
+    public CourseController(ICourseService courseService)
     {
         _courseService = courseService;
-        _coachService = coachService;
     }
 
-    // Получить все курсы
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<ActionResult<IEnumerable<CourseDto>>> GetAll()
     {
-        var courses = _courseService.GetAll();
-        var result = courses.Select(CourseMapper.ToDto);
-        return Ok(result);
+        var courses = await _courseService.GetAllAsync();
+        return Ok(courses.Select(CourseMapper.ToDto));
     }
 
-    // Получить курс по Id
     [HttpGet("{id}")]
-    public IActionResult GetById(int id)
+    public async Task<ActionResult<CourseDto>> GetById(int id)
     {
-        var course = _courseService.GetById(id);
+        var course = await _courseService.GetByIdAsync(id);
         if (course == null)
             return NotFound();
 
-        var result = CourseMapper.ToDto(course);
-        return Ok(result);
+        return Ok(CourseMapper.ToDto(course));
     }
 
-    // Создать курс
     [HttpPost]
-    public IActionResult Create([FromBody] CreateCourseDto dto)
+    public async Task<ActionResult> Add([FromBody] CreateCourseDto dto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-        var course = new Course(dto.Title, new TimeDay(dto.startDate, dto.endDate));
-        _courseService.Create(course);
-
+        var course = CourseMapper.ToDomain(dto);
+        await _courseService.CreateAsync(course);
         var result = CourseMapper.ToDto(course);
         return CreatedAtAction(nameof(GetById), new { id = course.Id }, result);
     }
 
-    // Обновить скиллы курса
-    [HttpPut("{id}/skills")]
-    public IActionResult UpdateSkills(int id, [FromBody] UpdateCourseSkillsDto dto)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
-        var course = _courseService.GetById(id);
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Update(int id, [FromBody] CreateCourseDto dto)
+    {
+        var course = await _courseService.GetByIdAsync(id);
         if (course == null)
             return NotFound();
-
-        course.UpdateRequiredSkills(dto.Skills);
-        _courseService.Update(course);
 
         return NoContent();
-    }
-
-    // Обновить расписание курса
-    [HttpPut("{id}/schedule")]
-    public IActionResult UpdateSchedule(int id, [FromBody] UpdateCourseScheduleDto dto)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-        var course = _courseService.GetById(id);
-        if (course == null)
-            return NotFound();
-
-        _courseService.Update(course);
-
-        return NoContent();
-    }
-
-    // Подтвердить курс
-    [HttpPost("{id}/confirm")]
-    public IActionResult Confirm(int id)
-    {
-        var course = _courseService.GetById(id);
-        if (course == null)
-            return NotFound();
-
-        try
-        {
-            course.Confirm();
-            _courseService.Update(course);
-            return NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-    }
-
-    // Назначить тренера
-    [HttpPost("{id}/assign-coach")]
-    public IActionResult AssignCoach(int id, [FromBody] AssignCoachDto dto)
-    {
-        var course = _courseService.GetById(id);
-        if (course == null)
-            return NotFound();
-
-        var coach = _coachService.GetById(dto.CoachId);
-        if (coach == null)
-            return NotFound("Coach not found");
-
-        try
-        {
-            course.AssignCoach(coach);
-            _courseService.Update(course);
-            return NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
     }
 }

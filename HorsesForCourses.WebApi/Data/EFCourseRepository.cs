@@ -12,31 +12,31 @@ namespace HorsesForCourses.WebApi.Data
             _context = context;
         }
 
-        public void Add(Course course)
+        public async Task AddAsync(Course course)
         {
-            _context.Courses.Add(course);
+            await _context.Courses.AddAsync(course);
+        }
+        
+
+        public async Task <Course?> GetByIdAsync(int id)
+        {
+            return await _context.Courses.Include(c => c.AssignedCoach).FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public Course? GetById(int id)
+        public async Task <IEnumerable<Course>> GetAllAsync()
         {
-            return _context.Courses.Include(c => c.AssignedCoach).FirstOrDefault(c => c.Id == id);
-        }
-
-        public IEnumerable<Course> GetAll()
-        {
-            return _context.Courses.Include(c => c.AssignedCoach).ToList();
+            return await _context.Courses.Include(c => c.AssignedCoach).ToListAsync();
         }
 
         public void Clear()
         {
-            _context.Courses.RemoveRange(_context.Courses);
+            _context.Courses.RemoveRange(_context.Courses); // This will clear all courses
         }
 
-        public void SaveChanges()
+        public async Task SaveChangesAsync()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
     }
 }
-

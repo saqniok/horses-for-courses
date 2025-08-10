@@ -1,3 +1,5 @@
+using HorsesForCourses.WebApi.DTOs;
+
 public class CreateCoachDto
 {
     public required string Name { get; set; }

@@ -19,10 +19,6 @@ namespace HorsesForCourses.Core.EntityConfigurations
                 .IsRequired()
                 .HasMaxLength(300);
 
-            // Уникальный Email
-            entity.HasIndex(c => c.Email)
-                .IsUnique();
-
             entity.Property(c => c.Skills)
                 .HasConversion(Converters.HashSetToString())
                 .Metadata.SetValueComparer(Converters.HashSetComparer());

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-
+namespace HorsesForCourses.WebApi.DTOs;
 public record CourseDto(
     int Id,
     string Title,

@@ -31,6 +31,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
 
+
 builder.Services.AddScoped<ICoachRepository, EFCoachRepository>();
 builder.Services.AddScoped<ICourseRepository, EFCourseRepository>();
 

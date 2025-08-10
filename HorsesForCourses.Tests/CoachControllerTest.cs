@@ -1,184 +1,121 @@
 
-// using System.Net;
-// using System.Text.Json;
-// using System.Text;
+// using System;
+// using System.Collections.Generic;
+// using System.Linq;
+// using HorsesForCourses.Core;
+// using Microsoft.AspNetCore.Mvc;
+// using Moq;
+// using Xunit;
 
-
-// namespace HorsesForCourses.Tests.Integration;
-
-// public class CoachControllerIntegrationTests : IClassFixture<CustomWebApiFactory>, IAsyncLifetime
+// public class CoachControllerTests
 // {
-//     private readonly HttpClient _client;
-//     private readonly CustomWebApiFactory _factory;
+//     private readonly Mock<ICoachService> _serviceMock;
+//     private readonly CoachController _controller;
 
-//     public CoachControllerIntegrationTests(CustomWebApiFactory factory)
+//     public CoachControllerTests()
 //     {
-//         _factory = factory;
-//         _client = factory.CreateClient();
+//         _serviceMock = new Mock<ICoachService>();
+//         _controller = new CoachController(_serviceMock.Object);
 //     }
-
-//     public async Task InitializeAsync()
-//     {
-//         _factory.ClearRepository();
-//         await Task.CompletedTask;
-//     }
-
-//     public Task DisposeAsync() => Task.CompletedTask;
 
 //     [Fact]
-//     public async Task GetAllCoaches_ReturnsSuccessAndJson()
+//     public void Add_ShouldReturnCreatedAtAction()
 //     {
+//         // Arrange
+//         var dto = new CreateCoachDto { Name = "John", ExperienceYears = 5 };
+//         var coach = new Coach("John", 5) { Id = 1 };
 
-//         var response = await _client.GetAsync("/coaches");
+//         // Тут важно, чтобы маппер работал — иначе тесты надо писать с подменой маппера
+//         _serviceMock.Setup(s => s.Create(It.IsAny<Coach>()))
+//                     .Callback<Coach>(c => c.Id = 1);
 
-//         response.EnsureSuccessStatusCode();
-//         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+//         // Act
+//         var result = _controller.Add(dto) as CreatedAtActionResult;
 
-//         var body = await response.Content.ReadAsStringAsync();
-//         var coaches = JsonSerializer.Deserialize<List<CoachSummaryDto>>(body, new JsonSerializerOptions
+//         // Assert
+//         Assert.NotNull(result);
+//         Assert.Equal(nameof(CoachController.GetById), result.ActionName);
+//         Assert.Equal(1, ((CoachSummaryDto)result.Value).Id);
+//     }
+
+//     [Fact]
+//     public void GetById_ShouldReturnOk_WhenCoachExists()
+//     {
+//         // Arrange
+//         var coach = new Coach("John", 5) { Id = 2 };
+//         _serviceMock.Setup(s => s.GetById(2)).Returns(coach);
+
+//         // Act
+//         var result = _controller.GetById(2) as OkObjectResult;
+
+//         // Assert
+//         Assert.NotNull(result);
+//         var dto = result.Value as CoachDetailsDto;
+//         Assert.NotNull(dto);
+//         Assert.Equal("John", dto.Name);
+//     }
+
+//     [Fact]
+//     public void GetById_ShouldReturnNotFound_WhenCoachDoesNotExist()
+//     {
+//         // Arrange
+//         _serviceMock.Setup(s => s.GetById(99)).Returns((Coach?)null);
+
+//         // Act
+//         var result = _controller.GetById(99);
+
+//         // Assert
+//         Assert.IsType<NotFoundResult>(result.Result);
+//     }
+
+//     [Fact]
+//     public void GetAll_ShouldReturnListOfCoaches()
+//     {
+//         // Arrange
+//         var coaches = new List<Coach>
 //         {
-//             PropertyNameCaseInsensitive = true
-//         });
+//             new Coach("John", 5) { Id = 1 },
+//             new Coach("Jane", 3) { Id = 2 }
+//         };
+//         _serviceMock.Setup(s => s.GetAll()).Returns(coaches);
 
-//         Assert.NotNull(coaches);
+//         // Act
+//         var result = _controller.GetAll() as OkObjectResult;
 
-//         Assert.Contains(coaches, c => c.Name == "John Doe");
-//         Assert.Contains(coaches, c => c.Name == "Jane Smith");
+//         // Assert
+//         Assert.NotNull(result);
+//         var list = result.Value as IEnumerable<CoachSummaryDto>;
+//         Assert.Equal(2, list.Count());
 //     }
 
 //     [Fact]
-//     public async Task GetCoachById_ReturnsSuccess_WhenFound()
+//     public void UpdateCoachSkills_ShouldReturnNoContent_WhenCoachExists()
 //     {
-//         var response = await _client.GetAsync("/coaches/1");
+//         // Arrange
+//         var coach = new Coach("John", 5) { Id = 1 };
+//         _serviceMock.Setup(s => s.GetById(1)).Returns(coach);
+//         var dto = new UpdateCoachSkillsDto { Skills = new List<string> { "Strategy" } };
 
-//         response.EnsureSuccessStatusCode();
-//         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+//         // Act
+//         var result = _controller.UpdateCoachSkills(1, dto);
 
-//         var body = await response.Content.ReadAsStringAsync();
-//         var coach = JsonSerializer.Deserialize<CoachDetailsDto>(body, new JsonSerializerOptions
-//         {
-//             PropertyNameCaseInsensitive = true
-//         });
-
-//         Assert.NotNull(coach);
-//         Assert.Equal(1, coach.Id);
-//         Assert.Equal("John Doe", coach.Name);
-//         Assert.Equal("john@example.com", coach.Email);
+//         // Assert
+//         Assert.IsType<NoContentResult>(result);
+//         _serviceMock.Verify(s => s.Update(It.IsAny<Coach>()), Times.Once);
 //     }
 
 //     [Fact]
-//     public async Task GetCoachById_Returns404_WhenNotFound()
+//     public void UpdateCoachSkills_ShouldReturnNotFound_WhenCoachDoesNotExist()
 //     {
-//         var response = await _client.GetAsync($"/coaches/{int.MaxValue}");
+//         // Arrange
+//         _serviceMock.Setup(s => s.GetById(5)).Returns((Coach?)null);
+//         var dto = new UpdateCoachSkillsDto { Skills = new List<string> { "Bluffing" } };
 
-//         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+//         // Act
+//         var result = _controller.UpdateCoachSkills(5, dto);
+
+//         // Assert
+//         Assert.IsType<NotFoundResult>(result);
+//         _serviceMock.Verify(s => s.Update(It.IsAny<Coach>()), Times.Never);
 //     }
-
-//     [Fact]
-//     public async Task AddCoach_ReturnsCreatedAtAction_WithNewCoach()
-//     {
-//         var newCoachDto = new CreateCoachDto { Name = "New", Email = "newtest@example.com" };
-//         var jsonContent = new StringContent(
-//             JsonSerializer.Serialize(newCoachDto),
-//             Encoding.UTF8,
-//             "application/json"
-//         );
-
-//         var response = await _client.PostAsync("/coaches", jsonContent);
-
-//         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-//         Assert.NotNull(response.Headers.Location);
-
-//         var newCoachIdString = response.Headers.Location?.Segments.LastOrDefault();
-//         Assert.NotNull(newCoachIdString);
-//         Assert.True(int.TryParse(newCoachIdString, out int newCoachId));
-//         Assert.Equal(3, newCoachId);
-
-
-//         var getResponse = await _client.GetAsync(response.Headers.Location);
-//         getResponse.EnsureSuccessStatusCode();
-
-//         var createdCoach = JsonSerializer.Deserialize<CoachDetailsDto>(
-//             await getResponse.Content.ReadAsStringAsync(),
-//             new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-//         );
-
-//         Assert.NotNull(createdCoach);
-//         Assert.Equal("New", createdCoach.Name);
-//         Assert.Equal("newtest@example.com", createdCoach.Email);
-//         Assert.Equal(newCoachId, createdCoach.Id);
-//     }
-
-//     [Fact]
-//     public async Task UpdateCoachSkills_ReturnsNoContent_WhenCoachAndSkillsExist()
-//     {
-
-//         var updateSkillsDto = new UpdateCoachSkillsDto { Skills = new List<string> { "Leadership", "Team Building" } };
-//         var jsonContent = new StringContent(
-//             JsonSerializer.Serialize(updateSkillsDto),
-//             Encoding.UTF8,
-//             "application/json"
-//         );
-
-//         var response = await _client.PostAsync("/coaches/1/skills", jsonContent);
-
-//         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-
-//         var getResponse = await _client.GetAsync("/coaches/1");
-//         getResponse.EnsureSuccessStatusCode();
-//         var coach = JsonSerializer.Deserialize<CoachDetailsDto>(
-//             await getResponse.Content.ReadAsStringAsync(),
-//             new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-//         );
-
-//         Assert.NotNull(coach);
-//         Assert.Contains("Leadership", coach.Skills);
-//         Assert.Contains("Team Building", coach.Skills);
-//         Assert.Equal(2, coach.Skills.Count);
-//     }
-
-//     [Fact]
-//     public async Task UpdateCoachSkills_Returns404_WhenCoachDoesNotExist()
-//     {
-
-//         var updateSkillsDto = new UpdateCoachSkillsDto { Skills = new List<string> { "Skill A" } };
-//         var jsonContent = new StringContent(
-//             JsonSerializer.Serialize(updateSkillsDto),
-//             Encoding.UTF8,
-//             "application/json"
-//         );
-
-//         var response = await _client.PostAsync($"/coaches/{int.MaxValue}/skills", jsonContent);
-
-//         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-//     }
-//     // [Fact]
-//     // public async Task DeleteCoach_ReturnsNoContent_WhenCoachExists()
-//     // {
-
-//     //     var deleteResponse = await _client.DeleteAsync($"/coaches/1");
-
-//     //     Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
-
-//     //     var getResponse = await _client.GetAsync($"/coaches/1");
-//     //     Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
-
-//     //     var getAllResponse = await _client.GetAsync("/coaches");
-//     //     getAllResponse.EnsureSuccessStatusCode();
-//     //     var remainingCoaches = JsonSerializer.Deserialize<List<CoachSummaryDto>>(
-//     //         await getAllResponse.Content.ReadAsStringAsync(),
-//     //         new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-//     //     );
-//     //     Assert.NotNull(remainingCoaches);
-//     //     Assert.Single(remainingCoaches);
-//     //     Assert.Equal("Jane Smith", remainingCoaches.First().Name);
-//     // }
-
-//     // [Fact]
-//     // public async Task DeleteCoach_Returns404_WhenCoachDoesNotExist()
-//     // {
-//     //     var response = await _client.DeleteAsync($"/coaches/{int.MaxValue}");
-
-//     //     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-//     // }
 // }

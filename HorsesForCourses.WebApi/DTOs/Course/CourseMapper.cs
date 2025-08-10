@@ -1,5 +1,7 @@
 using HorsesForCourses.Core;
 
+namespace HorsesForCourses.WebApi.DTOs;
+
 public static class CourseMapper
 {
     public static CourseDto ToDto(Course course)
@@ -14,7 +16,6 @@ public static class CourseMapper
             Coach: course.AssignedCoach != null
                 ? new CoachShortDto(course.AssignedCoach.Id, course.AssignedCoach.Name) // This line is correct, no change needed here.
                 : null
-        // Schedule: course.Schedule.Select(ts => ToTimeSlotDto(ts)).ToList()
         );
     }
 
@@ -29,29 +30,11 @@ public static class CourseMapper
     }
 
 
-    public static Course ToDomain(CourseDto dto)
+    public static Course ToDomain(CreateCourseDto dto)
     {
-        var period = new TimeDay(dto.StartDate, dto.EndDate);
+        var period = new TimeDay(dto.startDate, dto.endDate);
         var course = new Course(dto.Title, period);
-
-        if (dto.RequiredSkills != null)
-        {
-            course.UpdateRequiredSkills(dto.RequiredSkills);
-        }
-
-        if (dto.Schedule != null)
-        {
-            var timeSlots = dto.Schedule.Select(tsDto => new TimeSlot(tsDto.Day, tsDto.Start, tsDto.End));
-            course.UpdateTimeSlot(timeSlots);
-        }
-
-        if (dto.IsConfirmed)
-        {
-            course.Confirm();
-        }
-
-        // Если нужно назначить тренера по dto.Coach.Id — делай отдельно, через репозиторий тренеров
-
         return course;
     }
+
 }

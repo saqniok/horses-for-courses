@@ -1,14 +1,5 @@
+using HorsesForCourses.WebApi.DTOs;
 using Microsoft.AspNetCore.Mvc;
-using HorsesForCourses.Core;
-
-public interface ICoachService
-{
-    IEnumerable<Coach> GetAll();
-    Coach? GetById(int id);
-    void Create(Coach coach);
-    void Update(Coach coach);
-    // и т.д.
-}
 
 [ApiController]
 [Route("coaches")]
@@ -22,45 +13,41 @@ public class CoachController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult Add([FromBody] CreateCoachDto dto)
+    public async Task<ActionResult> Add([FromBody] CreateCoachDto dto)
     {
         var coach = CoachMapper.ToDomain(dto);
-        _coachService.Create(coach);
+        await _coachService.CreateAsync(coach);
 
         var result = CoachMapper.ToCoachSummaryDto(coach);
         return CreatedAtAction(nameof(GetById), new { id = coach.Id }, result);
     }
 
-    [HttpGet("{id}")]
-    public ActionResult<CoachDetailsDto> GetById(int id)
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<CoachSummaryDto>>> GetAll()
     {
-        var coach = _coachService.GetById(id);
+        var coaches = await _coachService.GetAllAsync();
+        return Ok(coaches.Select(CoachMapper.ToCoachSummaryDto));
+    }
 
+    [HttpGet("{id}")]
+    public async Task<ActionResult<CoachDetailsDto>> GetById(int id)
+    {
+        var coach = await _coachService.GetByIdAsync(id);
         if (coach == null)
             return NotFound();
 
         return Ok(CoachMapper.ToCoachDetailsDto(coach));
     }
 
-    [HttpGet]
-    public ActionResult<IEnumerable<CoachSummaryDto>> GetAll()
-    {
-        var coaches = _coachService.GetAll();
-
-        return Ok(coaches.Select(CoachMapper.ToCoachSummaryDto));
-    }
-
-
     [HttpPost("{id}/skills")]
-    public ActionResult UpdateCoachSkills(int id, [FromBody] UpdateCoachSkillsDto dto)
+    public async Task<ActionResult> UpdateCoachSkills(int id, [FromBody] UpdateCoachSkillsDto dto)
     {
-        var coach = _coachService.GetById(id);
-
+        var coach = await _coachService.GetByIdAsync(id);
         if (coach == null)
             return NotFound();
 
         CoachMapper.UpdateSkills(coach, dto);
-        _coachService.Update(coach);
+        await _coachService.UpdateAsync(coach);
 
         return NoContent();
     }

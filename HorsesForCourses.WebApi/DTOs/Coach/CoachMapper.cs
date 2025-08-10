@@ -1,5 +1,7 @@
 using HorsesForCourses.Core;
 
+namespace HorsesForCourses.WebApi.DTOs;
+
 public static class CoachMapper
 {
 

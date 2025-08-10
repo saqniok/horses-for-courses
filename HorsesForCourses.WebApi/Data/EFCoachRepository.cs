@@ -12,7 +12,7 @@ namespace HorsesForCourses.WebApi.Data
             _context = context;
         }
 
-        async void AddAsync(Coach coach)
+        public async Task AddAsync(Coach coach)
         {
             await _context.Coaches.AddAsync(coach);
         }
@@ -47,16 +47,6 @@ namespace HorsesForCourses.WebApi.Data
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
-        }
-
-        Task ICoachRepository.AddAsync(Coach coach)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Remove(Coach coach)
-        {
-            throw new NotImplementedException();
         }
     }
 }
