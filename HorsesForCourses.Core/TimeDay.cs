@@ -9,7 +9,6 @@ public class TimeDay
 
     // Constructors for EF
     private TimeDay() { }
-    // protected TimeDay(DateTime today, DateTime dateTime) { }
 
     public TimeDay(DateOnly start, DateOnly end)
     {

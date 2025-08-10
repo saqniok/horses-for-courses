@@ -39,9 +39,6 @@ namespace HorsesForCourses.WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique();
-
                     b.ToTable("Coaches", (string)null);
                 });
 

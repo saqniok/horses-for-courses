@@ -1,121 +1,111 @@
 
-// using System;
-// using System.Collections.Generic;
-// using System.Linq;
-// using HorsesForCourses.Core;
-// using Microsoft.AspNetCore.Mvc;
-// using Moq;
-// using Xunit;
+using HorsesForCourses.Core;
+using HorsesForCourses.WebApi.DTOs;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
 
-// public class CoachControllerTests
-// {
-//     private readonly Mock<ICoachService> _serviceMock;
-//     private readonly CoachController _controller;
+public class CoachControllerTests
+{
+    private readonly Mock<ICoachService> _serviceMock;
+    private readonly CoachController _controller;
 
-//     public CoachControllerTests()
-//     {
-//         _serviceMock = new Mock<ICoachService>();
-//         _controller = new CoachController(_serviceMock.Object);
-//     }
+    public CoachControllerTests()
+    {
+        _serviceMock = new Mock<ICoachService>();
+        _controller = new CoachController(_serviceMock.Object);
+    }
 
-//     [Fact]
-//     public void Add_ShouldReturnCreatedAtAction()
-//     {
-//         // Arrange
-//         var dto = new CreateCoachDto { Name = "John", ExperienceYears = 5 };
-//         var coach = new Coach("John", 5) { Id = 1 };
+    [Fact]
+    public async Task Add_ShouldReturnCreatedAtAction()
+    {
+        var dto = new CreateCoachDto { Name = "John", Email = "john@example.com" };
+        var coach = CoachMapper.ToDomain(dto);
 
-//         // Тут важно, чтобы маппер работал — иначе тесты надо писать с подменой маппера
-//         _serviceMock.Setup(s => s.Create(It.IsAny<Coach>()))
-//                     .Callback<Coach>(c => c.Id = 1);
+        _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Coach>()))
+                    .Returns(Task.CompletedTask)
+                    .Callback<Coach>(c => c.Id = 1);
 
-//         // Act
-//         var result = _controller.Add(dto) as CreatedAtActionResult;
 
-//         // Assert
-//         Assert.NotNull(result);
-//         Assert.Equal(nameof(CoachController.GetById), result.ActionName);
-//         Assert.Equal(1, ((CoachSummaryDto)result.Value).Id);
-//     }
+        var result = await _controller.Add(dto);
 
-//     [Fact]
-//     public void GetById_ShouldReturnOk_WhenCoachExists()
-//     {
-//         // Arrange
-//         var coach = new Coach("John", 5) { Id = 2 };
-//         _serviceMock.Setup(s => s.GetById(2)).Returns(coach);
 
-//         // Act
-//         var result = _controller.GetById(2) as OkObjectResult;
+        var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+        Assert.Equal(nameof(CoachController.GetById), createdResult.ActionName);
+        var returnedDto = Assert.IsType<CoachSummaryDto>(createdResult.Value);
+        Assert.Equal(1, returnedDto.Id);
+        Assert.Equal("John", returnedDto.Name);
+    }
 
-//         // Assert
-//         Assert.NotNull(result);
-//         var dto = result.Value as CoachDetailsDto;
-//         Assert.NotNull(dto);
-//         Assert.Equal("John", dto.Name);
-//     }
+    [Fact]
+    public async Task GetAll_ShouldReturnOkWithCoaches()
+    {
 
-//     [Fact]
-//     public void GetById_ShouldReturnNotFound_WhenCoachDoesNotExist()
-//     {
-//         // Arrange
-//         _serviceMock.Setup(s => s.GetById(99)).Returns((Coach?)null);
+        var coaches = new List<Coach>
+        {
+            new Coach("John", "john@example.com"),
+            new Coach("Jane", "jane@example.com")
+        };
+        _serviceMock.Setup(s => s.GetAllAsync()).ReturnsAsync(coaches);
 
-//         // Act
-//         var result = _controller.GetById(99);
+        var result = await _controller.GetAll();
 
-//         // Assert
-//         Assert.IsType<NotFoundResult>(result.Result);
-//     }
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var list = Assert.IsAssignableFrom<IEnumerable<CoachSummaryDto>>(okResult.Value);
+        Assert.Equal(2, list.Count());
+    }
 
-//     [Fact]
-//     public void GetAll_ShouldReturnListOfCoaches()
-//     {
-//         // Arrange
-//         var coaches = new List<Coach>
-//         {
-//             new Coach("John", 5) { Id = 1 },
-//             new Coach("Jane", 3) { Id = 2 }
-//         };
-//         _serviceMock.Setup(s => s.GetAll()).Returns(coaches);
+    [Fact]
+    public async Task GetById_ShouldReturnOk_WhenCoachExists()
+    {
 
-//         // Act
-//         var result = _controller.GetAll() as OkObjectResult;
+        var coach = new Coach("John", "john@example.com");
+        _serviceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(coach);
 
-//         // Assert
-//         Assert.NotNull(result);
-//         var list = result.Value as IEnumerable<CoachSummaryDto>;
-//         Assert.Equal(2, list.Count());
-//     }
 
-//     [Fact]
-//     public void UpdateCoachSkills_ShouldReturnNoContent_WhenCoachExists()
-//     {
-//         // Arrange
-//         var coach = new Coach("John", 5) { Id = 1 };
-//         _serviceMock.Setup(s => s.GetById(1)).Returns(coach);
-//         var dto = new UpdateCoachSkillsDto { Skills = new List<string> { "Strategy" } };
+        var result = await _controller.GetById(1);
 
-//         // Act
-//         var result = _controller.UpdateCoachSkills(1, dto);
 
-//         // Assert
-//         Assert.IsType<NoContentResult>(result);
-//         _serviceMock.Verify(s => s.Update(It.IsAny<Coach>()), Times.Once);
-//     }
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var dto = Assert.IsType<CoachDetailsDto>(okResult.Value);
+        Assert.Equal("John", dto.Name);
+    }
 
-//     [Fact]
-//     public void UpdateCoachSkills_ShouldReturnNotFound_WhenCoachDoesNotExist()
-//     {
-//         // Arrange
-//         _serviceMock.Setup(s => s.GetById(5)).Returns((Coach?)null);
-//         var dto = new UpdateCoachSkillsDto { Skills = new List<string> { "Bluffing" } };
+    [Fact]
+    public async Task GetById_ShouldReturnNotFound_WhenCoachDoesNotExist()
+    {
+        _serviceMock.Setup(s => s.GetByIdAsync(99)).ReturnsAsync((Coach?)null);
 
-//         // Act
-//         var result = _controller.UpdateCoachSkills(5, dto);
+        var result = await _controller.GetById(99);
 
-//         // Assert
-//         Assert.IsType<NotFoundResult>(result);
-//         _serviceMock.Verify(s => s.Update(It.IsAny<Coach>()), Times.Never);
-//     }
-// }
+        Assert.IsType<NotFoundResult>(result.Result);
+    }
+
+    [Fact]
+    public async Task UpdateCoachSkills_ShouldReturnNoContent_WhenCoachExists()
+    {
+        var coach = new Coach("John", "john@example.com");
+        _serviceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(coach);
+
+        var dto = new UpdateCoachSkillsDto { Skills = new List<string> { "Strategy" } };
+
+        _serviceMock.Setup(s => s.UpdateAsync(coach)).Returns(Task.CompletedTask);
+
+        var result = await _controller.UpdateCoachSkills(1, dto);
+
+        Assert.IsType<NoContentResult>(result);
+        _serviceMock.Verify(s => s.UpdateAsync(coach), Times.Once);
+        Assert.Contains("Strategy", coach.Skills);
+    }
+
+    [Fact]
+    public async Task UpdateCoachSkills_ShouldReturnNotFound_WhenCoachDoesNotExist()
+    {
+        _serviceMock.Setup(s => s.GetByIdAsync(5)).ReturnsAsync((Coach?)null);
+        var dto = new UpdateCoachSkillsDto { Skills = new List<string> { "Bluffing" } };
+
+        var result = await _controller.UpdateCoachSkills(5, dto);
+
+        Assert.IsType<NotFoundResult>(result);
+        _serviceMock.Verify(s => s.UpdateAsync(It.IsAny<Coach>()), Times.Never);
+    }
+}

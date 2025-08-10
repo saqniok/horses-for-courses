@@ -8,10 +8,12 @@ using HorsesForCourses.WebApi.DTOs;
 public class CourseController : ControllerBase
 {
     private readonly ICourseService _courseService;
+    private readonly ICoachService _coachService;
 
-    public CourseController(ICourseService courseService)
+    public CourseController(ICourseService courseService, ICoachService coachService)
     {
         _courseService = courseService;
+        _coachService = coachService;
     }
 
     [HttpGet]
@@ -31,6 +33,7 @@ public class CourseController : ControllerBase
         return Ok(CourseMapper.ToDto(course));
     }
 
+
     [HttpPost]
     public async Task<ActionResult> Add([FromBody] CreateCourseDto dto)
     {
@@ -39,14 +42,68 @@ public class CourseController : ControllerBase
         var result = CourseMapper.ToDto(course);
         return CreatedAtAction(nameof(GetById), new { id = course.Id }, result);
     }
-
-
-    [HttpPut("{id}")]
-    public async Task<ActionResult> Update(int id, [FromBody] CreateCourseDto dto)
+    
+    [HttpPut("{id}/skills")]
+    public async Task<ActionResult> UpdateSkills(int id, [FromBody] IEnumerable<string> skills)
     {
         var course = await _courseService.GetByIdAsync(id);
         if (course == null)
             return NotFound();
+
+        try
+        {
+            course.UpdateRequiredSkills(skills);
+            await _courseService.UpdateAsync(course);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
+        return NoContent();
+    }
+    [HttpPost("{id}/timeslots")]
+    public async Task<ActionResult> AddTimeSlot(int id, [FromBody] TimeSlotDto dto)
+    {
+        var course = await _courseService.GetByIdAsync(id);
+        if (course == null)
+            return NotFound();
+
+        course.AddTimeSlot(new TimeSlot(dto.Day, dto.Start, dto.End));
+
+        await _courseService.UpdateAsync(course);
+
+        return NoContent();
+    }
+
+    [HttpPost("{id}/confirm")]
+    public async Task<ActionResult> ConfirmCourse(int id)
+    {
+        var course = await _courseService.GetByIdAsync(id);
+        if (course == null)
+            return NotFound();
+
+        course.Confirm();
+        await _courseService.UpdateAsync(course);
+
+        return NoContent();
+    }
+
+    [HttpPost("{id}/assigncoach")]
+    public async Task<ActionResult> AssignCoach(int id, [FromBody] AssignCoachDto dto)
+    {
+        var course = await _courseService.GetByIdAsync(id);
+        if (course == null)
+            return NotFound();
+
+        var coach = await _coachService.GetByIdAsync(dto.CoachId);
+
+        if (coach == null)
+            return NotFound("Coach not found.");
+
+        course.AssignCoach(coach);
+
+        await _courseService.UpdateAsync(course);
 
         return NoContent();
     }

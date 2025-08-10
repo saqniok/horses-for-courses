@@ -7,6 +7,8 @@ namespace HorsesForCourses.WebApi.Data
     {
         private readonly AppDbContext _context;
 
+        private static int _nextId = 1;
+
         public EFCoachRepository(AppDbContext context)
         {
             _context = context;
@@ -14,6 +16,7 @@ namespace HorsesForCourses.WebApi.Data
 
         public async Task AddAsync(Coach coach)
         {
+            coach.Id = _nextId++;
             await _context.Coaches.AddAsync(coach);
         }
 

@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using HorsesForCourses.Core;
 using HorsesForCourses.WebApi.Data;
+using HorsesForCourses.WebApi.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -33,7 +34,9 @@ builder.Services.AddSwaggerGen();
 
 
 builder.Services.AddScoped<ICoachRepository, EFCoachRepository>();
+builder.Services.AddScoped<ICoachService, CoachService>();
 builder.Services.AddScoped<ICourseRepository, EFCourseRepository>();
+builder.Services.AddScoped<ICourseService, CourseService>();
 
 var app = builder.Build();
 

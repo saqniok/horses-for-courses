@@ -86,8 +86,6 @@ namespace HorsesForCourses.Core
             ClearSchedule();
 
             newTimeSlots.ToList().ForEach(ts => AddTimeSlot(ts));
-            // foreach (var ts in newTimeSlots)
-            //     AddTimeSlot(ts);
         }
 
         public void AssignCoach(Coach coach)

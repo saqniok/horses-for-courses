@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HorsesForCourses.WebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250808135157_InitialCreatу")]
+    [Migration("20250810184317_InitialCreatу")]
     partial class InitialCreatу
     {
         /// <inheritdoc />
@@ -42,13 +42,16 @@ namespace HorsesForCourses.WebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Coaches");
+                    b.ToTable("Coaches", (string)null);
                 });
 
             modelBuilder.Entity("HorsesForCourses.Core.Course", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("AssignedCoachId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("CoachId")
@@ -64,22 +67,24 @@ namespace HorsesForCourses.WebApi.Migrations
 
                     b.Property<string>("_requiredSkills")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("RequiredSkills");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CoachId");
 
-                    b.ToTable("Courses");
+                    b.ToTable("Courses", (string)null);
                 });
 
             modelBuilder.Entity("HorsesForCourses.Core.Course", b =>
                 {
                     b.HasOne("HorsesForCourses.Core.Coach", "AssignedCoach")
                         .WithMany("AssignedCourses")
-                        .HasForeignKey("CoachId");
+                        .HasForeignKey("CoachId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
-                    b.OwnsOne("HorsesForCourses.Core.Period", "Period", b1 =>
+                    b.OwnsOne("HorsesForCourses.Core.TimeDay", "Period", b1 =>
                         {
                             b1.Property<int>("CourseId")
                                 .HasColumnType("INTEGER");
@@ -126,7 +131,7 @@ namespace HorsesForCourses.WebApi.Migrations
 
                             b1.HasIndex("CourseId");
 
-                            b1.ToTable("TimeSlot");
+                            b1.ToTable("CourseSchedule", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("CourseId");

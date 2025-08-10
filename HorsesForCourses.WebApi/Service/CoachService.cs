@@ -37,7 +37,6 @@ namespace HorsesForCourses.WebApi.Service
 
         public async Task UpdateAsync(Coach coach)
         {
-            // EF сам отслеживает изменения, достаточно вызвать SaveChanges
             await _coachRepository.SaveChangesAsync();
         }
     }

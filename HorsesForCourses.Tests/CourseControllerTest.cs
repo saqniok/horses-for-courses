@@ -1,113 +1,118 @@
-// using System.Net;
-// using System.Net.Http.Json;
 
-// namespace HorsesForCourses.Tests
-// {
-//     public class CourseControllerTests : IClassFixture<CustomWebApiFactory>
-//     {
-//         private readonly CustomWebApiFactory _factory;
-//         private readonly HttpClient _client;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using HorsesForCourses.Core;
+using HorsesForCourses.WebApi.DTOs;
+using HorsesForCourses.WebApi.Service;
 
-//         public CourseControllerTests(CustomWebApiFactory factory)
-//         {
-//             _factory = factory;
-//             _client = factory.CreateClient();
-//         }
+public class CourseControllerTests
+{
+    private readonly Mock<ICourseService> _courseServiceMock = new();
+    private readonly Mock<ICoachService> _coachServiceMock = new();
+    private readonly CourseController _controller;
 
-//         [Fact]
-//         public async Task CreateCourse_ReturnsCreatedCourse()
-//         {
-//             var createDto = new CreateCourseDto(
-//                 Title: "C# Fundamentals",
-//                 startDate: new DateOnly(2025, 8, 1),
-//                 endDate: new DateOnly(2025, 8, 10)
-//             );
+    public CourseControllerTests()
+    {
+        _controller = new CourseController(_courseServiceMock.Object, _coachServiceMock.Object);
+    }
 
-//             var response = await _client.PostAsJsonAsync("/courses", createDto);
+    [Fact]
+    public async Task GetAll_ReturnsOkWithCourses()
+    {
+        // Arrange
+        var courses = new List<Course>
+        {
+            new Course("Course1", new TimeDay(default, default)) { Id = 1 },
+            new Course("Course2", new TimeDay(default, default)) { Id = 2 }
+        };
 
-//             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        _courseServiceMock.Setup(s => s.GetAllAsync()).ReturnsAsync(courses);
 
-//             var course = await response.Content.ReadFromJsonAsync<CourseDto>();
+        // Act
+        var result = await _controller.GetAll();
 
-//             Assert.NotNull(course);
-//             Assert.Equal(createDto.Title, course.Title);
-//             Assert.True(course.Id > 0);
-//         }
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var returnCourses = Assert.IsAssignableFrom<IEnumerable<CourseDto>>(okResult.Value);
+        Assert.Equal(2, returnCourses.Count());
+    }
 
-//         [Fact]
-//         public async Task GetAllCourses_ReturnsNonEmptyList()
-//         {
-//             var createDto = new CreateCourseDto(
-//                 Title: "C# Fundamentals",
-//                 startDate: new DateOnly(2025, 8, 1),
-//                 endDate: new DateOnly(2025, 8, 10)
-//             );
-//             await _client.PostAsJsonAsync("/courses", createDto);
+    [Fact]
+    public async Task AddTimeSlot_ReturnsNoContent_WhenCourseExists()
+    {
+        // Arrange
+        var course = new Course("Test", new TimeDay(default, default)) { Id = 1 };
+        _courseServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(course);
+        _courseServiceMock.Setup(s => s.UpdateAsync(course)).Returns(Task.CompletedTask);
 
-//             var response = await _client.GetAsync("/courses");
+        var dto = new TimeSlotDto
+        {
+            Day = WeekDay.Monday,
+            Start = 9,
+            End = 10
+        };
 
-//             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        // Act
+        var result = await _controller.AddTimeSlot(1, dto);
 
-//             var courses = await response.Content.ReadFromJsonAsync<List<CourseDto>>();
+        // Assert
+        Assert.IsType<NoContentResult>(result);
+        _courseServiceMock.Verify(s => s.UpdateAsync(course), Times.Once);
+        Assert.Single(course.Schedule);
+    }
 
-//             Assert.NotNull(courses);
-//             Assert.NotEmpty(courses);
-//         }
+    [Fact]
+    public async Task ConfirmCourse_ReturnsNoContent_WhenCourseExists()
+    {
+        // Arrange
+        var course = new Course("Test", new TimeDay(default, default)) { Id = 1 };
+        course.AddTimeSlot(new TimeSlot(WeekDay.Monday, 9, 10));
+        _courseServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(course);
+        _courseServiceMock.Setup(s => s.UpdateAsync(course)).Returns(Task.CompletedTask);
 
-//         [Fact]
-//         public async Task UpdateSkills_ExistingCourse_ReturnsNoContent()
-//         {
-//             var createDto = new CreateCourseDto(
-//                 Title: "C# Fundamentals",
-//                 startDate: new DateOnly(2025, 8, 1),
-//                 endDate: new DateOnly(2025, 8, 10)
-//             );
-//             var createResponse = await _client.PostAsJsonAsync("/courses", createDto);
-//             var createdCourse = await createResponse.Content.ReadFromJsonAsync<CourseDto>();
+        // Act
+        var result = await _controller.ConfirmCourse(1);
 
-//             Assert.NotNull(createdCourse);
+        // Assert
+        Assert.IsType<NoContentResult>(result);
+        _courseServiceMock.Verify(s => s.UpdateAsync(course), Times.Once);
+        Assert.True(course.IsConfirmed);
+    }
 
-//             var dto = new UpdateCourseSkillsDto(new List<string> { "C#", "TDD" });
+    [Fact]
+    public async Task AssignCoach_ReturnsNoContent_WhenCourseAndCoachExist()
+    {
+        // Arrange
+        var course = new Course("Test", new TimeDay(default, default)) { Id = 1 }; 
+        var coach = new Coach("CoachName", "coach@example.com") { Id = 2 };
+        course.AddTimeSlot(new TimeSlot(WeekDay.Monday, 9, 10)); 
+        _courseServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(course);
+        _coachServiceMock.Setup(s => s.GetByIdAsync(2)).ReturnsAsync(coach);
+        _courseServiceMock.Setup(s => s.UpdateAsync(course)).Returns(Task.CompletedTask);
 
-//             var response = await _client.PostAsJsonAsync($"/courses/{createdCourse.Id}/skills", dto);
+        var dto = new AssignCoachDto(2);
+        course.Confirm(); // Confirm the course before assigning coach
 
-//             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-//         }
+        var result = await _controller.AssignCoach(1, dto);
 
-//         // [Fact]
-//         // public async Task AssignCoach_ValidCoach_ReturnsNoContent()
-//         // {
-//         //     var createCourseDto = new CreateCourseDto("Test4 Course", DateTime.Today, DateTime.Today.AddDays(4));
+        Assert.IsType<NoContentResult>(result);
+        _courseServiceMock.Verify(s => s.UpdateAsync(course), Times.Once);
+        Assert.Equal(coach, course.AssignedCoach);
+    }
 
-//         //     var createResponse = await _client.PostAsJsonAsync("/courses", createCourseDto);
-//         //     var course = await createResponse.Content.ReadFromJsonAsync<CourseDto>();
+    [Fact]
+    public async Task AssignCoach_ReturnsNotFound_WhenCoachDoesNotExist()
+    {
+        var course = new Course("Test", new TimeDay(default, default)) { Id = 1 };
 
-//         //     Assert.NotNull(course);
+        _courseServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(course);
+        _coachServiceMock.Setup(s => s.GetByIdAsync(2)).ReturnsAsync((Coach?)null);
 
-//         //     var assignCoachDto = new AssignCoachDto(1);
+        var dto = new AssignCoachDto(2);
 
-//         //     var response = await _client.PostAsJsonAsync($"/courses/{course.Id}/assign-coach", assignCoachDto);
+        var result = await _controller.AssignCoach(1, dto);
 
-//         //     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-//         // }
-
-
-//         // [Fact]
-//         // public async Task ConfirmCourse_ExistingCourse_ReturnsNoContent()
-//         // {
-//         //     var createDto = new CreateCourseDto("Confirm Course", DateTime.Today, DateTime.Today.AddDays(3));
-
-//         //     var createResponse = await _client.PostAsJsonAsync("/courses", createDto);
-//         //     createResponse.EnsureSuccessStatusCode();
-
-//         //     var createdCourse = await createResponse.Content.ReadFromJsonAsync<CourseDto>();
-//         //     Assert.NotNull(createdCourse);
-
-//         //     var response = await _client.PostAsync($"/courses/{createdCourse.Id}/confirm", null);
-
-//         //     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-//         // }
-
-//     }
-// }
-
+        var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+        Assert.Equal("Coach not found.", notFoundResult.Value);
+    }
+}

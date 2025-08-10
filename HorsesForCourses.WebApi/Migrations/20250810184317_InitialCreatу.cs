@@ -37,7 +37,8 @@ namespace HorsesForCourses.WebApi.Migrations
                     PeriodEnd = table.Column<DateOnly>(type: "TEXT", nullable: false),
                     IsConfirmed = table.Column<bool>(type: "INTEGER", nullable: false),
                     CoachId = table.Column<int>(type: "INTEGER", nullable: true),
-                    _requiredSkills = table.Column<string>(type: "TEXT", nullable: false)
+                    AssignedCoachId = table.Column<int>(type: "INTEGER", nullable: true),
+                    RequiredSkills = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,11 +47,12 @@ namespace HorsesForCourses.WebApi.Migrations
                         name: "FK_Courses_Coaches_CoachId",
                         column: x => x.CoachId,
                         principalTable: "Coaches",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
-                name: "TimeSlot",
+                name: "CourseSchedule",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -62,9 +64,9 @@ namespace HorsesForCourses.WebApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TimeSlot", x => x.Id);
+                    table.PrimaryKey("PK_CourseSchedule", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TimeSlot_Courses_CourseId",
+                        name: "FK_CourseSchedule_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id",
@@ -77,8 +79,8 @@ namespace HorsesForCourses.WebApi.Migrations
                 column: "CoachId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TimeSlot_CourseId",
-                table: "TimeSlot",
+                name: "IX_CourseSchedule_CourseId",
+                table: "CourseSchedule",
                 column: "CourseId");
         }
 
@@ -86,7 +88,7 @@ namespace HorsesForCourses.WebApi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "TimeSlot");
+                name: "CourseSchedule");
 
             migrationBuilder.DropTable(
                 name: "Courses");

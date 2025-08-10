@@ -70,65 +70,6 @@ public class Coach
 
         return slot1.Start < slot2.End && slot1.End > slot2.Start;
     }
+
     #endregion
-    // public void RemoveSkill(string skill)
-    // {
-    //     if (!Skills.Contains(skill.ToLower()))
-    //         throw new ArgumentException("There is no skill in list");
-
-    //     Skills.Remove(skill);
-    // }
-
-    // private void EnsureCourseNotAlreadyAssigned(Course course)
-    // {
-    //     if (AssignedCourses.Contains(course))
-    //         throw new ArgumentException("Course is already assigned");
-    // }
-
-    // private void EnsureNoPeriodOverlap(Course course)
-    // {
-    //     var overlappingCourses = AssignedCourses
-    //         .Where(existing => course.Period.OverlapsWith(existing.Period));
-
-
-    //     overlappingCourses.ToList()
-    //         .ForEach(ec => EnsureNoScheduleOverlap(course, ec));
-    //     // foreach (var existingCourse in overlappingCourses)
-    //     // {
-    //     //     EnsureNoScheduleOverlap(course, existingCourse);
-    //     // }
-    // }
-
-    // private void EnsureNoScheduleOverlap(Course newCourse, Course existingCourse)
-    // {
-    //     bool overlapExists = newCourse.Schedule
-    //         .SelectMany(newSlot => existingCourse.Schedule,
-    //             (newSlot, existingSlot) => newSlot.OverlapsWith(existingSlot))
-    //         .Any(result => result);
-
-    //     if (overlapExists)
-    //         throw new ArgumentException("Lesson time is overlapping");
-    // }
-
-    // AI helped
-    // public bool IsAvailableCoach()
-    // {
-    //     if (!AssignedCourses.Any()) return true;
-
-    //     var allTimeSlots = AssignedCourses.SelectMany(c => c.Schedule).ToList();
-
-    //     for (int i = 0; i < allTimeSlots.Count; i++)
-    //     {
-    //         for (int j = i + 1; j < allTimeSlots.Count; j++)
-    //         {
-    //             if (AreTimeSlotsOverlapping(allTimeSlots[i], allTimeSlots[j]))
-    //                 throw new ArgumentException("Lesson time is overlapping");
-    //         }
-    //     }
-
-    //     return true;
-    // }
-
 }
-
-
