@@ -36,6 +36,7 @@ namespace HorsesForCourses.WebApi.Service
 
         public async Task UpdateAsync(Course course)
         {
+            _courseRepository.Update(course);
             await _courseRepository.SaveChangesAsync();
         }
     }

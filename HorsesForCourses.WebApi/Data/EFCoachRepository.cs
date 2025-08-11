@@ -7,7 +7,7 @@ namespace HorsesForCourses.WebApi.Data
     {
         private readonly AppDbContext _context;
 
-        private static int _nextId = 1;
+        // private static int _nextId = 1;
 
         public EFCoachRepository(AppDbContext context)
         {
@@ -16,7 +16,7 @@ namespace HorsesForCourses.WebApi.Data
 
         public async Task AddAsync(Coach coach)
         {
-            coach.Id = _nextId++;
+            // coach.Id = _nextId++;
             await _context.Coaches.AddAsync(coach);
         }
 
@@ -50,6 +50,11 @@ namespace HorsesForCourses.WebApi.Data
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
+        }
+
+        public void Update(Coach coach)
+        {
+            _context.Coaches.Update(coach);
         }
     }
 }

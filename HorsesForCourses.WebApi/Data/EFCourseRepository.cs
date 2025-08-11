@@ -16,14 +16,14 @@ namespace HorsesForCourses.WebApi.Data
         {
             await _context.Courses.AddAsync(course);
         }
-        
 
-        public async Task <Course?> GetByIdAsync(int id)
+
+        public async Task<Course?> GetByIdAsync(int id)
         {
             return await _context.Courses.Include(c => c.AssignedCoach).FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task <IEnumerable<Course>> GetAllAsync()
+        public async Task<IEnumerable<Course>> GetAllAsync()
         {
             return await _context.Courses.Include(c => c.AssignedCoach).ToListAsync();
         }
@@ -36,6 +36,11 @@ namespace HorsesForCourses.WebApi.Data
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
+        }
+
+        public void Update(Course course)
+        {
+            _context.Courses.Update(course);
         }
 
     }

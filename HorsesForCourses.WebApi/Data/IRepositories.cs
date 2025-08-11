@@ -7,6 +7,7 @@ public interface ICoachRepository
     Task<IEnumerable<Coach>> GetAllAsync();
     void Remove(int id);
     void Clear();
+    void Update(Coach coach);
     Task SaveChangesAsync();
 }
 
@@ -16,6 +17,7 @@ public interface ICourseRepository
     Task <Course?> GetByIdAsync(int id);
     Task <IEnumerable<Course>> GetAllAsync();
     void Clear();
+    void Update(Course course);
     Task SaveChangesAsync();
 }
 
