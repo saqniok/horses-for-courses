@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace HorsesForCourses.WebApi.DTOs;
+
 public record CourseDto(
     int Id,
     string Title,
@@ -18,7 +19,7 @@ public class CourseShortDto
     public required string Title { get; set; }
 }
 
-public record CreateCourseDto(
+public record CreateCourseRequest(
     [Required, StringLength(100)]
     string Title,
 
@@ -40,7 +41,7 @@ public record UpdateCourseScheduleDto(
     List<TimeSlotDto> TimeSlots
 );
 
-public record AssignCoachDto(
+public record AssignCoachRequest(
     [Required]
     int CoachId
 );

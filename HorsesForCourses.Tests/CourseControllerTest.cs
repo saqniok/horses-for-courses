@@ -20,10 +20,10 @@ public class CourseControllerTests
     public async Task GetAll_ReturnsOkWithCourses()
     {
         // Arrange
-        var courses = new List<Course>
+        var courses = new List<CourseDto>
         {
-            new Course("Course1", new TimeDay(default, default)) { Id = 1 },
-            new Course("Course2", new TimeDay(default, default)) { Id = 2 }
+            new CourseDto(Id: 1, Title: "Course1", StartDate: default, EndDate: default),
+            new CourseDto(Id: 2, Title: "Course2", StartDate: default, EndDate: default)
         };
 
         _courseServiceMock.Setup(s => s.GetAllAsync()).ReturnsAsync(courses);
@@ -83,14 +83,14 @@ public class CourseControllerTests
     public async Task AssignCoach_ReturnsNoContent_WhenCourseAndCoachExist()
     {
         // Arrange
-        var course = new Course("Test", new TimeDay(default, default)) { Id = 1 }; 
+        var course = new Course("Test", new TimeDay(default, default)) { Id = 1 };
         var coach = new Coach("CoachName", "coach@example.com") { Id = 2 };
-        course.AddTimeSlot(new TimeSlot(WeekDay.Monday, 9, 10)); 
+        course.AddTimeSlot(new TimeSlot(WeekDay.Monday, 9, 10));
         _courseServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(course);
         _coachServiceMock.Setup(s => s.GetByIdAsync(2)).ReturnsAsync(coach);
         _courseServiceMock.Setup(s => s.UpdateAsync(course)).Returns(Task.CompletedTask);
 
-        var dto = new AssignCoachDto(2);
+        var dto = new AssignCoachRequest(2);
         course.Confirm(); // Confirm the course before assigning coach
 
         var result = await _controller.AssignCoach(1, dto);
@@ -108,7 +108,7 @@ public class CourseControllerTests
         _courseServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(course);
         _coachServiceMock.Setup(s => s.GetByIdAsync(2)).ReturnsAsync((Coach?)null);
 
-        var dto = new AssignCoachDto(2);
+        var dto = new AssignCoachRequest(2);
 
         var result = await _controller.AssignCoach(1, dto);
 

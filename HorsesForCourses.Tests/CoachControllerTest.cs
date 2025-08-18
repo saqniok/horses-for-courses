@@ -18,8 +18,8 @@ public class CoachControllerTests
     [Fact]
     public async Task Add_ShouldReturnCreatedAtAction()
     {
-        var dto = new CreateCoachDto { Name = "John", Email = "john@example.com" };
-        var coach = CoachMapper.ToDomain(dto);
+        var dto = new CreateCoachRequest { Name = "John", Email = "john@example.com" };
+        var coach = new Coach(dto.Name, dto.Email); ;
 
         _serviceMock.Setup(s => s.CreateAsync(It.IsAny<Coach>()))
                     .Returns(Task.CompletedTask)
@@ -29,9 +29,10 @@ public class CoachControllerTests
         var result = await _controller.Add(dto);
 
 
-        var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+        var createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
         Assert.Equal(nameof(CoachController.GetById), createdResult.ActionName);
-        var returnedDto = Assert.IsType<CoachSummaryDto>(createdResult.Value);
+
+        var returnedDto = Assert.IsType<CoachSummaryResponse>(createdResult.Value);
         Assert.Equal(1, returnedDto.Id);
         Assert.Equal("John", returnedDto.Name);
     }
@@ -40,30 +41,34 @@ public class CoachControllerTests
     public async Task GetAll_ShouldReturnOkWithCoaches()
     {
 
-        var coaches = new List<Coach>
+        var coaches = new List<CoachSummaryResponse>
         {
-            new Coach("John", "john@example.com"),
-            new Coach("Jane", "jane@example.com")
+            new CoachSummaryResponse{Name = "John", Email = "john@example.com"},
+            new CoachSummaryResponse{Name ="Jane", Email ="jane@example.com"}
         };
         _serviceMock.Setup(s => s.GetAllAsync()).ReturnsAsync(coaches);
 
         var result = await _controller.GetAll();
 
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var list = Assert.IsAssignableFrom<IEnumerable<CoachSummaryDto>>(okResult.Value);
+        var list = Assert.IsAssignableFrom<IEnumerable<CoachSummaryResponse>>(okResult.Value);
         Assert.Equal(2, list.Count());
     }
 
     [Fact]
     public async Task GetById_ShouldReturnOk_WhenCoachExists()
     {
+        var coachDto = new CoachDetailsDto
+        {
+            Id = 1,
+            Name = "John",
+            Email = "john@example.com",
+            Skills = new List<string>()
+        };
 
-        var coach = new Coach("John", "john@example.com");
-        _serviceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(coach);
-
+        _serviceMock.Setup(s => s.GetDtoByIdAsync(1)).ReturnsAsync(coachDto);
 
         var result = await _controller.GetById(1);
-
 
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
         var dto = Assert.IsType<CoachDetailsDto>(okResult.Value);
@@ -73,7 +78,7 @@ public class CoachControllerTests
     [Fact]
     public async Task GetById_ShouldReturnNotFound_WhenCoachDoesNotExist()
     {
-        _serviceMock.Setup(s => s.GetByIdAsync(99)).ReturnsAsync((Coach?)null);
+        _serviceMock.Setup(s => s.GetDtoByIdAsync(99)).ReturnsAsync((CoachDetailsDto?)null);
 
         var result = await _controller.GetById(99);
 

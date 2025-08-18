@@ -1,4 +1,5 @@
 using HorsesForCourses.Core;
+using HorsesForCourses.WebApi.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace HorsesForCourses.WebApi.Data
@@ -27,9 +28,19 @@ namespace HorsesForCourses.WebApi.Data
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task<IEnumerable<Coach>> GetAllAsync()
+        public async Task<IEnumerable<CoachSummaryResponse>> GetAllAsync()
         {
-            return await _context.Coaches.ToListAsync();
+            return await _context.Coaches
+                .AsNoTracking()
+                .OrderBy(p => p.Name).ThenBy(p => p.Id)
+                .Select(p => new CoachSummaryResponse
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Email = p.Email,
+                    NumberOfCoursesAssignedTo = p.AssignedCourses.Count
+                })
+                .ToListAsync();
         }
 
         public void Remove(int id)
@@ -55,6 +66,20 @@ namespace HorsesForCourses.WebApi.Data
         public void Update(Coach coach)
         {
             _context.Coaches.Update(coach);
+        }
+
+        public async Task<CoachDetailsDto?> GetDtoByIdAsync(int id)
+        {
+            return await _context.Coaches
+                .AsNoTracking()
+                .Select(p => new CoachDetailsDto
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Email = p.Email,
+                    // skills , courses
+                })
+                .FirstOrDefaultAsync(a => a.Id == id);
         }
     }
 }

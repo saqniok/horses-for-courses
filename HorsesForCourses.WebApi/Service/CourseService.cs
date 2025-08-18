@@ -1,10 +1,11 @@
 using HorsesForCourses.Core;
+using HorsesForCourses.WebApi.DTOs;
 
 namespace HorsesForCourses.WebApi.Service
 {
     public interface ICourseService
     {
-        Task<IEnumerable<Course>> GetAllAsync();
+        Task<IEnumerable<CourseDto>> GetAllAsync();
         Task<Course?> GetByIdAsync(int id);
         Task CreateAsync(Course course);
         Task UpdateAsync(Course course);
@@ -19,7 +20,7 @@ namespace HorsesForCourses.WebApi.Service
             _courseRepository = courseRepository;
         }
 
-        public async Task<IEnumerable<Course>> GetAllAsync()
+        public async Task<IEnumerable<CourseDto>> GetAllAsync()
         {
             return await _courseRepository.GetAllAsync();
         }

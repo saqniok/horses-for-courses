@@ -20,7 +20,7 @@ public class CourseController : ControllerBase
     public async Task<ActionResult<IEnumerable<CourseDto>>> GetAll()
     {
         var courses = await _courseService.GetAllAsync();
-        return Ok(courses.Select(CourseMapper.ToDto));
+        return Ok(courses);
     }
 
     [HttpGet("{id}")]
@@ -30,17 +30,17 @@ public class CourseController : ControllerBase
         if (course == null)
             return NotFound();
 
-        return Ok(CourseMapper.ToDto(course));
+        return Ok(course);
     }
 
 
     [HttpPost]
-    public async Task<ActionResult> Add([FromBody] CreateCourseDto dto)
+    public async Task<ActionResult> Add([FromBody] CreateCourseRequest dto)
     {
         var course = CourseMapper.ToDomain(dto);
         await _courseService.CreateAsync(course);
-        var result = CourseMapper.ToDto(course);
-        return CreatedAtAction(nameof(GetById), new { id = course.Id }, result);
+
+        return CreatedAtAction(nameof(GetById), new { id = course.Id });
     }
 
     [HttpPut("{id}/skills")]
@@ -90,7 +90,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost("{id}/assigncoach")]
-    public async Task<ActionResult> AssignCoach(int id, [FromBody] AssignCoachDto dto)
+    public async Task<ActionResult> AssignCoach(int id, [FromBody] AssignCoachRequest dto)
     {
         var course = await _courseService.GetByIdAsync(id);
         if (course == null)
@@ -111,7 +111,7 @@ public class CourseController : ControllerBase
     [HttpGet("paged")]
     public async Task<ActionResult<PagedResult<Course>>> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 25, CancellationToken ct = default)
     {
-        var request = new PageRequest(page, pageSize); 
+        var request = new PageRequest(page, pageSize);
         var result = await _courseService.GetPagedAsync(request, ct);
         return Ok(result);
     }

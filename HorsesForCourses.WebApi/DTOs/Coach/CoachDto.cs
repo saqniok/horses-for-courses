@@ -1,6 +1,6 @@
 using HorsesForCourses.WebApi.DTOs;
 
-public class CreateCoachDto
+public class CreateCoachRequest
 {
     public required string Name { get; set; }
     public required string Email { get; set; }
@@ -12,7 +12,7 @@ public class UpdateCoachSkillsDto
 }
 
 
-public class CoachSummaryDto
+public class CoachSummaryResponse
 {
     public int Id { get; set; }
     public required string Name { get; set; }

@@ -1,3 +1,4 @@
+using HorsesForCourses.Core;
 using HorsesForCourses.WebApi.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,30 +14,37 @@ public class CoachController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> Add([FromBody] CreateCoachDto dto)
+    public async Task<ActionResult<CoachSummaryResponse>> Add([FromBody] CreateCoachRequest dto)
     {
-        var coach = CoachMapper.ToDomain(dto);
+        var coach = new Coach(dto.Name, dto.Email);
         await _coachService.CreateAsync(coach);
 
-        var result = CoachMapper.ToCoachSummaryDto(coach);
-        return CreatedAtAction(nameof(GetById), new { id = coach.Id }, result);
+        var resultDto = new CoachSummaryResponse
+        {
+            Id = coach.Id,
+            Name = coach.Name,
+            Email = coach.Email,
+            NumberOfCoursesAssignedTo = coach.AssignedCourses.Count
+        };
+
+        return CreatedAtAction(nameof(GetById), new { id = coach.Id }, resultDto);
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CoachSummaryDto>>> GetAll()
+    public async Task<ActionResult<IEnumerable<CoachSummaryResponse>>> GetAll()
     {
         var coaches = await _coachService.GetAllAsync();
-        return Ok(coaches.Select(CoachMapper.ToCoachSummaryDto));
+        return Ok(coaches);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<CoachDetailsDto>> GetById(int id)
     {
-        var coach = await _coachService.GetByIdAsync(id);
+        var coach = await _coachService.GetDtoByIdAsync(id);
         if (coach == null)
             return NotFound();
 
-        return Ok(CoachMapper.ToCoachDetailsDto(coach));
+        return Ok(coach);
     }
 
     [HttpPost("{id}/skills")]
@@ -45,8 +53,7 @@ public class CoachController : ControllerBase
         var coach = await _coachService.GetByIdAsync(id);
         if (coach == null)
             return NotFound();
-
-        CoachMapper.UpdateSkills(coach, dto);
+        coach.UpdateSkills(dto.Skills);
         await _coachService.UpdateAsync(coach);
 
         return NoContent();

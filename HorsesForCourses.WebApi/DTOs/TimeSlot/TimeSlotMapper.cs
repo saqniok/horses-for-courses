@@ -16,13 +16,13 @@ public static class TimeSlotMapper
         };
     }
 
-    public static IEnumerable<TimeSlot> ToDomain(this IEnumerable<TimeSlotDto> dtos)
-    {
-        return dtos.Select(dto => dto.ToDomain());
-    }
+    // public static IEnumerable<TimeSlot> ToDomain(this IEnumerable<TimeSlotDto> dtos)
+    // {
+    //     return dtos.Select(dto => dto.ToDomain());
+    // }
 
-    public static IEnumerable<TimeSlotDto> ToDto(this IEnumerable<TimeSlot> slots)
-    {
-        return slots.Select(ts => ts.ToDto());
-    }
+    // public static IEnumerable<TimeSlotDto> ToDto(this IEnumerable<TimeSlot> slots)
+    // {
+    //     return slots.Select(ts => ts.ToDto());
+    // }
 }
