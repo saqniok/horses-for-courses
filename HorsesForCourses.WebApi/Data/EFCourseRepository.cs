@@ -45,13 +45,13 @@ namespace HorsesForCourses.WebApi.Data
         {
             return await _context.Courses
                 .Include(c => c.AssignedCoach)
-                .OrderBy(c => c.Id)                // ⚠ обязательно сортируем
-                .ToPagedResultAsync(request, ct); // используем твой helper
+                .OrderBy(c => c.Id)                
+                .ToPagedResultAsync(request, ct); 
         }
 
         public void Clear()
         {
-            _context.Courses.RemoveRange(_context.Courses); // This will clear all courses
+            _context.Courses.RemoveRange(_context.Courses); 
         }
 
         public async Task SaveChangesAsync()

@@ -19,19 +19,19 @@ public static class Converters
             c => c == null ? new HashSet<string>() : new HashSet<string>(c)
         );
 
-    public static ValueConverter<List<string>, string> ListToString()
-        => new ValueConverter<List<string>, string>(
-            v => string.Join(';', v),
-            v => string.IsNullOrWhiteSpace(v)
-                    ? new List<string>()
-                    : v.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList()
-        );
+    // public static ValueConverter<List<string>, string> ListToString()
+    //     => new ValueConverter<List<string>, string>(
+    //         v => string.Join(';', v),
+    //         v => string.IsNullOrWhiteSpace(v)
+    //                 ? new List<string>()
+    //                 : v.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList()
+    //     );
 
-    public static ValueComparer<List<string>> ListComparer()
-        => new ValueComparer<List<string>>(
-            (c1, c2) => (c1 ?? new List<string>()).SequenceEqual(c2 ?? new List<string>()),
-            c => (c ?? new List<string>()).Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-            c => c == null ? new List<string>() : c.ToList()
-        );
+    // public static ValueComparer<List<string>> ListComparer()
+    //     => new ValueComparer<List<string>>(
+    //         (c1, c2) => (c1 ?? new List<string>()).SequenceEqual(c2 ?? new List<string>()),
+    //         c => (c ?? new List<string>()).Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+    //         c => c == null ? new List<string>() : c.ToList()
+    //     );
 
 }

@@ -72,12 +72,13 @@ namespace HorsesForCourses.WebApi.Data
         {
             return await _context.Coaches
                 .AsNoTracking()
-                .Select(p => new CoachDetailsDto
+                .Select(c => new CoachDetailsDto
                 {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Email = p.Email,
-                    // skills , courses
+                    Id = c.Id,
+                    Name = c.Name,
+                    Email = c.Email,
+                    Skills = c.Skills.ToList(),
+                    Courses = c.AssignedCourses.Select(ac => new CourseShortDto { Id = ac.Id, Title = ac.Title }).ToList()
                 })
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
