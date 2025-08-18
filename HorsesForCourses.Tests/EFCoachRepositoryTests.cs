@@ -1,7 +1,10 @@
 
+using Castle.Components.DictionaryAdapter;
 using HorsesForCourses.Core;
 using HorsesForCourses.WebApi.Data;
 using Microsoft.EntityFrameworkCore;
+using QuickAcid;
+using QuickFuzzr;
 
 
 public class EFCoachRepositoryTests
@@ -17,21 +20,29 @@ public class EFCoachRepositoryTests
     [Fact]
     public async Task AddAndGetById_ShouldWorkCorrectly()
     {
-        await using var context = CreateDbContext();
-        var repo = new EFCoachRepository(context);
+        for (int i = 1000; i < 1000; i++)
+        {
+            var coach = new Coach("John Doe", "john@example.com");
+            await using (var context = CreateDbContext())
+            {
+                var repo = new EFCoachRepository(context);
+                await repo.AddAsync(coach);
+                await repo.SaveChangesAsync();
+            }
 
-        var coach = new Coach("John Doe", "john@example.com");
+            await using (var context = CreateDbContext())
+            {
+                var repo = new EFCoachRepository(context);
+                var fetched = await repo.GetByIdAsync(coach.Id);
 
-        await repo.AddAsync(coach);
-        await repo.SaveChangesAsync();
+                Assert.NotNull(fetched);
+                Assert.Equal("John Doe", fetched!.Name);
+                Assert.Equal("john@example.com", fetched.Email);
+            }
 
-        var fetched = await repo.GetByIdAsync(coach.Id);
+        }
 
-        Assert.NotNull(fetched);
-        Assert.Equal("John Doe", fetched!.Name);
-        Assert.Equal("john@example.com", fetched.Email);
     }
-
 
     [Fact]
     public async Task Remove_ShouldRemoveCoach()
