@@ -28,6 +28,14 @@ namespace HorsesForCourses.WebApi.Data
             return await _context.Courses.Include(c => c.AssignedCoach).ToListAsync();
         }
 
+        public async Task<PagedResult<Course>> GetPagedAsync(PageRequest request, CancellationToken ct = default)
+        {
+            return await _context.Courses
+                .Include(c => c.AssignedCoach)
+                .OrderBy(c => c.Id)                // ⚠ обязательно сортируем
+                .ToPagedResultAsync(request, ct); // используем твой helper
+        }
+        
         public void Clear()
         {
             _context.Courses.RemoveRange(_context.Courses); // This will clear all courses

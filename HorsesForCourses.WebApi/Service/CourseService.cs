@@ -8,6 +8,7 @@ namespace HorsesForCourses.WebApi.Service
         Task<Course?> GetByIdAsync(int id);
         Task CreateAsync(Course course);
         Task UpdateAsync(Course course);
+        Task<PagedResult<Course>> GetPagedAsync(PageRequest request, CancellationToken ct = default);
     }
     public class CourseService : ICourseService
     {
@@ -38,6 +39,11 @@ namespace HorsesForCourses.WebApi.Service
         {
             _courseRepository.Update(course);
             await _courseRepository.SaveChangesAsync();
+        }
+
+        public async Task<PagedResult<Course>> GetPagedAsync(PageRequest request, CancellationToken ct = default)
+        {
+            return await _courseRepository.GetPagedAsync(request, ct);
         }
     }
 }

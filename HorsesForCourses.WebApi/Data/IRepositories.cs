@@ -16,6 +16,7 @@ public interface ICourseRepository
     Task AddAsync(Course course);
     Task <Course?> GetByIdAsync(int id);
     Task <IEnumerable<Course>> GetAllAsync();
+    Task<PagedResult<Course>> GetPagedAsync(PageRequest request, CancellationToken ct = default);
     void Clear();
     void Update(Course course);
     Task SaveChangesAsync();

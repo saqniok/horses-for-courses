@@ -42,7 +42,7 @@ public class CourseController : ControllerBase
         var result = CourseMapper.ToDto(course);
         return CreatedAtAction(nameof(GetById), new { id = course.Id }, result);
     }
-    
+
     [HttpPut("{id}/skills")]
     public async Task<ActionResult> UpdateSkills(int id, [FromBody] IEnumerable<string> skills)
     {
@@ -107,4 +107,13 @@ public class CourseController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpGet("paged")]
+    public async Task<ActionResult<PagedResult<Course>>> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 25, CancellationToken ct = default)
+    {
+        var request = new PageRequest(page, pageSize); 
+        var result = await _courseService.GetPagedAsync(request, ct);
+        return Ok(result);
+    }
+
 }
