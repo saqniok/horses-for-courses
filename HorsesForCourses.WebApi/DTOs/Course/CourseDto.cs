@@ -20,6 +20,7 @@ public class CourseShortDto
 }
 
 public record CreateCourseRequest(
+    
     [Required, StringLength(100)]
     string Title,
 

@@ -37,10 +37,16 @@ public class CourseController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> Add([FromBody] CreateCourseRequest dto)
     {
-        var course = CourseMapper.ToDomain(dto);
+        var course = new Course(dto.Title, new TimeDay(dto.startDate, dto.endDate));
         await _courseService.CreateAsync(course);
 
-        return CreatedAtAction(nameof(GetById), new { id = course.Id });
+        var resultDto = new CourseDto(
+            course.Id,
+            course.Title,
+            course.Period.StartDate,
+            course.Period.EndDate);
+
+        return CreatedAtAction(nameof(GetById), new { id = course.Id }, resultDto);
     }
 
     [HttpPut("{id}/skills")]
