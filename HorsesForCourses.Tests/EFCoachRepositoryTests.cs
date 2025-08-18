@@ -14,23 +14,27 @@ public class EFCoachRepositoryTests
         return new AppDbContext(options);
     }
 
-    [Fact]
-    public async Task AddAndGetById_ShouldWorkCorrectly()
-    {
-        await using var context = CreateDbContext();
-        var repo = new EFCoachRepository(context);
+[Fact]
+public async Task AddAndGetById_ShouldWorkCorrectly()
+{
+    await using var context = CreateDbContext();
+    var repo = new EFCoachRepository(context);
 
-        var coach = new Coach("John Doe", "john@example.com");
+    var coach = new Coach("John Doe", "john@example.com");
 
-        await repo.AddAsync(coach);
-        await repo.SaveChangesAsync();
+    await repo.AddAsync(coach);
+    await repo.SaveChangesAsync();
 
-        var fetched = await repo.GetByIdAsync(coach.Id);
+    var fetched = await repo.GetByIdAsync(coach.Id);
 
-        Assert.NotNull(fetched);
-        Assert.Equal("John Doe", fetched!.Name);
-        Assert.Equal("john@example.com", fetched.Email);
-    }
+    Assert.NotNull(fetched);
+    Assert.Equal(coach.Id, fetched!.Id);
+    Assert.Equal("John Doe", fetched.Name);
+    Assert.Equal("john@example.com", fetched.Email);
+
+    Assert.Equal(1, await context.Coaches.CountAsync());
+}
+
 
 
     [Fact]

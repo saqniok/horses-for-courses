@@ -38,28 +38,30 @@ public class CourseControllerTests
     }
 
     [Fact]
-    public async Task AddTimeSlot_ReturnsNoContent_WhenCourseExists()
+    public async Task UpdateTimeSlots_ReplacesOldSlotsWithNew_OnExistingCourse()
     {
-        // Arrange
         var course = new Course("Test", new TimeDay(default, default)) { Id = 1 };
+        course.AddTimeSlot(new TimeSlot(WeekDay.Tuesday, 14, 15));
+
         _courseServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(course);
         _courseServiceMock.Setup(s => s.UpdateAsync(course)).Returns(Task.CompletedTask);
 
-        var dto = new TimeSlotDto
+        var dtos = new List<TimeSlotDto>
         {
-            Day = WeekDay.Monday,
-            Start = 9,
-            End = 10
+            new TimeSlotDto { Day = WeekDay.Monday, Start = 9, End = 10 },
+            new TimeSlotDto { Day = WeekDay.Friday, Start = 16, End = 17 }
         };
 
-        // Act
-        var result = await _controller.AddTimeSlot(1, dto);
+        var result = await _controller.UpdateTimeSlots(1, dtos);
 
-        // Assert
         Assert.IsType<NoContentResult>(result);
         _courseServiceMock.Verify(s => s.UpdateAsync(course), Times.Once);
-        Assert.Single(course.Schedule);
+
+        Assert.Equal(2, course.Schedule.Count);
+        Assert.Contains(course.Schedule, ts => ts.Day == WeekDay.Monday && ts.Start == 9 && ts.End == 10);
+        Assert.Contains(course.Schedule, ts => ts.Day == WeekDay.Friday && ts.Start == 16 && ts.End == 17);
     }
+
 
     [Fact]
     public async Task ConfirmCourse_ReturnsNoContent_WhenCourseExists()

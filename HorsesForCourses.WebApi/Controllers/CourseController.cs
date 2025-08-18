@@ -69,18 +69,20 @@ public class CourseController : ControllerBase
         return NoContent();
     }
     [HttpPost("{id}/timeslots")]
-    public async Task<ActionResult> AddTimeSlot(int id, [FromBody] TimeSlotDto dto)
+    public async Task<ActionResult> UpdateTimeSlots(int id, [FromBody] List<TimeSlotDto> dtos)
     {
         var course = await _courseService.GetByIdAsync(id);
         if (course == null)
             return NotFound();
 
-        course.AddTimeSlot(new TimeSlot(dto.Day, dto.Start, dto.End));
+        var newTimeSlots = dtos.Select(dto => new TimeSlot(dto.Day, dto.Start, dto.End));
+        course.UpdateTimeSlot(newTimeSlots);
 
         await _courseService.UpdateAsync(course);
 
         return NoContent();
     }
+
 
     [HttpPost("{id}/confirm")]
     public async Task<ActionResult> ConfirmCourse(int id)

@@ -1,5 +1,4 @@
 using HorsesForCourses.Core;
-using HorsesForCourses.WebApi.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
