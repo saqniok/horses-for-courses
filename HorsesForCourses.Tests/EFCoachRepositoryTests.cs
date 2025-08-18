@@ -1,10 +1,6 @@
-
-using Castle.Components.DictionaryAdapter;
 using HorsesForCourses.Core;
 using HorsesForCourses.WebApi.Data;
 using Microsoft.EntityFrameworkCore;
-using QuickAcid;
-using QuickFuzzr;
 
 
 public class EFCoachRepositoryTests
@@ -20,8 +16,6 @@ public class EFCoachRepositoryTests
     [Fact]
     public async Task AddAndGetById_ShouldWorkCorrectly()
     {
-        for (int i = 1000; i < 1000; i++)
-        {
             var coach = new Coach("John Doe", "john@example.com");
             await using (var context = CreateDbContext())
             {
@@ -39,9 +33,6 @@ public class EFCoachRepositoryTests
                 Assert.Equal("John Doe", fetched!.Name);
                 Assert.Equal("john@example.com", fetched.Email);
             }
-
-        }
-
     }
 
     [Fact]

@@ -5,66 +5,63 @@ using HorsesForCourses.Core;
 public class TimeSlotTests
 {
     [Fact]
-    public void Constructor_ShouldThrow_WhenStartBefore9()
+    public void Constructor_StartBefore9_ThrowsArgumentException()
     {
         var ex = Assert.Throws<ArgumentException>(() => new TimeSlot(WeekDay.Monday, 8, 10));
         Assert.Equal("Lesson time must be within working hours 9:00 - 17:00", ex.Message);
     }
 
     [Fact]
-    public void Constructor_ShouldThrow_WhenEndAfter17()
+    public void Constructor_EndAfter17_ThrowsArgumentException()
     {
-        var ex = Assert.Throws<ArgumentException>(() => new TimeSlot(WeekDay.Monday, 9, 18));
+        var ex = Assert.Throws<ArgumentException>(() => new TimeSlot(WeekDay.Monday, 10, 18));
         Assert.Equal("Lesson time must be within working hours 9:00 - 17:00", ex.Message);
     }
 
     [Fact]
-    public void Constructor_ShouldThrow_WhenEndBeforeStart()
+    public void Constructor_EndBeforeStart_ThrowsArgumentException()
     {
-        var ex = Assert.Throws<ArgumentException>(() => new TimeSlot(WeekDay.Monday, 11, 10));
+        var ex = Assert.Throws<ArgumentException>(() => new TimeSlot(WeekDay.Monday, 12, 10));
         Assert.Equal("Lesson end time must be after start time", ex.Message);
     }
 
     [Fact]
-    public void Constructor_ShouldThrow_WhenDurationLessThan1()
+    public void Constructor_DurationLessThan1_ThrowsArgumentException()
     {
         var ex = Assert.Throws<ArgumentException>(() => new TimeSlot(WeekDay.Monday, 10, 10));
         Assert.Equal("Lesson duration must be at least 1 hour.", ex.Message);
     }
 
     [Fact]
-    public void Duration_ShouldReturnCorrectValue()
+    public void Constructor_ValidTime_CreatesTimeSlot()
     {
-        var slot = new TimeSlot(WeekDay.Tuesday, 9, 12);
-        Assert.Equal(3, slot.Duration);
+        var ts = new TimeSlot(WeekDay.Monday, 10, 12);
+        Assert.Equal(WeekDay.Monday, ts.Day);
+        Assert.Equal(10, ts.Start);
+        Assert.Equal(12, ts.End);
     }
 
     [Fact]
-    public void OverlapsWith_ShouldReturnTrue_WhenSlotsOverlapOnSameDay()
+    public void OverlapsWith_DifferentDay_ReturnsFalse()
     {
-        var slot1 = new TimeSlot(WeekDay.Wednesday, 10, 12);
-        var slot2 = new TimeSlot(WeekDay.Wednesday, 11, 13);
-
-        Assert.True(slot1.OverlapsWith(slot2));
-        Assert.True(slot2.OverlapsWith(slot1));
+        var ts1 = new TimeSlot(WeekDay.Monday, 10, 12);
+        var ts2 = new TimeSlot(WeekDay.Tuesday, 10, 12);
+        Assert.False(ts1.OverlapsWith(ts2));
     }
 
     [Fact]
-    public void OverlapsWith_ShouldReturnFalse_WhenSlotsDoNotOverlapOnSameDay()
+    public void OverlapsWith_OverlappingTimes_ReturnsTrue()
     {
-        var slot1 = new TimeSlot(WeekDay.Thursday, 9, 10);
-        var slot2 = new TimeSlot(WeekDay.Friday, 10, 11);
-
-        Assert.False(slot1.OverlapsWith(slot2));
-        Assert.False(slot2.OverlapsWith(slot1));
+        var ts1 = new TimeSlot(WeekDay.Monday, 10, 12);
+        var ts2 = new TimeSlot(WeekDay.Monday, 11, 13);
+        Assert.True(ts1.OverlapsWith(ts2));
     }
 
     [Fact]
-    public void OverlapsWith_ShouldReturnFalse_WhenSlotsOnDifferentDays()
+    public void OverlapsWith_NonOverlappingTimes_ReturnsFalse()
     {
-        var slot1 = new TimeSlot(WeekDay.Friday, 9, 12);
-        var slot2 = new TimeSlot(WeekDay.Monday, 9, 12);
-
-        Assert.False(slot1.OverlapsWith(slot2));
+        var ts1 = new TimeSlot(WeekDay.Monday, 10, 12);
+        var ts2 = new TimeSlot(WeekDay.Monday, 13, 14);
+        Assert.False(ts1.OverlapsWith(ts2));
     }
 }

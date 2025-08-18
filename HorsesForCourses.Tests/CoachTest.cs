@@ -23,11 +23,9 @@ public class CoachTests
     {
         var coach = new Coach("Makaka", "Email@mail.com");
 
-        // Add skill
         coach.AddSkill("Dancing");
         Assert.Contains("dancing", coach.Skills);
-
-        // Add same skill
+        
         var addSameSkill = Assert.Throws<ArgumentException>(() => coach.AddSkill("Dancing"));
         Assert.Equal("Skill already added", addSameSkill.Message);
 

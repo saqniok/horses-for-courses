@@ -25,7 +25,7 @@ public class TimeSlot
         End = end;
     }
 
-    public int Duration => End - Start;
+    // public int Duration => End - Start;
 
     public bool OverlapsWith(TimeSlot other)
     {

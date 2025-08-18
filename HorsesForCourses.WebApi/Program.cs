@@ -22,7 +22,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(
         new JsonStringEnumConverter(null, allowIntegerValues: false));
 
-    options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+    // options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
