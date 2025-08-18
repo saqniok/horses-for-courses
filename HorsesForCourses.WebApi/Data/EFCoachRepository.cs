@@ -17,7 +17,7 @@ namespace HorsesForCourses.WebApi.Data
 
         public async Task AddAsync(Coach coach)
         {
-            // coach.Id = _nextId++;
+         //   coach.Id = _nextId++;
             await _context.Coaches.AddAsync(coach);
         }
 
