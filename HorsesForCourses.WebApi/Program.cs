@@ -22,7 +22,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(
         new JsonStringEnumConverter(null, allowIntegerValues: false));
 
-    // options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -33,17 +34,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-builder.Services.AddScoped<ICoachRepository, EFCoachRepository>();
-builder.Services.AddScoped<ICoachService, CoachService>();
-builder.Services.AddScoped<ICourseRepository, EFCourseRepository>();
-builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services
+    .AddScoped<ICoachRepository, EFCoachRepository>()
+    .AddScoped<ICoachService, CoachService>()
+    .AddScoped<ICourseRepository, EFCourseRepository>()
+    .AddScoped<ICourseService, CourseService>();
 
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    // dbContext.Database.Migrate();
 }
 
 if (app.Environment.IsDevelopment())

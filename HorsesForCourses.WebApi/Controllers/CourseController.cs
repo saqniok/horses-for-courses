@@ -117,7 +117,10 @@ public class CourseController : ControllerBase
     }
 
     [HttpGet("paged")]
-    public async Task<ActionResult<PagedResult<Course>>> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 25, CancellationToken ct = default)
+    public async Task<ActionResult<PagedResult<Course>>> GetPaged(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 25,
+        CancellationToken ct = default)
     {
         var request = new PageRequest(page, pageSize);
         var result = await _courseService.GetPagedAsync(request, ct);
