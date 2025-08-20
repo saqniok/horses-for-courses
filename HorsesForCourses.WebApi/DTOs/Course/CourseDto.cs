@@ -7,13 +7,13 @@ public record CourseDto(
     string Title,
     DateOnly StartDate,
     DateOnly EndDate,
-    List<string>? RequiredSkills = null,
-    List<TimeSlotDto>? Schedule = null,
+    IReadOnlyList<string>? RequiredSkills = null,
+    IReadOnlyList<TimeSlotDto>? Schedule = null,
     bool IsConfirmed = false,
     CoachShortDto? Coach = null
 );
 
-public class CourseShortDto
+public record CourseShortDto
 {
     public int Id { get; set; }
     public required string Title { get; set; }
@@ -32,15 +32,15 @@ public record CreateCourseRequest(
 );
 
 
-public record UpdateCourseSkillsDto(
-    [Required]
-    List<string> Skills
-);
+// public record UpdateCourseSkillsDto(
+//     [Required]
+//     List<string> Skills
+// );
 
-public record UpdateCourseScheduleDto(
-    [Required]
-    List<TimeSlotDto> TimeSlots
-);
+// public record UpdateCourseScheduleDto(
+//     [Required]
+//     List<TimeSlotDto> TimeSlots
+// );
 
 public record AssignCoachRequest(
     [Required]
