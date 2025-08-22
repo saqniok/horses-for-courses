@@ -1,5 +1,3 @@
-
-
 namespace HorsesForCourses.Core;
 
 
@@ -33,8 +31,13 @@ public class Coach
     public void UpdateSkills(IEnumerable<string> newSkills)
     {
         Skills.Clear();
-
         newSkills.ToList().ForEach(skill => Skills.Add((skill)));
+    }
+
+    public void UpdateDetails(string name, string email)
+    {
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Email = email ?? throw new ArgumentNullException(nameof(email));
     }
 
     public bool HasAllSkills(IEnumerable<string> requiredSkills)

@@ -1,5 +1,7 @@
 using HorsesForCourses.Core;
 using Microsoft.AspNetCore.Mvc;
+using HorsesForCourses.WebApi.Service;
+namespace HorsesForCourses.WebApi.Controllers;
 
 [ApiController]
 [Route("coaches")]
@@ -54,6 +56,31 @@ public class CoachController : ControllerBase
             return NotFound();
         coach.UpdateSkills(dto.Skills);
         await _coachService.UpdateAsync(coach);
+
+        return NoContent();
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Update(int id, [FromBody] CoachDetailsDto dto)
+    {
+        var coach = await _coachService.GetByIdAsync(id);
+        if (coach == null)
+            return NotFound();
+
+        coach.UpdateDetails(dto.Name, dto.Email);
+        await _coachService.UpdateAsync(coach);
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        var coach = await _coachService.GetByIdAsync(id);
+        if (coach == null)
+            return NotFound();
+
+        await _coachService.DeleteAsync(id);
 
         return NoContent();
     }

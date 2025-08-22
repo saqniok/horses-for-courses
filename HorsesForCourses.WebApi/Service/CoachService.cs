@@ -1,17 +1,18 @@
 using HorsesForCourses.Core;
 using HorsesForCourses.WebApi.DTOs;
 
-public interface ICoachService
-{
-    Task<IEnumerable<CoachSummaryResponse>> GetAllAsync();
-    Task<Coach?> GetByIdAsync(int id);
-    Task CreateAsync(Coach coach);
-    Task UpdateAsync(Coach coach);
-    Task<CoachDetailsDto?> GetDtoByIdAsync(int id);
-}
-
 namespace HorsesForCourses.WebApi.Service
 {
+    public interface ICoachService
+    {
+        Task<IEnumerable<CoachSummaryResponse>> GetAllAsync();
+        Task<Coach?> GetByIdAsync(int id);
+        Task CreateAsync(Coach coach);
+        Task UpdateAsync(Coach coach);
+        Task<CoachDetailsDto?> GetDtoByIdAsync(int id);
+        Task DeleteAsync(int id);
+    }
+
     public class CoachService : ICoachService
     {
         private readonly ICoachRepository _coachRepository;
@@ -45,6 +46,12 @@ namespace HorsesForCourses.WebApi.Service
         public async Task<CoachDetailsDto?> GetDtoByIdAsync(int id)
         {
             return await _coachRepository.GetDtoByIdAsync(id);
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            _coachRepository.Remove(id);
+            await _coachRepository.SaveChangesAsync();
         }
     }
 }

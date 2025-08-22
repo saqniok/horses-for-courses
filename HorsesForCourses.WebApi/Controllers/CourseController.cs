@@ -3,6 +3,8 @@ using HorsesForCourses.Core;
 using HorsesForCourses.WebApi.Service;
 using HorsesForCourses.WebApi.DTOs;
 
+namespace HorsesForCourses.WebApi.Controllers;
+
 [ApiController]
 [Route("courses")]
 public class CourseController : ControllerBase
