@@ -40,6 +40,11 @@ public class Coach
         Email = email ?? throw new ArgumentNullException(nameof(email));
     }
 
+    public void RemoveSkill(string skill)
+    {
+        Skills.Remove(skill);
+    }
+
     public bool HasAllSkills(IEnumerable<string> requiredSkills)
         => requiredSkills.All(skill => Skills.Contains(skill));
 

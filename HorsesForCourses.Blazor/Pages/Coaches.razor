@@ -107,7 +107,7 @@ else
                             <div class="mb-3">
                                 @foreach (var skill in editingCoach.Skills)
                                 {
-                                    <span class="badge bg-secondary me-1">@skill</span>
+                                    <span class="badge bg-secondary me-1" @onclick="() => RemoveSkill(editingCoach, skill)" style="cursor: pointer;">@skill</span>
                                 }
                                 <InputText class="form-control mt-2" placeholder="Add skill" @bind-Value="newSkill" @onkeydown="(e) => AddSkillOnEnter(e, editingCoach)" />
                                 <button type="button" class="btn btn-sm btn-success mt-2" @onclick="() => AddSkill(editingCoach)">Add Skill</button>
@@ -244,6 +244,19 @@ else
             {
                 error = ex.Message;
             }
+        }
+    }
+
+    private async Task RemoveSkill(CoachDetailsDto coach, string skillToRemove)
+    {
+        try
+        {
+            await CoachService.RemoveCoachSkillAsync(coach.Id, skillToRemove);
+            coach.Skills.Remove(skillToRemove);
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
         }
     }
 }

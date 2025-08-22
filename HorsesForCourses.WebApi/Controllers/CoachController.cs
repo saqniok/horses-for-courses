@@ -84,4 +84,18 @@ public class CoachController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpDelete("{id}/skills/{skill}")]
+    public async Task<ActionResult> RemoveSkill(int id, string skill)
+    {
+        try
+        {
+            await _coachService.RemoveSkillAsync(id, skill);
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
 }

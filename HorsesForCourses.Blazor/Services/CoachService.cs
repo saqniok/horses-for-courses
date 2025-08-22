@@ -59,4 +59,10 @@ public class CoachService : ICoachService
         var response = await _httpClient.DeleteAsync($"coaches/{id}");
         response.EnsureSuccessStatusCode();
     }
+
+    public async Task RemoveCoachSkillAsync(int id, string skill)
+    {
+        var response = await _httpClient.DeleteAsync($"coaches/{id}/skills/{skill}");
+        response.EnsureSuccessStatusCode();
+    }
 }

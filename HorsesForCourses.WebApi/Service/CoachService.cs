@@ -11,6 +11,7 @@ namespace HorsesForCourses.WebApi.Service
         Task UpdateAsync(Coach coach);
         Task<CoachDetailsDto?> GetDtoByIdAsync(int id);
         Task DeleteAsync(int id);
+        Task RemoveSkillAsync(int id, string skill);
     }
 
     public class CoachService : ICoachService
@@ -51,6 +52,16 @@ namespace HorsesForCourses.WebApi.Service
         public async Task DeleteAsync(int id)
         {
             _coachRepository.Remove(id);
+            await _coachRepository.SaveChangesAsync();
+        }
+
+        public async Task RemoveSkillAsync(int id, string skill)
+        {
+            var coach = await _coachRepository.GetByIdAsync(id);
+            if (coach == null)
+                throw new InvalidOperationException($"Coach with ID {id} not found.");
+
+            coach.RemoveSkill(skill);
             await _coachRepository.SaveChangesAsync();
         }
     }

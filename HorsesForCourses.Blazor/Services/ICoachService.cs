@@ -10,4 +10,5 @@ public interface ICoachService
     Task UpdateCoachAsync(int id, CoachDetailsDto coach);
     Task UpdateCoachSkillsAsync(int id, UpdateCoachSkillsDto skills);
     Task DeleteCoachAsync(int id);
+    Task RemoveCoachSkillAsync(int id, string skill);
 }
