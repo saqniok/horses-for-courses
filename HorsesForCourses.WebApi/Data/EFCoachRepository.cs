@@ -68,6 +68,15 @@ namespace HorsesForCourses.WebApi.Data
             _context.Coaches.Update(coach);
         }
 
+        public async Task DeleteAsync(int id)
+        {
+            var coach = await _context.Coaches.FindAsync(id);
+            if (coach != null)
+            {
+                _context.Coaches.Remove(coach);
+            }
+        }
+
         public async Task<CoachDetailsDto?> GetDtoByIdAsync(int id)
         {
             return await _context.Coaches

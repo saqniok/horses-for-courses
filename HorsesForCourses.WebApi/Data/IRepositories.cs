@@ -12,6 +12,7 @@ public interface ICoachRepository
     void Clear();
     void Update(Coach coach);
     Task SaveChangesAsync();
+    Task DeleteAsync(int id);
 }
 
 public interface ICourseRepository
@@ -20,9 +21,8 @@ public interface ICourseRepository
     Task<Course?> GetByIdAsync(int id);
     Task<IEnumerable<CourseDto>> GetAllAsync();
     Task<PagedResult<Course>> GetPagedAsync(PageRequest request, CancellationToken ct = default);
+    Task DeleteAsync(int id);
     void Clear();
     void Update(Course course);
     Task SaveChangesAsync();
 }
-
-

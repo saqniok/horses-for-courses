@@ -1,4 +1,5 @@
 using HorsesForCourses.Core;
+using HorsesForCourses.WebApi.Data;
 using HorsesForCourses.WebApi.DTOs;
 
 namespace HorsesForCourses.WebApi.Service
@@ -9,6 +10,7 @@ namespace HorsesForCourses.WebApi.Service
         Task<Course?> GetByIdAsync(int id);
         Task CreateAsync(Course course);
         Task UpdateAsync(Course course);
+        Task DeleteAsync(int id);
         Task<PagedResult<Course>> GetPagedAsync(PageRequest request, CancellationToken ct = default);
     }
     public class CourseService : ICourseService
@@ -45,6 +47,12 @@ namespace HorsesForCourses.WebApi.Service
         public async Task<PagedResult<Course>> GetPagedAsync(PageRequest request, CancellationToken ct = default)
         {
             return await _courseRepository.GetPagedAsync(request, ct);
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            await _courseRepository.DeleteAsync(id);
+            await _courseRepository.SaveChangesAsync();
         }
     }
 }

@@ -27,4 +27,22 @@ public class CourseService : ICourseService
         var result = await response.Content.ReadFromJsonAsync<List<CourseDto>>(_jsonSerializerOptions);
         return result ?? new List<CourseDto>();
     }
+
+    public async Task DeleteCourseAsync(int id)
+    {
+        var response = await _httpClient.DeleteAsync($"courses/{id}");
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task ConfirmCourseAsync(int id)
+    {
+        var response = await _httpClient.PostAsync($"courses/{id}/confirm", null);
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task AddCourseAsync(CreateCourseRequestDto course)
+    {
+        var response = await _httpClient.PostAsJsonAsync("courses", course, _jsonSerializerOptions);
+        response.EnsureSuccessStatusCode();
+    }
 }

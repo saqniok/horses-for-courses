@@ -64,5 +64,13 @@ namespace HorsesForCourses.WebApi.Data
             _context.Courses.Update(course);
         }
 
+        public async Task DeleteAsync(int id)
+        {
+            var course = await _context.Courses.FindAsync(id);
+            if (course != null)
+            {
+                _context.Courses.Remove(course);
+            }
+        }
     }
 }

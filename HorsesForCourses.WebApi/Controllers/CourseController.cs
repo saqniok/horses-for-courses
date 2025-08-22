@@ -129,4 +129,14 @@ public class CourseController : ControllerBase
         return Ok(result);
     }
 
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        var course = await _courseService.GetByIdAsync(id);
+        if (course == null)
+            return NotFound();
+
+        await _courseService.DeleteAsync(id);
+        return NoContent();
+    }
 }
