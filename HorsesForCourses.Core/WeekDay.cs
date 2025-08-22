@@ -2,9 +2,9 @@ namespace HorsesForCourses.Core;
 
 public enum WeekDay
 {
-    Monday,
-    Tuesday,
-    Wednesday,
-    Thursday,
-    Friday
+    Monday = 1,
+    Tuesday = 2,
+    Wednesday = 3,
+    Thursday = 4,
+    Friday = 5
 }

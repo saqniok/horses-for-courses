@@ -7,6 +7,7 @@ public class TimeDay
     public DateOnly StartDate { get; private set; }
     public DateOnly EndDate { get; private set; }
 
+
     // Constructors for EF
     private TimeDay() { }
 
@@ -21,5 +22,15 @@ public class TimeDay
     public bool OverlapsWith(TimeDay other)
     {
         return StartDate <= other.EndDate && EndDate >= other.StartDate;
+    }
+
+    public bool IncludesDay(WeekDay day)
+    {
+        for (var date = StartDate; date <= EndDate; date = date.AddDays(1))
+        {
+            if (date.DayOfWeek == (DayOfWeek)day)
+                return true;
+        }
+        return false;
     }
 }

@@ -1,46 +1,51 @@
 @page "/courses"
-@inject HorsesForCourses.Blazor.Services.CourseService CourseService
+@using HorsesForCourses.WebApi.DTOs
+@using System.Net.Http.Json
+@inject HttpClient Http
 
-<h3>Список курсов</h3>
+<h3>Courses</h3>
 
 @if (courses == null)
 {
-    <p>Загрузка...</p>
-}
-else if (!courses.Any())
-{
-    <p>Курсы не найдены.</p>
+    <p><em>Loading...</em></p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var course in courses)
-            {
-                <tr>
-                    <td>@course.Id</td>
-                    <td>@course.Title</td>
-                    <td>@course.StartDate.ToShortDateString()</td>
-                    <td>@course.EndDate.ToShortDateString()</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <ul>
+        @foreach (var course in courses)
+        {
+            <li>@course.Title (@course.StartDate.ToShortDateString() - @course.EndDate.ToShortDateString())</li>
+        }
+    </ul>
+
+    <div>
+        <input @bind="newCourse.Title" placeholder="Title" />
+        <input type="date" @bind="newCourse.startDate" />
+        <input type="date" @bind="newCourse.endDate" />
+        <button @onclick="AddCourse">Add Course</button>
+    </div>
 }
 
 @code {
     private List<CourseDto>? courses;
+    private CreateCourseRequest newCourse = new("", DateOnly.FromDateTime(DateTime.Now), DateOnly.FromDateTime(DateTime.Now.AddMonths(1)));
 
     protected override async Task OnInitializedAsync()
     {
-        courses = await CourseService.GetCoursesAsync();
+        courses = await Http.GetFromJsonAsync<List<CourseDto>>("courses");
+    }
+
+    private async Task AddCourse()
+    {
+        var response = await Http.PostAsJsonAsync("courses", newCourse);
+        if (response.IsSuccessStatusCode)
+        {
+            var createdCourse = await response.Content.ReadFromJsonAsync<CourseDto>();
+            if (createdCourse != null)
+            {
+                courses?.Add(createdCourse);
+                newCourse = new("", DateOnly.FromDateTime(DateTime.Now), DateOnly.FromDateTime(DateTime.Now.AddMonths(1)));
+            }
+        }
     }
 }

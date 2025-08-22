@@ -40,7 +40,7 @@ public class CourseControllerTests
     [Fact]
     public async Task UpdateTimeSlots_ReplacesOldSlotsWithNew_OnExistingCourse()
     {
-        var course = new Course("Test", new TimeDay(default, default)) { Id = 1 };
+        var course = new Course("Test", new TimeDay(new DateOnly(2025, 3, 17), new DateOnly(2025, 3, 21))) { Id = 1 };
         course.AddTimeSlot(new TimeSlot(WeekDay.Tuesday, 14, 15));
 
         _courseServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(course);

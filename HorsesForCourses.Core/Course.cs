@@ -72,13 +72,11 @@ namespace HorsesForCourses.Core
         public void AddTimeSlot(TimeSlot timeSlot)
         {
             ConfirmConfrimation();
-            _schedule.Add(timeSlot);
-        }
 
-        public void RemoveTimeSlot(TimeSlot timeSlot)
-        {
-            ConfirmConfrimation();
-            _schedule.Remove(timeSlot);
+            if (!Period.IncludesDay(timeSlot.Day))
+                throw new InvalidOperationException("Cannot add a time slot for a day that is not included in the course duration.");
+           
+            _schedule.Add(timeSlot);
         }
 
         public void UpdateTimeSlot(IEnumerable<TimeSlot> newTimeSlots)

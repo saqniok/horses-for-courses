@@ -82,7 +82,7 @@ public class CourseController : ControllerBase
 
         return NoContent();
     }
-
+  
 
     [HttpPost("{id}/confirm")]
     public async Task<ActionResult> ConfirmCourse(int id)

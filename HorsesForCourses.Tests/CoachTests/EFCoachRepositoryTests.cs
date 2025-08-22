@@ -8,7 +8,7 @@ public class EFCoachRepositoryTests
     private AppDbContext CreateDbContext()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
         return new AppDbContext(options);
     }
@@ -16,23 +16,20 @@ public class EFCoachRepositoryTests
     [Fact]
     public async Task AddAndGetById_ShouldWorkCorrectly()
     {
+        await using (var context = CreateDbContext())
+        {
+            var repo = new EFCoachRepository(context);
+
             var coach = new Coach("John Doe", "john@example.com");
-            await using (var context = CreateDbContext())
-            {
-                var repo = new EFCoachRepository(context);
-                await repo.AddAsync(coach);
-                await repo.SaveChangesAsync();
-            }
+            await repo.AddAsync(coach);
+            await repo.SaveChangesAsync();
 
-            await using (var context = CreateDbContext())
-            {
-                var repo = new EFCoachRepository(context);
-                var fetched = await repo.GetByIdAsync(coach.Id);
+            var fetched = await repo.GetByIdAsync(coach.Id);
 
-                Assert.NotNull(fetched);
-                Assert.Equal("John Doe", fetched!.Name);
-                Assert.Equal("john@example.com", fetched.Email);
-            }
+            Assert.NotNull(fetched);
+            Assert.Equal("John Doe", fetched!.Name);
+            Assert.Equal("john@example.com", fetched.Email);
+        }
     }
 
     [Fact]
