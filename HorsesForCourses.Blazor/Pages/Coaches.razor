@@ -1,4 +1,5 @@
 @page "/coaches"
+@using HorsesForCourses.Blazor.Pages.Components
 
 <PageTitle>Coaches</PageTitle>
 
@@ -33,8 +34,10 @@ else
                     <td>@coach.Email</td>
                     <td>@coach.NumberOfCoursesAssignedTo</td>
                     <td>
-                        <button class="btn btn-sm btn-info" @onclick="() => ShowEditCoachModal(coach.Id)">Edit</button>
-                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteCoach(coach.Id)">Delete</button>
+                        <div style ="display: flex; gap: 0.5rem;"> @*держит в одной строке кнопки при смене размера стр*@
+                            <button class="btn btn-sm btn-info" @onclick="() => ShowEditCoachModal(coach.Id)">Edit</button>
+                            <button class="btn btn-sm btn-danger" @onclick="() => DeleteCoach(coach.Id)">Delete</button>
+                        </div>
                     </td>
                 </tr>
             }
@@ -44,78 +47,25 @@ else
 
 @if (showAddCoachModal)
 {
-    <div class="modal fade show d-block" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New Coach</h5>
-                    <button type="button" class="btn-close" @onclick="HideAddCoachModal"></button>
-                </div>
-                <div class="modal-body">
-                    <EditForm Model="@newCoach" OnValidSubmit="AddCoach">
-                        <DataAnnotationsValidator />
-                        <ValidationSummary />
-
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <InputText id="name" class="form-control" @bind-Value="newCoach.Name" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <InputText id="email" class="form-control" @bind-Value="newCoach.Email" />
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </EditForm>
-                </div>
-            </div>
-        </div>
-    </div>
+    <AddCoachForm  Coach="@newCoach" 
+                   OnValidSubmit="AddCoach" 
+                   OnClose="HideAddCoachModal" />
 }
 
-@if (showEditCoachModal)
+@if (showEditCoachModal && editingCoach != null)
 {
-    <div class="modal fade show d-block" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Coach</h5>
-                    <button type="button" class="btn-close" @onclick="HideEditCoachModal"></button>
-                </div>
-                <div class="modal-body">
-                    @if (editingCoach == null)
-                    {
-                        <p>Loading coach details...</p>
-                    }
-                    else
-                    {
-                        <EditForm Model="@editingCoach" OnValidSubmit="UpdateCoach">
-                            <DataAnnotationsValidator />
-                            <ValidationSummary />
+    <EditCoachForm Coach="@editingCoach"
+                   OnValidSubmit="UpdateCoach"
+                   OnClose="HideEditCoachModal"
+                   @bind-NewSkill="newSkill"
+                   OnAddSkillOnEnter="(e) => AddSkillOnEnter(e, editingCoach)"
+                   OnAddSkill="(() => AddSkill(editingCoach))"
+                   OnRemoveSkill="(tuple) => RemoveSkill(tuple.Item1, tuple.Item2)" />
+}
 
-                            <div class="mb-3">
-                                <label for="editName" class="form-label">Name</label>
-                                <InputText id="editName" class="form-control" @bind-Value="editingCoach.Name" />
-                            </div>
-                            <div class="mb-3">
-                                <label for="editEmail" class="form-label">Email</label>
-                                <InputText id="editEmail" class="form-control" @bind-Value="editingCoach.Email" />
-                            </div>
-
-                            <h6>Skills</h6>
-                            <div class="mb-3">
-                                @foreach (var skill in editingCoach.Skills)
-                                {
-                                    <span class="badge bg-secondary me-1" @onclick="() => RemoveSkill(editingCoach, skill)">@skill</span>
-                                }
-                                <InputText class="form-control mt-2" placeholder="Add skill" @bind-Value="newSkill" @onkeydown="(e) => AddSkillOnEnter(e, editingCoach)" />
-                                <button type="button" class="btn btn-sm btn-success mt-2" @onclick="() => AddSkill(editingCoach)">Add Skill</button>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                        </EditForm>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
+@if (showConfirmDeleteModal)
+{
+    <ConfirmDialog Message="You are sure you want to remove this coach?"
+                   OnConfirm="ConfirmDelete"
+                   OnCancel="CancelDelete" />
 }
