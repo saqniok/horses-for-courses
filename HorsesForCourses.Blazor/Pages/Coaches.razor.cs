@@ -12,10 +12,10 @@ namespace HorsesForCourses.Blazor.Pages
     public partial class Coaches
     {
         [Inject]
-        private ICoachService CoachService { get; set; }
+        private ICoachService? CoachService { get; set; }
 
         [Inject]
-        private IJSRuntime JSRuntime { get; set; }
+        private IJSRuntime? JSRuntime { get; set; }
 
         private List<CoachSummaryResponse>? coaches;
         private string? error;
