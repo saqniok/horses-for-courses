@@ -9,20 +9,27 @@
                 <button type="button" class="btn-close" @onclick="OnClose"></button>
             </div>
             <div class="modal-body">
-                <EditForm Model="@Coach" OnValidSubmit="OnValidSubmit">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
+                @if (Coach != null)
+                {
+                    <EditForm Model="@Coach" OnValidSubmit="OnValidSubmit">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
 
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Name</label>
-                        <InputText id="name" class="form-control" @bind-Value="Coach.Name" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <InputText id="email" class="form-control" @bind-Value="Coach.Email" />
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </EditForm>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <InputText id="name" class="form-control" @bind-Value="Coach.Name" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <InputText id="email" class="form-control" @bind-Value="Coach.Email" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </EditForm>
+                }
+                else
+                {
+                    <p>Loading form...</p>
+                }
             </div>
         </div>
     </div>
@@ -38,5 +45,3 @@
     [Parameter]
     public EventCallback OnClose { get; set; }
 }
-
-

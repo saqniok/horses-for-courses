@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
+using System.Linq; // Added for .Any()
 using System.Threading.Tasks;
 
 namespace HorsesForCourses.Blazor.Pages
@@ -40,6 +41,10 @@ namespace HorsesForCourses.Blazor.Pages
         private bool showConfirmDeleteModal = false;
         private int coachIdToDelete;
 
+        // Поля для расширяемых деталей тренера
+        private HashSet<int> expandedCoachIds = new HashSet<int>();
+        private Dictionary<int, CoachDetailsDto> coachDetailsCache = new Dictionary<int, CoachDetailsDto>();
+
         /// <summary>
         /// Метод жизненного цикла, вызываемый при инициализации компонента. Загружает список тренеров.
         /// </summary>
@@ -58,6 +63,8 @@ namespace HorsesForCourses.Blazor.Pages
                 // Используйте оператор подавления null, так как ожидается, что CoachService будет внедрен
                 coaches = await CoachService!.GetCoachesAsync();
                 error = null;
+                expandedCoachIds.Clear(); // Очистить развернутые элементы при перезагрузке
+                coachDetailsCache.Clear(); // Очистить кэш деталей при перезагрузке
             }
             catch (Exception ex)
             {
@@ -141,6 +148,11 @@ namespace HorsesForCourses.Blazor.Pages
                 await CoachService!.UpdateCoachAsync(editingCoach.Id, editingCoach);
                 await CoachService!.UpdateCoachSkillsAsync(editingCoach.Id, new UpdateCoachSkillsDto { Skills = editingCoach.Skills });
                 HideEditCoachModal();
+                // Обновить кэш деталей для измененного тренера
+                if (coachDetailsCache.ContainsKey(editingCoach.Id))
+                {
+                    coachDetailsCache[editingCoach.Id] = editingCoach; // Обновить кэшированные детали
+                }
                 await LoadCoaches();
             }
             catch (Exception ex)
@@ -196,6 +208,16 @@ namespace HorsesForCourses.Blazor.Pages
             {
                 // Используйте оператор подавления null, так как ожидается, что CoachService будет внедрен
                 await CoachService!.DeleteCoachAsync(coachIdToDelete);
+                // Удалить из кэша деталей, если он там есть
+                if (coachDetailsCache.ContainsKey(coachIdToDelete))
+                {
+                    coachDetailsCache.Remove(coachIdToDelete);
+                }
+                // Удалить из expandedCoachIds, если он там есть
+                if (expandedCoachIds.Contains(coachIdToDelete))
+                {
+                    expandedCoachIds.Remove(coachIdToDelete);
+                }
                 await LoadCoaches();
             }
             catch (Exception ex)
@@ -210,6 +232,37 @@ namespace HorsesForCourses.Blazor.Pages
         private void CancelDelete()
         {
             showConfirmDeleteModal = false;
+        }
+
+        /// <summary>
+        /// Переключает отображение подробной информации о тренере.
+        /// </summary>
+        /// <param name="coachId">Идентификатор тренера.</param>
+        private async Task ToggleCoachDetails(int coachId)
+        {
+            if (expandedCoachIds.Contains(coachId))
+            {
+                expandedCoachIds.Remove(coachId);
+            }
+            else
+            {
+                expandedCoachIds.Add(coachId);
+                // Загрузить детали тренера, если они еще не кэшированы
+                if (!coachDetailsCache.ContainsKey(coachId))
+                {
+                    try
+                    {
+                        var details = await CoachService!.GetCoachDetailsAsync(coachId);
+                        coachDetailsCache[coachId] = details;
+                    }
+                    catch (Exception ex)
+                    {
+                        error = ex.Message;
+                        // Если не удалось загрузить детали, удалить из expandedCoachIds, чтобы не показывать пустую секцию
+                        expandedCoachIds.Remove(coachId);
+                    }
+                }
+            }
         }
 
         /// <summary>
