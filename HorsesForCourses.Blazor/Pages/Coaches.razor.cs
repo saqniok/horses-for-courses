@@ -3,10 +3,6 @@ using HorsesForCourses.Blazor.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using System;
-using System.Collections.Generic;
-using System.Linq; // Added for .Any()
-using System.Threading.Tasks;
 
 namespace HorsesForCourses.Blazor.Pages
 {
@@ -147,12 +143,14 @@ namespace HorsesForCourses.Blazor.Pages
                 // Используйте оператор подавления null, так как ожидается, что CoachService будет внедрен
                 await CoachService!.UpdateCoachAsync(editingCoach.Id, editingCoach);
                 await CoachService!.UpdateCoachSkillsAsync(editingCoach.Id, new UpdateCoachSkillsDto { Skills = editingCoach.Skills });
-                HideEditCoachModal();
+
                 // Обновить кэш деталей для измененного тренера
                 if (coachDetailsCache.ContainsKey(editingCoach.Id))
                 {
                     coachDetailsCache[editingCoach.Id] = editingCoach; // Обновить кэшированные детали
                 }
+                
+                HideEditCoachModal(); // Move this line here
                 await LoadCoaches();
             }
             catch (Exception ex)
