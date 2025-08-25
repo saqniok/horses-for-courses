@@ -1,29 +1,88 @@
+@*Это Верхнаяя понель, Которая просто имеет кнопку, с ссылкой на начальную стр*@
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Horses for Courses</a>
     </div>
 </div>
+@* 
+navbar          # делает блок полосой навигации
+navbar-dark     # придает темный цвет
+ps-3            # отступ слева (padding-start = 1rem),
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+container-fluid     #   Это ещё один контейнер Bootstrap
+                        Этот класс создаёт "жидкий" (fluid) контейнер, 
+                        который растягивается на всю доступную ширину родительского элемента, 
+                        обеспечивая полную ширину содержимого.
+
+navbar-brand        #   Этот класс форматирует текст как бренд. По умолчанию он делает его больше и жирнее.
+href=""             #   Это атрибут гиперссылки. Пустое значение обычно означает, 
+                        что при клике на этот элемент будет осуществлён переход на главную страницу веб-приложения.
+*@
+
+
+@*
+Этот код создает боковую навигационную панель, 
+которая обычно используется для "гамбургер-меню" на мобильных устройствах. 
+Код использует HTML, CSS-классы из Bootstrap и компоненты Blazor, 
+что является ключевым для его функциональности.
+*@
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" /> @*под вопросом*@
+@*
+type="checkbox"             #   Это создает стандартный HTML-флажок, который можно включать и выключать. 
+                                В данном случае он не отображается как обычный флажок, 
+                                а используется для отслеживания состояния меню: открыто оно или закрыто.
+
+title="Navigation menu"     #   Это всплывающая подсказка, которая появляется при наведении на элемент. 
+                                Она также помогает пользователям, использующим специальные возможности 
+                                (например, скринридеры), понять назначение элемента.
+                                Для трекинга мышки, если юзер наводит курсов на ту облость, то область может 
+                                изменить цвет/показать попап/вывести доп инфу.
+
+class="navbar-toggler"      #   Это класс Bootstrap, который обычно используется для стилизации кнопки, 
+                                открывающей/закрывающей навигационное меню. 
+                                В сочетании с CSS этот флажок становится невидимым, а его состояние (включен/выключен)
+                                управляет отображением меню.
+*@
+
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                <span class="bi bi-house-door-fill" aria-hidden="true"></span> Home
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="coaches">
-                <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Coaches
+                <span class="bi bi-person-fill" aria-hidden="true"></span> Coaches
             </NavLink>
         </div>
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="courses">
-                <span class="bi bi-book-fill-nav-menu" aria-hidden="true"></span> Courses
+                <span class="bi bi-book-fill" aria-hidden="true"></span> Courses
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="contacts">
+                <span class="bi bi-telephone-fill" aria-hidden="true"></span> Contacts
             </NavLink>
         </div>
     </nav>
 </div>
+
+@* 
+navbar          # делает блок полосой навигации
+navbar-dark     # придает темный цвет
+ps-3            # отступ слева (padding-start = 1rem),
+*@
+@*
+
+
+ICONS from Bootstrap
+    bi bi-house-door-fill
+    bi bi-person-fill
+    bi bi-book-fill
+    bi bi-telephone-fill
+*@
