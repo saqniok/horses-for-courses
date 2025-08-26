@@ -1,5 +1,6 @@
 namespace HorsesForCourses.Core;
 
+using System.Globalization;
 
 public class Coach
 {
@@ -14,10 +15,18 @@ public class Coach
 
     public Coach(string name, string email)
     {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Name = FormatName(name);
         Email = email ?? throw new ArgumentNullException(nameof(email));
         Skills = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         AssignedCourses = new List<Course>();
+    }
+
+    private string FormatName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Coach name cannot be empty.", nameof(name));
+            
+        return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.ToLower());
     }
 
     public void AddSkill(string skill)
@@ -36,7 +45,7 @@ public class Coach
 
     public void UpdateDetails(string name, string email)
     {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
+        Name = FormatName(name);
         Email = email ?? throw new ArgumentNullException(nameof(email));
     }
 

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace HorsesForCourses.Blazor.Dtos;
 
 public class CoachSummaryResponse
@@ -10,7 +12,11 @@ public class CoachSummaryResponse
 
 public class CreateCoachRequest
 {
+    [Required(ErrorMessage = "Name is required.")]
     public required string Name { get; set; }
+
+    [Required(ErrorMessage = "Email is required.")]
+    [EmailAddress(ErrorMessage = "Invalid email address.")]
     public required string Email { get; set; }
 }
 
