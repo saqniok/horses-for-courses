@@ -1,0 +1,41 @@
+@using HorsesForCourses.Blazor.Dtos
+
+@if (Details != null)
+{
+    <h6>Skills:</h6>
+    @if (Details.Skills != null && Details.Skills.Any())
+    {
+        @foreach (var skill in Details.Skills)
+        {
+            <span class="badge bg-primary me-1">@skill</span>
+        }
+    }
+    else
+    {
+        <p>No skills assigned.</p>
+    }
+
+    <h6 class="mt-2">Assigned Courses:</h6>
+    @if (Details.Courses != null && Details.Courses.Any())
+    {
+        <ul>
+            @foreach (var course in Details.Courses)
+            {
+                <li>@course.Title</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>Coach don't have assigned courses</p>
+    }
+}
+else
+{
+    <p>Loading details...</p>
+}
+
+@code {
+    [Parameter]
+    public CoachDetailsDto? Details { get; set; }
+}

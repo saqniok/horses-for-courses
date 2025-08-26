@@ -4,13 +4,18 @@
 <div class="modal fade show d-block" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
+
             <div class="modal-header">
                 <h5 class="modal-title">Add New Coach</h5>
-                <button type="button" class="btn-close" @onclick="OnClose"></button>
+
+                <button type="button" class="btn-close" @onclick="OnClose"></button> @*X - button to close window*@
             </div>
+            
             <div class="modal-body">
                 @if (Coach != null)
                 {
+                    @*The main component of the form. The attribute of Model = "@Coach" connects the form with the object Coach, 
+                    And Onvalidsubmit indicates a method that will be caused after successful validation.*@
                     <EditForm Model="@Coach" OnValidSubmit="OnValidSubmit">
                         <DataAnnotationsValidator />
                         <ValidationSummary />

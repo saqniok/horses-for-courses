@@ -34,7 +34,7 @@ else
                     <td>@coach.Email</td>
                     <td>@coach.NumberOfCoursesAssignedTo</td>
                     <td>
-                        <div style ="display: flex; gap: 0.5rem;"> @*держит в одной строке кнопки при смене размера стр*@
+                        <div style ="display: flex; gap: 0.5rem;"> @*keeps buttons in a single row regardless of window size*@
                             <button class="btn btn-sm btn-info" @onclick:stopPropagation="true" @onclick="() => ShowEditCoachModal(coach.Id)">Edit</button>
                             <button class="btn btn-sm btn-danger" @onclick:stopPropagation="true" @onclick="() => DeleteCoach(coach.Id)">Delete</button>
                         </div>
@@ -44,41 +44,7 @@ else
                 {
                     <tr>
                         <td colspan="4">
-                            @if (coachDetailsCache.ContainsKey(coach.Id) && coachDetailsCache[coach.Id] != null)
-                            {
-                                var details = coachDetailsCache[coach.Id];
-                                <h6>Skills:</h6>
-                                @if (details.Skills != null && details.Skills.Any())
-                                {
-                                    @foreach (var skill in details.Skills)
-                                    {
-                                        <span class="badge bg-primary me-1">@skill</span>
-                                    }
-                                }
-                                else
-                                {
-                                    <p>No skills assigned.</p>
-                                }
-
-                                <h6 class="mt-2">Assigned Courses:</h6>
-                                @if (details.Courses != null && details.Courses.Any())
-                                {
-                                    <ul>
-                                        @foreach (var course in details.Courses)
-                                        {
-                                            <li>@course.Title</li>
-                                        }
-                                    </ul>
-                                }
-                                else
-                                {
-                                    <p>Coach don't have assigned courses</p>
-                                }
-                            }
-                            else
-                            {
-                                <p>Loading details...</p>
-                            }
+                            <CoachDetails Details="@(coachDetailsCache.ContainsKey(coach.Id) ? coachDetailsCache[coach.Id] : null)" />
                         </td>
                     </tr>
                 }
@@ -108,7 +74,6 @@ else
 
 @if (showConfirmDeleteModal)
 {
-    <ConfirmDialog Message="Вы уверены, что хотите удалить этого тренера?"
-                   OnConfirm="ConfirmDelete"
+    <ConfirmDialog OnConfirm="ConfirmDelete"
                    OnCancel="CancelDelete" />
 }
