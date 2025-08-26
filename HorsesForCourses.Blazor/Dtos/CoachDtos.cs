@@ -28,7 +28,12 @@ public class UpdateCoachSkillsDto
 public class CoachDetailsDto
 {
     public int Id { get; set; }
+
+    [Required(ErrorMessage = "Name is required.")]
     public required string Name { get; set; }
+
+    [Required(ErrorMessage = "Email is required.")]
+    [EmailAddress(ErrorMessage = "Invalid email address.")]
     public required string Email { get; set; }
     public List<string> Skills { get; set; } = new();
     public List<CourseShortDto> Courses { get; set; } = new();

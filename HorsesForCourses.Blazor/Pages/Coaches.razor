@@ -43,7 +43,7 @@ else
                 @if (expandedCoachIds.Contains(coach.Id))
                 {
                     <tr>
-                        <td colspan="4">
+                        <td colspan="4" style="background-color: #ebeaea;">
                             <CoachDetails Details="@(coachDetailsCache.ContainsKey(coach.Id) ? coachDetailsCache[coach.Id] : null)" />
                         </td>
                     </tr>
@@ -67,7 +67,6 @@ else
                    OnClose="HideEditCoachModal"
                    NewSkill="@newSkill"
                    NewSkillChanged="@((value) => newSkill = value)"
-                   OnAddSkillOnEnter="(e) => AddSkillOnEnter(e, editingCoach)"
                    OnAddSkill="(() => AddSkill(editingCoach))"
                    OnRemoveSkill="(tuple) => RemoveSkill(tuple.Item1, tuple.Item2)" />
 }
