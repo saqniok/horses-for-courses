@@ -29,25 +29,12 @@ else
         <tbody>
             @foreach (var coach in coaches)
             {
-                <tr @onclick="() => ToggleCoachDetails(coach.Id)" style="cursor: pointer;">
-                    <td>@coach.Name</td>
-                    <td>@coach.Email</td>
-                    <td>@coach.NumberOfCoursesAssignedTo</td>
-                    <td>
-                        <div style ="display: flex; gap: 0.5rem;"> @*keeps buttons in a single row regardless of window size*@
-                            <button class="btn btn-sm btn-info" @onclick:stopPropagation="true" @onclick="() => ShowEditCoachModal(coach.Id)">Edit</button>
-                            <button class="btn btn-sm btn-danger" @onclick:stopPropagation="true" @onclick="() => DeleteCoach(coach.Id)">Delete</button>
-                        </div>
-                    </td>
-                </tr>
-                @if (expandedCoachIds.Contains(coach.Id))
-                {
-                    <tr>
-                        <td colspan="4" style="background-color: #ebeaea;">
-                            <CoachDetails Details="@(coachDetailsCache.ContainsKey(coach.Id) ? coachDetailsCache[coach.Id] : null)" />
-                        </td>
-                    </tr>
-                }
+                <CoachRow Coach="coach"
+                          IsExpanded="expandedCoachIds.Contains(coach.Id)"
+                          CoachDetails="@(coachDetailsCache.ContainsKey(coach.Id) ? coachDetailsCache[coach.Id] : null)"
+                          OnToggleExpand="() => ToggleCoachDetails(coach.Id)"
+                          OnEdit="() => ShowEditCoachModal(coach.Id)"
+                          OnDelete="() => DeleteCoach(coach.Id)" />
             }
         </tbody>
     </table>
@@ -67,6 +54,7 @@ else
                    OnClose="HideEditCoachModal"
                    NewSkill="@newSkill"
                    NewSkillChanged="@((value) => newSkill = value)"
+                   OnAddSkillOnEnter="(e) => AddSkillOnEnter(e, editingCoach)"
                    OnAddSkill="(() => AddSkill(editingCoach))"
                    OnRemoveSkill="(tuple) => RemoveSkill(tuple.Item1, tuple.Item2)" />
 }

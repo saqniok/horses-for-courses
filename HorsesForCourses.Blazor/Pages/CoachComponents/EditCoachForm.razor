@@ -17,24 +17,35 @@ else
                 </div>
                 <div class="modal-body">
                     <EditForm Model="@Coach" OnValidSubmit="OnValidSubmit">
+                        @*Components for validation. 
+                        DataAnnotationsValidator checks the fields for compliance 
+                        with Dataannotations attributes 
+                        (for example, [recept]). Validationsummary displays error messages.*@
                         <DataAnnotationsValidator />
-                        <ValidationSummary />
+                        <ValidationSummary />  
 
+                        @*Name fiels*@
                         <div class="mb-3">
                             <label for="editName" class="form-label">Name</label>
+                            @*input text for name*@
                             <InputText id="editName" class="form-control" @bind-Value="Coach.Name" />
                         </div>
+
+                        @*Email field*@
                         <div class="mb-3">
                             <label for="editEmail" class="form-label">Email</label>
+                            @*input text for email*@
                             <InputText id="editEmail" class="form-control" @bind-Value="Coach.Email" />
                         </div>
 
                         <h6>Skills</h6>
                         <div class="mb-3">
+                            @*show skills in row, and removing them by click*@
                             @foreach (var skill in Coach.Skills)
                             {
-                                <span class="badge bg-secondary me-1" @onclick="() => OnRemoveSkill.InvokeAsync(Tuple.Create(Coach, skill))">@skill</span>
+                                <span class="badge bg-secondary me-1" style="cursor: pointer;" @onclick="() => OnRemoveSkill.InvokeAsync(Tuple.Create(Coach, skill))">@skill</span>
                             }
+
                             <InputText class="form-control mt-2" placeholder="Add skill" @bind-Value:get="NewSkill" @bind-Value:set="NewSkillChanged.InvokeAsync" />
                             <button type="button" class="btn btn-sm btn-success mt-2" @onclick="() => OnAddSkill.InvokeAsync()">Add Skill</button>
                         </div>
