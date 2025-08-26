@@ -1,8 +1,7 @@
 @page "/courses"
 @using HorsesForCourses.Blazor.Services
-@inject ICourseService CourseService
-@using Microsoft.JSInterop
-@inject IJSRuntime JSRuntime
+@using HorsesForCourses.Blazor.Dtos
+@using HorsesForCourses.Blazor.Pages.CourseComponents
 
 <PageTitle>Courses</PageTitle>
 
@@ -64,119 +63,13 @@ else
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Add New Course</h5>
-                    <button type="button" class="close" @onclick="CancelAddCourse" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" @onclick="HideAddCourseModal"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="title">Title</label>
-                        <input type="text" class="form-control" id="title" @bind="newCourseTitle" />
-                    </div>
-                    <div class="form-group">
-                        <label for="startDate">Start Date</label>
-                        <input type="date" class="form-control" id="startDate" @bind="newCourseStartDate" />
-                    </div>
-                    <div class="form-group">
-                        <label for="endDate">End Date</label>
-                        <input type="date" class="form-control" id="endDate" @bind="newCourseEndDate" />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @onclick="CancelAddCourse">Cancel</button>
-                    <button type="button" class="btn btn-primary" @onclick="HandleAddCourse">Add Course</button>
-                </div>
+                <AddCourseForm Course="newCourse"
+                               OnValidSubmit="HandleAddCourseValidSubmit"
+                               OnClose="HideAddCourseModal" />
             </div>
         </div>
     </div>
     <div class="modal-backdrop fade show"></div>
-}
-
-@code {
-    private List<CourseDto>? courses;
-    private string? error;
-    private bool showAddCourseModal = false;
-    private string newCourseTitle = "";
-    private DateTime newCourseStartDate = DateTime.Today;
-    private DateTime newCourseEndDate = DateTime.Today;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadCourses();
-    }
-
-    private async Task LoadCourses()
-    {
-        try
-        {
-            courses = await CourseService.GetCoursesAsync();
-        }
-        catch (Exception ex)
-        {
-            error = ex.Message;
-        }
-    }
-
-    private async Task DeleteCourse(int id)
-    {
-        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this course?");
-        if (confirmed)
-        {
-            try
-            {
-                await CourseService.DeleteCourseAsync(id);
-                await LoadCourses(); // Refresh the list
-            }
-            catch (Exception ex)
-            {
-                error = ex.Message;
-            }
-        }
-    }
-
-    private async Task ConfirmCourse(int id)
-    {
-        try
-        {
-            await CourseService.ConfirmCourseAsync(id);
-            await LoadCourses(); // Refresh the list
-        }
-        catch (Exception ex)
-        {
-            error = ex.Message;
-        }
-    }
-
-    private void ShowAddCourseModal()
-    {
-        showAddCourseModal = true;
-        newCourseTitle = ""; // Clear previous input
-        newCourseStartDate = DateTime.Today;
-        newCourseEndDate = DateTime.Today;
-    }
-
-    private async Task HandleAddCourse()
-    {
-        try
-        {
-            var newCourse = new CreateCourseRequestDto
-            {
-                Title = newCourseTitle,
-                StartDate = DateOnly.FromDateTime(newCourseStartDate),
-                EndDate = DateOnly.FromDateTime(newCourseEndDate)
-            };
-            await CourseService.AddCourseAsync(newCourse);
-            showAddCourseModal = false;
-            await LoadCourses(); // Refresh the list
-        }
-        catch (Exception ex)
-        {
-            error = ex.Message;
-        }
-    }
-
-    private void CancelAddCourse()
-    {
-        showAddCourseModal = false;
-    }
 }
