@@ -45,4 +45,10 @@ public class CourseService : ICourseService
         var response = await _httpClient.PostAsJsonAsync("courses", course, _jsonSerializerOptions);
         response.EnsureSuccessStatusCode();
     }
+    
+    public async Task UpdateCourseAsync(int id, CourseDto course)
+    {
+        var response = await _httpClient.PutAsJsonAsync($"courses/{id}", course, _jsonSerializerOptions);
+        response.EnsureSuccessStatusCode();
+    }
 }

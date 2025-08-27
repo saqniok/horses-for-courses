@@ -8,6 +8,7 @@ public interface ICourseService
     Task DeleteCourseAsync(int id);
     Task ConfirmCourseAsync(int id);
     Task AddCourseAsync(CreateCourseRequestDto course);
+    Task UpdateCourseAsync(int id, CourseDto course);
 }
 
 

@@ -129,6 +129,20 @@ public class CourseController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Update(int id, [FromBody] CourseDto dto)
+    {
+        var course = await _courseService.GetByIdAsync(id);
+        if (course == null)
+            return NotFound();
+
+        course.UpdateTitle(dto.Title);
+        
+        await _courseService.UpdateAsync(course);
+
+        return NoContent();
+    }
+
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {

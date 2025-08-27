@@ -16,9 +16,13 @@ namespace HorsesForCourses.Blazor.Pages
         protected List<CourseDto>? courses;
         protected string? error;
 
-        // New fields for AddCourseForm modal
+        // fields for AddCourseForm modal
         private bool showAddCourseModal = false;
         private CreateCourseRequestDto newCourse = new CreateCourseRequestDto { Title = string.Empty };
+
+        // fields for EditCourseForm modal
+        private bool showEditCourseModal = false;
+        private CourseDto? editingCourse;
 
         protected override async Task OnInitializedAsync()
         {
@@ -38,7 +42,7 @@ namespace HorsesForCourses.Blazor.Pages
             StateHasChanged();
         }
 
-        // New methods for AddCourseForm modal
+        // methods for AddCourseForm modal
         private void ShowAddCourseModal()
         {
             showAddCourseModal = true;
@@ -62,6 +66,38 @@ namespace HorsesForCourses.Blazor.Pages
         private void HideAddCourseModal()
         {
             showAddCourseModal = false;
+        }
+
+        // methods for EditCourseForm modal
+        private void ShowEditCourseModal(int courseId)
+        {
+            editingCourse = courses?.FirstOrDefault(c => c.Id == courseId);
+            if (editingCourse != null)
+            {
+                showEditCourseModal = true;
+            }
+        }
+
+        private async Task UpdateCourse()
+        {
+            if (editingCourse != null)
+            {
+                try
+                {
+                    await CourseService.UpdateCourseAsync(editingCourse.Id, editingCourse);
+                    showEditCourseModal = false;
+                    await LoadCourses(); // Refresh the list
+                }
+                catch (Exception ex)
+                {
+                    error = ex.Message;
+                }
+            }
+        }
+
+        private void HideEditCourseModal()
+        {
+            showEditCourseModal = false;
         }
 
         protected async Task DeleteCourse(int id)

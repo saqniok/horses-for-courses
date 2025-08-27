@@ -3,16 +3,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HorsesForCourses.Blazor.Dtos;
 
-public record CourseDto(
-    int Id,
-    string Title,
-    DateOnly StartDate,
-    DateOnly EndDate,
-    IReadOnlyList<string>? RequiredSkills = null,
-    IReadOnlyList<TimeSlotDto>? Schedule = null,
-    bool IsConfirmed = false,
-    CoachShortDto? Coach = null
-);
+public class CourseDto
+{
+    public int Id { get; set; }
+    public string Title { get; set; } = null!;
+    public DateOnly StartDate { get; set; }
+    public DateOnly EndDate { get; set; }
+    public IReadOnlyList<string>? RequiredSkills { get; set; }
+    public IReadOnlyList<TimeSlotDto>? Schedule { get; set; }
+    public bool IsConfirmed { get; set; }
+    public CoachShortDto? Coach { get; set; }
+}
 
 public record CoachShortDto(
     int Id,
