@@ -2,32 +2,47 @@
 @using HorsesForCourses.Blazor.Services
 @inject ICourseService CourseService
 
-<EditForm Model="@Course" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Course</h5>
+                    <button type="button" class="btn-close" @onclick="OnClose"></button>
+                </div>
+                <EditForm Model="@Course" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
 
-    <div class="modal-body">
-        <div class="form-group">
-            <label for="title">Title</label>
-            <InputText id="title" class="form-control" @bind-Value="Course.Title" />
-            <ValidationMessage For="@(() => Course.Title)" />
-        </div>
-        <div class="form-group">
-            <label for="startDate">Start Date</label>
-            <InputDate id="startDate" class="form-control" @bind-Value="Course.StartDate" />
-        </div>
-        <div class="form-group">
-            <label for="endDate">End Date</label>
-            <InputDate id="endDate" class="form-control" @bind-Value="Course.EndDate" />
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <InputText id="title" class="form-control" @bind-Value="Course.Title" />
+                            <ValidationMessage For="@(() => Course.Title)" />
+                        </div>
+                        <div class="form-group">
+                            <label for="startDate">Start Date</label>
+                            <InputDate id="startDate" class="form-control" @bind-Value="Course.StartDate" />
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">End Date</label>
+                            <InputDate id="endDate" class="form-control" @bind-Value="Course.EndDate" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" @onclick="OnClose">Cancel</button>
+                    </div>
+                </EditForm>
+            </div>
         </div>
     </div>
-    <div class="modal-footer">
-        <button type="submit" class="btn btn-primary">Save</button>
-        <button type="button" class="btn btn-secondary" @onclick="OnClose">Cancel</button>
-    </div>
-</EditForm>
+    <div class="modal-backdrop fade show"></div>
+
 
 @code {
+    [Parameter]
+    public bool Show { get; set; }
+
     [Parameter]
     public CreateCourseRequestDto Course { get; set; } = new CreateCourseRequestDto { Title = string.Empty };
 

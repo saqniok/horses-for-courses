@@ -1,0 +1,33 @@
+@using HorsesForCourses.Blazor.Dtos
+
+<tr>
+    <td>@Course.Title</td>
+    <td>@Course.StartDate.ToShortDateString()</td>
+    <td>@Course.EndDate.ToShortDateString()</td>
+    <td>@(Course.Coach?.Name ?? "N/A")</td>
+    <td>
+        <span class="@(Course.IsConfirmed ? "badge bg-success" : "badge bg-warning")">
+            @(Course.IsConfirmed ? "Confirmed" : "Pending")
+        </span>
+    </td>
+    <td>
+        <div style="display: flex; gap: 0.5rem;">  
+            <button class="btn btn-sm btn-danger" @onclick="() => OnDelete.InvokeAsync(Course.Id)">Delete</button>
+            @if (!Course.IsConfirmed)
+            {
+                <button class="btn btn-sm btn-success" @onclick="() => OnConfirm.InvokeAsync(Course.Id)">Confirm</button>
+            }
+        </div>
+    </td>
+</tr>
+
+@code {
+    [Parameter]
+    public CourseDto? Course { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnDelete { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnConfirm { get; set; }
+}

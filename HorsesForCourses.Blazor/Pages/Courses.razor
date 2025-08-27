@@ -23,8 +23,8 @@ else
         <thead>
             <tr>
                 <th>Title</th>
-                <th>Start Date</th>
-                <th>End Date</th>
+                <th style="white-space: nowrap;">Start Date</th>
+                <th style="white-space: nowrap;">End Date</th>
                 <th>Coach</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -33,24 +33,9 @@ else
         <tbody>
             @foreach (var course in courses)
             {
-                <tr>
-                    <td>@course.Title</td>
-                    <td>@course.StartDate.ToShortDateString()</td>
-                    <td>@course.EndDate.ToShortDateString()</td>
-                    <td>@(course.Coach?.Name ?? "N/A")</td>
-                    <td>
-                        <span class="@(course.IsConfirmed ? "badge bg-success" : "badge bg-warning")">
-                            @(course.IsConfirmed ? "Confirmed" : "Pending")
-                        </span>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-danger" @onclick="() => DeleteCourse(course.Id)">Delete</button>
-                        @if (!course.IsConfirmed)
-                        {
-                            <button class="btn btn-sm btn-success" @onclick="() => ConfirmCourse(course.Id)">Confirm</button>
-                        }
-                    </td>
-                </tr>
+                <CourseRow Course="course" 
+                           OnDelete="DeleteCourse" 
+                           OnConfirm="ConfirmCourse" />
             }
         </tbody>
     </table>
@@ -58,18 +43,8 @@ else
 
 @if (showAddCourseModal)
 {
-    <div class="modal fade show d-block" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Add New Course</h5>
-                    <button type="button" class="btn-close" @onclick="HideAddCourseModal"></button>
-                </div>
-                <AddCourseForm Course="newCourse"
-                               OnValidSubmit="HandleAddCourseValidSubmit"
-                               OnClose="HideAddCourseModal" />
-            </div>
-        </div>
-    </div>
-    <div class="modal-backdrop fade show"></div>
+    <AddCourseForm Show="showAddCourseModal"
+                   Course="newCourse"
+                   OnValidSubmit="HandleAddCourseValidSubmit"
+                   OnClose="HideAddCourseModal" />
 }
