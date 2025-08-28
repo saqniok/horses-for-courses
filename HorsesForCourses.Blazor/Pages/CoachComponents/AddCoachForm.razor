@@ -5,53 +5,42 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
 
+            @* Header for EditForm*@
             <div class="modal-header">
                 <h5 class="modal-title">Add New Coach</h5>
-
-                <button type="button" class="btn-close" @onclick="OnClose"></button> @*X - button to close window*@
+                <button type="button" class="btn-close" @onclick="HandleClose"></button> @* X - Close button, binds the click event to the HandleClose method in the code-behind file*@
             </div>
             
+            @* Body for EditForm*@
             <div class="modal-body">
-                @if (Coach != null)
-                {
-                    @*The main component of the form. The attribute of Model = "@Coach" connects the form with the object Coach, 
-                    And Onvalidsubmit indicates a method that will be caused after successful validation.*@
-                    <EditForm Model="@Coach" OnValidSubmit="OnValidSubmit">
-                        <DataAnnotationsValidator />
-                        <ValidationSummary />
+                @*This is a Blazor component that manages the form state. It is bound to the @newCoach model, and when data validation is successful, the HandleValidSubmit method is called.*@
+                <EditForm Model="@newCoach" OnValidSubmit="HandleValidSubmit"> 
+                    <DataAnnotationsValidator />    @* A component that includes form validation based on data annotations (attributes such as [Required], [EmailAddress]) in the @newCoach model.*@
+                    <ValidationSummary />           @* A component that displays a list of all validation errors for the entire form.*@
 
-                        @*Name field*@
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <InputText id="name" class="form-control" @bind-Value="Coach.Name" />
-                        </div>
 
-                        @*Email field*@
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <InputText id="email" class="form-control" @bind-Value="Coach.Email" />
-                        </div>
+                    @* Name field*@
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <InputText id="name" class="form-control" @bind-Value="newCoach.Name" />
+                    </div>
 
-                        @*save btn*@
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </EditForm>
-                }
-                else
-                {
-                    <p>Loading form...</p>
-                }
+                    @* Email field*@
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <InputText id="email" class="form-control" @bind-Value="newCoach.Email" />
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(error))
+                    {
+                        @*<div class="alert alert-danger"> — These are Bootstrap class that style an element as a red warning (error notification)*@
+                        <div class="alert alert-danger">@error</div>
+                    }
+
+                    @* The button that initiates form submission. Since it is located inside EditForm, clicking it triggers validation, followed by a call to OnValidSubmit *@
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </EditForm>
             </div>
         </div>
     </div>
 </div>
-
-@code {
-    [Parameter]
-    public CreateCoachRequest? Coach { get; set; }
-
-    [Parameter]
-    public EventCallback OnValidSubmit { get; set; }
-
-    [Parameter]
-    public EventCallback OnClose { get; set; }
-}

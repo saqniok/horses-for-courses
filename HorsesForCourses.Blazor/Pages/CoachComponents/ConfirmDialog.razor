@@ -2,33 +2,16 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-
-                <h5 class="modal-title">Confirm</h5>
-                <button type="button" class="btn-close" @onclick="OnCancel"></button>
-                
+                <h5 class="modal-title">@Title</h5>
+                <button type="button" class="btn-close" @onclick="Cancel"></button>
             </div>
             <div class="modal-body">
                 <p>@Message</p>
             </div>
-
-
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" @onclick="OnCancel">Cancel</button>
-                <button type="button" class="btn btn-danger" @onclick="OnConfirm">Delete</button>
+                <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+                <button type="button" class="btn btn-danger" @onclick="Confirm">Delete</button>
             </div>
-
-
         </div>
     </div>
 </div>
-
-@code {
-    [Parameter]
-    public string Message { get; set; } = "are you sure you want to remove this coach?";
-
-    [Parameter]
-    public EventCallback OnConfirm { get; set; }
-
-    [Parameter]
-    public EventCallback OnCancel { get; set; }
-}

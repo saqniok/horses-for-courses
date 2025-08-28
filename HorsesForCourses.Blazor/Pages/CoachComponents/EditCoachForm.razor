@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Web
 
-@if (Coach == null)
+@if (EditingCoach == null)
 {
     <p>Loading coach details...</p>
 }
@@ -13,42 +13,40 @@ else
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Edit Coach</h5>
-                    <button type="button" class="btn-close" @onclick="OnClose"></button>
+                    <button type="button" class="btn-close" @onclick="Cancel"></button>
                 </div>
                 <div class="modal-body">
-                    <EditForm Model="@Coach" OnValidSubmit="OnValidSubmit">
-                        @*Components for validation. 
-                        DataAnnotationsValidator checks the fields for compliance 
-                        with Dataannotations attributes 
-                        (for example, [recept]). Validationsummary displays error messages.*@
+                    <EditForm Model="@EditingCoach" OnValidSubmit="UpdateCoach">
                         <DataAnnotationsValidator />
-                        <ValidationSummary />  
+                        <ValidationSummary />
 
-                        @*Name fiels*@
                         <div class="mb-3">
                             <label for="editName" class="form-label">Name</label>
-                            @*input text for name*@
-                            <InputText id="editName" class="form-control" @bind-Value="Coach.Name" />
+                            <InputText id="editName" class="form-control" @bind-Value="EditingCoach.Name" />
                         </div>
 
-                        @*Email field*@
                         <div class="mb-3">
                             <label for="editEmail" class="form-label">Email</label>
-                            @*input text for email*@
-                            <InputText id="editEmail" class="form-control" @bind-Value="Coach.Email" />
+                            <InputText id="editEmail" class="form-control" @bind-Value="EditingCoach.Email" />
                         </div>
 
                         <h6>Skills</h6>
                         <div class="mb-3">
-                            @*show skills in row, and removing them by click*@
-                            @foreach (var skill in Coach.Skills)
+                            @foreach (var skill in EditingCoach.Skills)
                             {
-                                <span class="badge bg-secondary me-1" style="cursor: pointer;" @onclick="() => OnRemoveSkill.InvokeAsync(Tuple.Create(Coach, skill))">@skill</span>
+                                <span class="badge bg-secondary me-1" style="cursor: pointer;" @onclick="() => RemoveSkill(skill)">@skill &times;</span>
                             }
-
-                            <InputText class="form-control mt-2" placeholder="Add skill" @bind-Value:get="NewSkill" @bind-Value:set="NewSkillChanged.InvokeAsync" />
-                            <button type="button" class="btn btn-sm btn-success mt-2" @onclick="() => OnAddSkill.InvokeAsync()">Add Skill</button>
                         </div>
+
+                        <div class="input-group mb-3">
+                            <InputText class="form-control" placeholder="Add skill" @bind-Value="newSkill" @onkeydown="AddSkillOnEnter" />
+                            <button type="button" class="btn btn-outline-secondary" @onclick="AddSkill">Add Skill</button>
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(error))
+                        {
+                            <div class="alert alert-danger">@error</div>
+                        }
 
                         <button type="submit" class="btn btn-primary">Save Changes</button>
                     </EditForm>
@@ -56,30 +54,4 @@ else
             </div>
         </div>
     </div>
-}
-
-@code {
-    [Parameter]
-    public CoachDetailsDto? Coach { get; set; }
-
-    [Parameter]
-    public EventCallback OnValidSubmit { get; set; }
-
-    [Parameter]
-    public EventCallback OnClose { get; set; }
-
-    [Parameter]
-    public string? NewSkill { get; set; }
-
-    [Parameter]
-    public EventCallback<string> NewSkillChanged { get; set; }
-
-    [Parameter]
-    public EventCallback<KeyboardEventArgs> OnAddSkillOnEnter { get; set; }
-
-    [Parameter]
-    public EventCallback OnAddSkill { get; set; }
-
-    [Parameter]
-    public EventCallback<Tuple<CoachDetailsDto, string>> OnRemoveSkill { get; set; }
 }

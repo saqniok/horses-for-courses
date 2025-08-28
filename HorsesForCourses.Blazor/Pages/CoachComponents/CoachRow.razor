@@ -1,46 +1,13 @@
 @using HorsesForCourses.Blazor.Dtos
 
-<tr @onclick="OnToggleExpand" style="cursor: pointer;">
+<tr @onclick="ToggleDetails" style="cursor: pointer;">
     <td>@Coach.Name</td>
     <td>@Coach.Email</td>
     <td>@Coach.NumberOfCoursesAssignedTo</td>
     <td>
-
-        @*hold buttons on one row*@
         <div style="display: flex; gap: 0.5rem;">  
-            <button class="btn btn-sm btn-info" @onclick:stopPropagation="true" @onclick="OnEdit">Edit</button>
-            <button class="btn btn-sm btn-danger" @onclick:stopPropagation="true" @onclick="OnDelete">Delete</button>
+            <button class="btn btn-sm btn-info" @onclick:stopPropagation="true" @onclick="Edit">Edit</button>
+            <button class="btn btn-sm btn-danger" @onclick:stopPropagation="true" @onclick="Delete">Delete</button>
         </div>
-
     </td>
 </tr>
-@if (IsExpanded)
-{
-    @*create coach table with additional info*@
-    <tr>
-        @*color style for background*@
-        <td colspan="4" style="background-color: #ebeaea;">
-            <CoachDetails Details="@CoachDetails" />
-        </td>
-    </tr>
-}
-
-@code {
-    [Parameter]
-    public CoachSummaryResponse Coach { get; set; } = null!;
-
-    [Parameter]
-    public bool IsExpanded { get; set; }
-
-    [Parameter]
-    public CoachDetailsDto? CoachDetails { get; set; }
-
-    [Parameter]
-    public EventCallback OnToggleExpand { get; set; }
-
-    [Parameter]
-    public EventCallback OnEdit { get; set; }
-
-    [Parameter]
-    public EventCallback OnDelete { get; set; }
-}

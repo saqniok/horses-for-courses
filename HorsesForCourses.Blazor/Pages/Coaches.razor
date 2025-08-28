@@ -17,7 +17,7 @@ else if (coaches == null)
 }
 else
 {
-    <table class="table">
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th>Name</th>
@@ -30,11 +30,25 @@ else
             @foreach (var coach in coaches)
             {
                 <CoachRow Coach="coach"
-                          IsExpanded="expandedCoachIds.Contains(coach.Id)"
-                          CoachDetails="@(coachDetailsCache.ContainsKey(coach.Id) ? coachDetailsCache[coach.Id] : null)"
-                          OnToggleExpand="() => ToggleCoachDetails(coach.Id)"
+                          OnToggleDetails="() => ToggleCoachDetails(coach.Id)"
                           OnEdit="() => ShowEditCoachModal(coach.Id)"
-                          OnDelete="() => DeleteCoach(coach.Id)" />
+                          OnDelete="() => ShowDeleteConfirmModal(coach.Id)" />
+                
+                @if (expandedCoachIds.Contains(coach.Id))
+                {
+                    <tr>
+                        <td colspan="4" style="background-color: #f8f9fa;">
+                            @if (coachDetailsCache.TryGetValue(coach.Id, out var details))
+                            {
+                                <CoachDetails Details="details" />
+                            }
+                            else
+                            {
+                                <p><em>Loading details...</em></p>
+                            }
+                        </td>
+                    </tr>
+                }
             }
         </tbody>
     </table>
@@ -42,25 +56,20 @@ else
 
 @if (showAddCoachModal)
 {
-    <AddCoachForm  Coach="@newCoach" 
-                   OnValidSubmit="AddCoach" 
-                   OnClose="HideAddCoachModal" />
+    <AddCoachForm OnValidSubmit="HandleCoachAdded" OnClose="HideAddCoachModal" />
 }
 
 @if (showEditCoachModal && editingCoach != null)
 {
-    <EditCoachForm Coach="@editingCoach"
-                   OnValidSubmit="UpdateCoach"
-                   OnClose="HideEditCoachModal"
-                   NewSkill="@newSkill"
-                   NewSkillChanged="@((value) => newSkill = value)"
-                   OnAddSkillOnEnter="(e) => AddSkillOnEnter(e, editingCoach)"
-                   OnAddSkill="(() => AddSkill(editingCoach))"
-                   OnRemoveSkill="(tuple) => RemoveSkill(tuple.Item1, tuple.Item2)" />
+    <EditCoachForm EditingCoach="editingCoach"
+                   OnCoachUpdated="HandleCoachUpdated"
+                   OnCancel="HideEditCoachModal" />
 }
 
 @if (showConfirmDeleteModal)
 {
-    <ConfirmDialog OnConfirm="ConfirmDelete"
-                   OnCancel="CancelDelete" />
+    <ConfirmDialog Title="Delete Coach"
+                   Message=@($"Are you sure you want to delete this coach?")
+                   OnConfirm="HandleDeleteConfirmed"
+                   OnCancel="HideDeleteConfirmModal" />
 }
