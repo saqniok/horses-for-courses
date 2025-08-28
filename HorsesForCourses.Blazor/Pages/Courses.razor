@@ -36,7 +36,8 @@ else
                 <CourseRow Course="course" 
                            OnDelete="DeleteCourse" 
                            OnConfirm="ConfirmCourse" 
-                           OnEdit="() => ShowEditCourseModal(course.Id)" />
+                           OnEdit="() => ShowEditCourseModal(course.Id)"
+                           OnAssignCoach="() => ShowAssignCoachModal(course.Id)" />
             }
         </tbody>
     </table>
@@ -55,4 +56,12 @@ else
     <EditCourseForm Course="editingCourse"
                    OnValidSubmit="UpdateCourse"
                    OnClose="HideEditCourseModal" />
+}
+
+@if (showAssignCoachModal && assigningCourse != null)
+{
+    <AssignCoachForm Course="assigningCourse"
+                    EligibleCoaches="eligibleCoaches"
+                    OnAssignCoach="AssignCoachToCourse"
+                    OnClose="HideAssignCoachModal" />
 }

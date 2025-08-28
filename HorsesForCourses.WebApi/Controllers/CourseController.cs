@@ -93,8 +93,21 @@ public class CourseController : ControllerBase
         if (course == null)
             return NotFound();
 
-        course.Confirm();
-        await _courseService.UpdateAsync(course);
+        try
+        {
+            // Check if course can be confirmed (has schedule)
+            if (!course.Schedule.Any())
+            {
+                return BadRequest("Cannot confirm course without any lessons. Please add schedule first.");
+            }
+
+            course.Confirm();
+            await _courseService.UpdateAsync(course);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
 
         return NoContent();
     }
@@ -136,9 +149,37 @@ public class CourseController : ControllerBase
         if (course == null)
             return NotFound();
 
-        course.UpdateTitle(dto.Title);
-        
-        await _courseService.UpdateAsync(course);
+        try
+        {
+            // Update title
+            course.UpdateTitle(dto.Title);
+            
+            // Note: Period (dates) cannot be updated as it's read-only in the domain model
+            // If date changes are needed, this would require domain model changes
+            
+            // Update required skills
+            if (dto.RequiredSkills != null)
+            {
+                course.UpdateRequiredSkills(dto.RequiredSkills);
+            }
+            
+            // Update schedule/time slots
+            if (dto.Schedule != null)
+            {
+                var newTimeSlots = dto.Schedule.Select(ts => new TimeSlot(ts.Day, ts.Start, ts.End));
+                course.UpdateTimeSlot(newTimeSlots);
+            }
+            
+            await _courseService.UpdateAsync(course);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
 
         return NoContent();
     }

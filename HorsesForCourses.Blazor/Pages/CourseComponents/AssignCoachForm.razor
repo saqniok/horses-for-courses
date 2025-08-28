@@ -1,0 +1,123 @@
+@using HorsesForCourses.Blazor.Dtos
+@using Microsoft.AspNetCore.Components.Forms
+
+@if (Course == null)
+{
+    <p>Loading course details...</p>
+}
+else
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign Coach to Course</h5>
+                    <button type="button" class="btn-close" @onclick="OnClose"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <h6>Course: @Course.Title</h6>
+                        <p><strong>Period:</strong> @Course.StartDate.ToShortDateString() - @Course.EndDate.ToShortDateString()</p>
+                        
+                        @if (Course.RequiredSkills != null && Course.RequiredSkills.Any())
+                        {
+                            <p><strong>Required Skills:</strong></p>
+                            <div class="mb-2">
+                                @foreach (var skill in Course.RequiredSkills)
+                                {
+                                    <span class="badge bg-secondary me-1">@skill</span>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    @if (EligibleCoaches != null && EligibleCoaches.Any())
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">Select Coach:</label>
+                            <select class="form-select" @bind="selectedCoachId">
+                                <option value="0">Choose a coach...</option>
+                                @foreach (var coach in EligibleCoaches)
+                                {
+                                    <option value="@coach.Id">@coach.Name (@coach.Skills?.Count() skills)</option>
+                                }
+                            </select>
+                        </div>
+
+                        @if (selectedCoachId > 0)
+                        {
+                            var selectedCoach = EligibleCoaches.FirstOrDefault(c => c.Id == selectedCoachId);
+                            if (selectedCoach != null)
+                            {
+                                <div class="alert alert-info">
+                                    <h6>@selectedCoach.Name</h6>
+                                    <p><strong>Email:</strong> @selectedCoach.Email</p>
+                                    @if (selectedCoach.Skills != null && selectedCoach.Skills.Any())
+                                    {
+                                        <p><strong>Skills:</strong></p>
+                                        <div>
+                                            @foreach (var skill in selectedCoach.Skills)
+                                            {
+                                                <span class="badge bg-primary me-1">@skill</span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            <h6>No Eligible Coaches Found</h6>
+                            <p>There are no coaches available who have all the required skills for this course:</p>
+                            @if (Course.RequiredSkills != null && Course.RequiredSkills.Any())
+                            {
+                                <ul>
+                                    @foreach (var skill in Course.RequiredSkills)
+                                    {
+                                        <li>@skill</li>
+                                    }
+                                </ul>
+                            }
+                            <p>Please ensure coaches have the necessary skills before trying to assign them to this course.</p>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="OnClose">Cancel</button>
+                    @if (EligibleCoaches != null && EligibleCoaches.Any())
+                    {
+                        <button type="button" class="btn btn-primary" @onclick="AssignCoach" disabled="@(selectedCoachId == 0)">
+                            Assign Coach
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public CourseDto? Course { get; set; }
+
+    [Parameter]
+    public List<CoachDetailsDto>? EligibleCoaches { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnAssignCoach { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    private int selectedCoachId = 0;
+
+    private async Task AssignCoach()
+    {
+        if (selectedCoachId > 0)
+        {
+            await OnAssignCoach.InvokeAsync(selectedCoachId);
+        }
+    }
+}

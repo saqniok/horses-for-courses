@@ -3,16 +3,34 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HorsesForCourses.Blazor.Dtos;
 
-public class CourseDto
+public class CourseDto : IValidatableObject
 {
     public int Id { get; set; }
+    
+    [Required(ErrorMessage = "Title is required.")]
+    [StringLength(100, MinimumLength = 3, ErrorMessage = "Title must be between 3 and 100 characters.")]
     public string Title { get; set; } = null!;
+    
+    [Required(ErrorMessage = "Start Date is required.")]
     public DateOnly StartDate { get; set; }
+    
+    [Required(ErrorMessage = "End Date is required.")]
     public DateOnly EndDate { get; set; }
+    
     public IReadOnlyList<string>? RequiredSkills { get; set; }
     public IReadOnlyList<TimeSlotDto>? Schedule { get; set; }
     public bool IsConfirmed { get; set; }
     public CoachShortDto? Coach { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (StartDate > EndDate)
+        {
+            yield return new ValidationResult(
+                "Start Date cannot be after End Date.",
+                new[] { nameof(StartDate), nameof(EndDate) });
+        }
+    }
 }
 
 public record CoachShortDto(

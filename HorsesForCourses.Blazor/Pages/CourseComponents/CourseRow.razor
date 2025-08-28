@@ -14,12 +14,18 @@
         </td>
         <td>
             <div style="display: flex; gap: 0.5rem;">  
-                <button class="btn btn-sm btn-info" @onclick="() => OnEdit.InvokeAsync(Course.Id)">Edit</button>
-                <button class="btn btn-sm btn-danger" @onclick="() => OnDelete.InvokeAsync(Course.Id)">Delete</button>
                 @if (!Course.IsConfirmed)
                 {
+                    <button class="btn btn-sm btn-info" @onclick="() => OnEdit.InvokeAsync(Course.Id)">Edit</button>
                     <button class="btn btn-sm btn-success" @onclick="() => OnConfirm.InvokeAsync(Course.Id)">Confirm</button>
                 }
+                else
+                {
+                    <button class="btn btn-sm @(Course.Coach == null ? "btn-warning" : "btn-secondary")" @onclick="() => OnAssignCoach.InvokeAsync(Course.Id)">
+                        @(Course.Coach == null ? "Assign Coach" : "Change Coach")
+                    </button>
+                }
+                <button class="btn btn-sm btn-danger" @onclick="() => OnDelete.InvokeAsync(Course.Id)">Delete</button>
             </div>
         </td>
     </tr>
@@ -37,4 +43,7 @@
 
     [Parameter]
     public EventCallback<int> OnEdit { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnAssignCoach { get; set; }
 }

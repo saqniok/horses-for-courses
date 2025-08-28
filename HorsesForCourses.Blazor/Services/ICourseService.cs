@@ -9,6 +9,5 @@ public interface ICourseService
     Task ConfirmCourseAsync(int id);
     Task AddCourseAsync(CreateCourseRequestDto course);
     Task UpdateCourseAsync(int id, CourseDto course);
+    Task AssignCoachAsync(int courseId, int coachId);
 }
-
-

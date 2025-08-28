@@ -21,7 +21,10 @@ namespace HorsesForCourses.WebApi.Data
 
         public async Task<Course?> GetByIdAsync(int id)
         {
-            return await _context.Courses.Include(c => c.AssignedCoach).FirstOrDefaultAsync(c => c.Id == id);
+            return await _context.Courses
+                .Include(c => c.AssignedCoach)
+                .Include(c => c.Schedule)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<IEnumerable<CourseDto>> GetAllAsync()

@@ -1,5 +1,7 @@
 @using HorsesForCourses.Blazor.Dtos
 @using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web
+@using HorsesForCourses.Core
 
 @if (Course == null)
 {
@@ -8,7 +10,7 @@
 else
 {
     <div class="modal fade show d-block" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Edit Course</h5>
@@ -19,12 +21,114 @@ else
                         <DataAnnotationsValidator />
                         <ValidationSummary />
 
+                        @* Title field *@
                         <div class="mb-3">
                             <label for="editTitle" class="form-label">Title</label>
                             <InputText id="editTitle" class="form-control" @bind-Value="Course.Title" />
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        @* Date fields - Read only as they cannot be changed in domain model *@
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editStartDate" class="form-label">Start Date</label>
+                                <input id="editStartDate" class="form-control" type="date" value="@Course.StartDate.ToString("yyyy-MM-dd")" readonly />
+                                <small class="form-text text-muted">Dates cannot be modified after course creation</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editEndDate" class="form-label">End Date</label>
+                                <input id="editEndDate" class="form-control" type="date" value="@Course.EndDate.ToString("yyyy-MM-dd")" readonly />
+                                <small class="form-text text-muted">Dates cannot be modified after course creation</small>
+                            </div>
+                        </div>
+
+                        @* Required Skills section *@
+                        <div class="mb-3">
+                            <h6>Required Skills</h6>
+                            @if (Course.RequiredSkills != null && Course.RequiredSkills.Any())
+                            {
+                                <div class="mb-2">
+                                    @foreach (var skill in Course.RequiredSkills)
+                                    {
+                                        <span class="badge bg-secondary me-1" style="cursor: pointer;" @onclick="() => RemoveSkill(skill)">
+                                            @skill <i class="fas fa-times ms-1"></i>
+                                        </span>
+                                    }
+                                </div>
+                            }
+                            <div class="input-group">
+                                <InputText class="form-control" placeholder="Add required skill" @bind-Value="newSkill" @onkeypress="@(async (e) => await AddSkillOnEnter(e))" />
+                                <button type="button" class="btn btn-outline-success" @onclick="AddSkill">Add Skill</button>
+                            </div>
+                        </div>
+
+                        @* Schedule section *@
+                        <div class="mb-3">
+                            <h6>Schedule</h6>
+                            @if (Course.Schedule != null && Course.Schedule.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Day</th>
+                                                <th>Start Time</th>
+                                                <th>End Time</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var timeSlot in Course.Schedule)
+                                            {
+                                                <tr>
+                                                    <td>@timeSlot.Day</td>
+                                                    <td>@FormatTime(timeSlot.Start)</td>
+                                                    <td>@FormatTime(timeSlot.End)</td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" @onclick="() => RemoveTimeSlot(timeSlot)">
+                                                            Remove
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            
+                            @* Add new time slot *@
+                            <div class="card mt-2">
+                                <div class="card-body">
+                                    <h6 class="card-title">Add Time Slot</h6>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Day</label>
+                                            <InputSelect class="form-select" @bind-Value="newTimeSlot.Day">
+                                                @foreach (WeekDay day in Enum.GetValues<WeekDay>())
+                                                {
+                                                    <option value="@day">@day</option>
+                                                }
+                                            </InputSelect>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Start Time</label>
+                                            <InputNumber class="form-control" @bind-Value="newTimeSlot.Start" min="0" max="23" />
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">End Time</label>
+                                            <InputNumber class="form-control" @bind-Value="newTimeSlot.End" min="0" max="23" />
+                                        </div>
+                                        <div class="col-md-2 d-flex align-items-end">
+                                            <button type="button" class="btn btn-outline-primary" @onclick="AddTimeSlot">Add</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" @onclick="OnClose">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
                     </EditForm>
                 </div>
             </div>
@@ -41,4 +145,88 @@ else
 
     [Parameter]
     public EventCallback OnClose { get; set; }
+
+    private string newSkill = string.Empty;
+    private TimeSlotDto newTimeSlot = new TimeSlotDto { Day = WeekDay.Monday, Start = 9, End = 10 };
+
+    private void AddSkill()
+    {
+        if (!string.IsNullOrWhiteSpace(newSkill) && Course != null)
+        {
+            var skills = Course.RequiredSkills?.ToList() ?? new List<string>();
+            if (!skills.Contains(newSkill.Trim()))
+            {
+                skills.Add(newSkill.Trim());
+                Course.RequiredSkills = skills.AsReadOnly();
+                newSkill = string.Empty;
+            }
+        }
+    }
+
+    private Task AddSkillOnEnter(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            AddSkill();
+        }
+        return Task.CompletedTask;
+    }
+
+    private void RemoveSkill(string skill)
+    {
+        if (Course?.RequiredSkills != null)
+        {
+            var skills = Course.RequiredSkills.ToList();
+            skills.Remove(skill);
+            Course.RequiredSkills = skills.AsReadOnly();
+        }
+    }
+
+    private void AddTimeSlot()
+    {
+        if (Course != null && newTimeSlot.Start < newTimeSlot.End)
+        {
+            var schedule = Course.Schedule?.ToList() ?? new List<TimeSlotDto>();
+            
+            // Check if this time slot already exists
+            bool exists = schedule.Any(ts => ts.Day == newTimeSlot.Day && 
+                                           ts.Start == newTimeSlot.Start && 
+                                           ts.End == newTimeSlot.End);
+            
+            if (!exists)
+            {
+                schedule.Add(new TimeSlotDto 
+                { 
+                    Day = newTimeSlot.Day, 
+                    Start = newTimeSlot.Start, 
+                    End = newTimeSlot.End 
+                });
+                Course.Schedule = schedule.AsReadOnly();
+                
+                // Reset form
+                newTimeSlot = new TimeSlotDto { Day = WeekDay.Monday, Start = 9, End = 10 };
+            }
+        }
+    }
+
+    private void RemoveTimeSlot(TimeSlotDto timeSlot)
+    {
+        if (Course?.Schedule != null)
+        {
+            var schedule = Course.Schedule.ToList();
+            var toRemove = schedule.FirstOrDefault(ts => ts.Day == timeSlot.Day && 
+                                                        ts.Start == timeSlot.Start && 
+                                                        ts.End == timeSlot.End);
+            if (toRemove != null)
+            {
+                schedule.Remove(toRemove);
+                Course.Schedule = schedule.AsReadOnly();
+            }
+        }
+    }
+
+    private string FormatTime(int hour)
+    {
+        return $"{hour:D2}:00";
+    }
 }
