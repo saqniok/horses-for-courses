@@ -1,13 +1,25 @@
 <div class="modal fade show d-block" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
+
+    <div class="modal-dialog" role="document"> 
+    @* This element is the main wrapper for the content of a modal window in Bootstrap. 
+    role="document" is an ARIA attribute that helps make the component 
+    accessible to screen readers and other assistive technologies. *@ 
+
+        <div class="modal-content"> @* This is a container for all the contents of the modal window, including the header, body, and footer.*@
+
+            <div class="modal-header"> @* The top part of the modal window, containing the title and the close button.*@
+
                 <h5 class="modal-title">@Title</h5>
                 <button type="button" class="btn-close" @onclick="Cancel"></button>
+                @* “X” button to close the modal window. @onclick=“Cancel” links the click event to the Cancel method in the code-behind file*@
             </div>
+
+            @* Confirm body with buttons*@
             <div class="modal-body">
                 <p>@Message</p>
             </div>
+
+            @* buttons Cancel/Confirm*@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
                 <button type="button" class="btn btn-danger" @onclick="Confirm">Delete</button>
