@@ -1,35 +1,47 @@
 @using HorsesForCourses.Blazor.Dtos
 
+@* This is the first conditional check. The code inside this block will be executed only if the Details parameter is not null *@
 @if (Details != null)
 {
     <h6>Skills:</h6>
     @if (Details.Skills != null && Details.Skills.Any())
     {
         @foreach (var skill in Details.Skills)
-        {
+        {   
+            @* For each `skill`, an HTML element `<span>` with Bootstrap styles 
+            is created to display it as a “badge.” `@skill` displays the value of the current skill*@
             <span class="badge bg-primary me-1">@skill</span>
         }
     }
+
+    @* If you don't have the skills, a corresponding message is displayed *@
     else
     {
         <p>No skills assigned.</p>
     }
 
+
     <h6 class="mt-2">Assigned Courses:</h6>
     @if (Details.Courses != null && Details.Courses.Any())
     {
+        @* If there are courses, an unordered list `<ul>` is created, and the loop iterates through each course*@
         <ul>
             @foreach (var course in Details.Courses)
             {
+                @* For each course, a list item `<li>` is created with its name `Title`*@
                 <li>@course.Title</li>
             }
         </ul>
     }
+
+    @* If you don't have the skills, a corresponding message is displayed *@
     else
     {
         <p>Coach don't have assigned courses</p>
     }
 }
+
+@* While `Details` is loading or has not yet been installed, text from the else block will be displayed*@
 else
 {
     <p>Loading details...</p>

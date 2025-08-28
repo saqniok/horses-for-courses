@@ -5,7 +5,9 @@
     <td>@Coach.Email</td>
     <td>@Coach.NumberOfCoursesAssignedTo</td>
     <td>
-        <div style="display: flex; gap: 0.5rem;">  
+        <div style="display: flex; gap: 0.5rem;"> @* Holds buttons in one row, independently from window size*@
+
+            @* buttons *@
             <button class="btn btn-sm btn-info" @onclick:stopPropagation="true" @onclick="Edit">Edit</button>
             <button class="btn btn-sm btn-danger" @onclick:stopPropagation="true" @onclick="Delete">Delete</button>
         </div>

@@ -11,37 +11,48 @@ else
     <div class="modal fade show d-block" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+
+                @* Header field*@
                 <div class="modal-header">
                     <h5 class="modal-title">Edit Coach</h5>
                     <button type="button" class="btn-close" @onclick="Cancel"></button>
                 </div>
+
+                @* Body field*@
                 <div class="modal-body">
                     <EditForm Model="@EditingCoach" OnValidSubmit="UpdateCoach">
-                        <DataAnnotationsValidator />
-                        <ValidationSummary />
+                        <DataAnnotationsValidator />        @* A component that includes form validation based on data annotations (attributes such as [Required], [EmailAddress]) in the @newCoach model.*@
+                        <ValidationSummary />               @* A component that displays a list of all validation errors for the entire form.*@
 
+                        @* Name Field*@
                         <div class="mb-3">
                             <label for="editName" class="form-label">Name</label>
                             <InputText id="editName" class="form-control" @bind-Value="EditingCoach.Name" />
                         </div>
 
+
+                        @* Email field*@
                         <div class="mb-3">
                             <label for="editEmail" class="form-label">Email</label>
                             <InputText id="editEmail" class="form-control" @bind-Value="EditingCoach.Email" />
                         </div>
 
-                        <h6>Skills</h6>
+                        @* Skills field*@
+                        <h6>Skills</h6> @* simple header name*@
                         <div class="mb-3">
                             @foreach (var skill in EditingCoach.Skills)
-                            {
+                            {   
+                                @* create a line with skills, and functio ro remove them by clicking on them.*@
                                 <span class="badge bg-secondary me-1" style="cursor: pointer;" @onclick="() => RemoveSkill(skill)">@skill &times;</span>
                             }
                         </div>
 
+                        @* input for skills + button *@
                         <div class="input-group mb-3">
                             <InputText class="form-control" placeholder="Add skill" @bind-Value="newSkill" @onkeydown="AddSkillOnEnter" />
                             <button type="button" class="btn btn-outline-secondary" @onclick="AddSkill">Add Skill</button>
                         </div>
+                        
                         
                         @if (!string.IsNullOrEmpty(error))
                         {
