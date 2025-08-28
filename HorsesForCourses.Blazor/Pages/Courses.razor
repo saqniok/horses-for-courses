@@ -37,7 +37,15 @@ else
                            OnDelete="DeleteCourse" 
                            OnConfirm="ConfirmCourse" 
                            OnEdit="() => ShowEditCourseModal(course.Id)"
-                           OnAssignCoach="() => ShowAssignCoachModal(course.Id)" />
+                           OnAssignCoach="() => ShowAssignCoachModal(course.Id)"
+                           ShowDetails="@(expandedCourseId == course.Id)"
+                           OnToggleDetails="@(() => ToggleCourseDetails(course.Id))" />
+                
+                @if (expandedCourseId == course.Id)
+                {
+                    <CourseDetailsExpanded Course="course" 
+                                         OnClose="() => CloseCourseDetails()" />
+                }
             }
         </tbody>
     </table>

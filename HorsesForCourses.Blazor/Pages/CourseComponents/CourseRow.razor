@@ -2,8 +2,13 @@
 
 @if (Course != null)
 {
-    <tr>
-        <td>@Course.Title</td>
+    <tr class="course-row" @onclick="ToggleDetails" style="cursor: pointer;">
+        <td>
+            <div style="display: flex; align-items: center;">
+                <span class="me-2">@(ShowDetails ? "▼" : "▶")</span>
+                @Course.Title
+            </div>
+        </td>
         <td>@Course.StartDate.ToShortDateString()</td>
         <td>@Course.EndDate.ToShortDateString()</td>
         <td>@(Course.Coach?.Name ?? "N/A")</td>
@@ -12,7 +17,7 @@
                 @(Course.IsConfirmed ? "Confirmed" : "Pending")
             </span>
         </td>
-        <td>
+        <td @onclick:stopPropagation="true">
             <div style="display: flex; gap: 0.5rem;">  
                 @if (!Course.IsConfirmed)
                 {
@@ -46,4 +51,15 @@
 
     [Parameter]
     public EventCallback<int> OnAssignCoach { get; set; }
+
+    [Parameter]
+    public bool ShowDetails { get; set; }
+
+    [Parameter]
+    public EventCallback OnToggleDetails { get; set; }
+
+    private async Task ToggleDetails()
+    {
+        await OnToggleDetails.InvokeAsync();
+    }
 }

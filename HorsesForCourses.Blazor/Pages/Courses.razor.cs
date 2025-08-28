@@ -32,6 +32,9 @@ namespace HorsesForCourses.Blazor.Pages
         private CourseDto? assigningCourse;
         private List<CoachDetailsDto>? eligibleCoaches;
 
+        // fields for course details expansion
+        private int? expandedCourseId = null;
+
         protected override async Task OnInitializedAsync()
         {
             await LoadCourses();
@@ -224,6 +227,24 @@ namespace HorsesForCourses.Blazor.Pages
                 }
             }
             return Task.CompletedTask;
+        }
+
+        // methods for course details expansion
+        private void ToggleCourseDetails(int courseId)
+        {
+            if (expandedCourseId == courseId)
+            {
+                expandedCourseId = null; // Close if already open
+            }
+            else
+            {
+                expandedCourseId = courseId; // Open this course details
+            }
+        }
+
+        private void CloseCourseDetails()
+        {
+            expandedCourseId = null;
         }
     }
 }

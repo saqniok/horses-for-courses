@@ -1,0 +1,150 @@
+@using HorsesForCourses.Blazor.Dtos
+@using HorsesForCourses.Core
+
+@if (Course != null)
+{
+    <tr>
+        <td colspan="6" style="padding: 0; background-color: #f8f9fa;">
+            <div style="padding: 20px; border-top: 2px solid #dee2e6;">
+                <div class="row">
+                    <!-- Course Information -->
+                    <div class="col-md-4">
+                        <h5>Course Details</h5>
+                        <div class="mb-3">
+                            <strong>Title:</strong> @Course.Title
+                        </div>
+                        <div class="mb-3">
+                            <strong>Period:</strong> @Course.StartDate.ToShortDateString() - @Course.EndDate.ToShortDateString()
+                        </div>
+                        <div class="mb-3">
+                            <strong>Status:</strong> 
+                            <span class="@(Course.IsConfirmed ? "badge bg-success" : "badge bg-warning")">
+                                @(Course.IsConfirmed ? "Confirmed" : "Pending")
+                            </span>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Coach:</strong> @(Course.Coach?.Name ?? "Not assigned")
+                        </div>
+                        
+                        @if (Course.RequiredSkills != null && Course.RequiredSkills.Any())
+                        {
+                            <div class="mb-3">
+                                <strong>Required Skills:</strong>
+                                <div class="mt-2">
+                                    @foreach (var skill in Course.RequiredSkills)
+                                    {
+                                        <span class="badge bg-secondary me-1 mb-1">@skill</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    
+                    <!-- Weekly Schedule -->
+                    <div class="col-md-8">
+                        <h5>Weekly Schedule</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm schedule-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 80px;">Time</th>
+                                        <th>Monday</th>
+                                        <th>Tuesday</th>
+                                        <th>Wednesday</th>
+                                        <th>Thursday</th>
+                                        <th>Friday</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int hour = 9; hour <= 17; hour++)
+                                    {
+                                        <tr>
+                                            <td class="time-cell">@hour:00</td>
+                                            @for (int day = 1; day <= 5; day++)
+                                            {
+                                                var weekDay = (WeekDay)day;
+                                                var isScheduled = IsHourScheduled(weekDay, hour);
+                                                <td class="@(isScheduled ? "scheduled-hour" : "free-hour")">
+                                                    @if (isScheduled)
+                                                    {
+                                                        <span class="scheduled-indicator">●</span>
+                                                    }
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <span class="scheduled-indicator">●</span> Scheduled hours
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-12 text-end">
+                        <button class="btn btn-sm btn-secondary" @onclick="OnClose">
+                            <i class="fas fa-times"></i> Close Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
+}
+
+<style>
+    .schedule-table {
+        font-size: 0.85rem;
+    }
+    
+    .time-cell {
+        background-color: #e9ecef;
+        font-weight: bold;
+        text-align: center;
+    }
+    
+    .scheduled-hour {
+        background-color: #d4edda !important;
+        text-align: center;
+        vertical-align: middle;
+    }
+    
+    .free-hour {
+        background-color: #ffffff;
+        text-align: center;
+        vertical-align: middle;
+    }
+    
+    .scheduled-indicator {
+        color: #28a745;
+        font-size: 1.2rem;
+    }
+    
+    .schedule-table td {
+        height: 35px;
+        vertical-align: middle;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public CourseDto? Course { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    private bool IsHourScheduled(WeekDay day, int hour)
+    {
+        if (Course?.Schedule == null)
+            return false;
+
+        return Course.Schedule.Any(slot => 
+            slot.Day == day && 
+            hour >= slot.Start && 
+            hour < slot.End);
+    }
+}
