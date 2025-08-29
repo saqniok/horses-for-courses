@@ -14,38 +14,46 @@
 else if (coaches == null)
 {
     <p><em>Loading...</em></p>
+    @* <p> - paragraph *@
+    @* <em> - emphasis -> change style to (default) italics (наклон) *@
 }
 else
 {
     <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Courses Assigned</th>
-                <th>Actions</th>
+
+        <thead>                      @* `thead` - table head for columns headers *@
+            <tr>                        @* table row *@
+                <th>Name</th>               @* table header *@
+                <th>Email</th>              @* table header *@
+                <th>Courses Assigned</th>   @* table header *@
+                <th>Actions</th>            @* table header *@
             </tr>
         </thead>
+
+
         <tbody>
+            @* This loop iterates through the collection of coaches to display them in the table *@
             @foreach (var coach in coaches)
             {
-                <CoachRow Coach="coach"
+                @* For each coach, the `CoachRow` component is rendered, which represents a single row in the table *@
+                <CoachRow Coach="coach" 
                           OnToggleDetails="() => ToggleCoachDetails(coach.Id)"
                           OnEdit="() => ShowEditCoachModal(coach.Id)"
                           OnDelete="() => ShowDeleteConfirmModal(coach.Id)" />
-                
+                        @* 1. OnToggleDetails: An event callback that triggers the ToggleCoachDetails method in this parent component *@
+                        @* 2. OnEdit: Triggers the ShowEditCoachModal method to open the edit dialog *@
+                        @* 3. OnDelete: Triggers the ShowDeleteConfirmModal method to open the delete confirmation dialog *@
+
+                @* This condition checks if the details for the current coach should be expanded *@
                 @if (expandedCoachIds.Contains(coach.Id))
                 {
+                    @* If the details are expanded, a new table row is rendered below the coach's main row *@
                     <tr>
+                        @* <td> - Table Data -> This cell spans all columns of the table to hold the details view *@
                         <td colspan="4" style="background-color: #f8f9fa;">
-                            @if (coachDetailsCache.TryGetValue(coach.Id, out var details))
-                            {
-                                <CoachDetails Details="details" />
-                            }
-                            else
-                            {
-                                <p><em>Loading details...</em></p>
-                            }
+                            @* The `CoachDetails` component is rendered here, passing the cached details *@
+                            @* `GetValueOrDefault` is used to safely get the details, returning null if not found, which the `CoachDetails` component handles *@
+                            <CoachDetails Details="coachDetailsCache.GetValueOrDefault(coach.Id)" />
                         </td>
                     </tr>
                 }
