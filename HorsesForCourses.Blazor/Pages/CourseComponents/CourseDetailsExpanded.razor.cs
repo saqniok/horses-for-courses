@@ -20,7 +20,7 @@ namespace HorsesForCourses.Blazor.Pages.CourseComponents
             return Course.Schedule.Any(slot =>
                 slot.Day == day &&
                 hour >= slot.Start &&
-                hour < slot.End);
+                hour <= slot.End);
         }
     }
 }

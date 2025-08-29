@@ -1,7 +1,58 @@
 @page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Home - Horses for Courses</PageTitle>
 
-<h1>Welcome to Horses for Courses!</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <h1 class="display-4 mb-4">Welcome to Horses for Courses</h1>
+            <p class="lead mb-5">Professional Course and Coach Management System</p>
 
-<p>Select a category from the navigation menu to get started.</p>
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Coach Management</h5>
+                            <p class="card-text text-muted">Manage your coaching staff with detailed profiles and assignment capabilities.</p>
+                            <a href="/coaches" class="btn btn-primary">View Coaches</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-book-open fa-3x text-success mb-3"></i>
+                            <h5 class="card-title">Course Management</h5>
+                            <p class="card-text text-muted">Create and manage courses with detailed scheduling and coach assignments.</p>
+                            <a href="/courses" class="btn btn-success">View Courses</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-address-book fa-3x text-info mb-3"></i>
+                            <h5 class="card-title">Contact Information</h5>
+                            <p class="card-text text-muted">Get in touch with our team for support and collaboration.</p>
+                            <a href="/contacts" class="btn btn-info">Contact Us</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-light border">
+                <h4 class="alert-heading">Getting Started</h4>
+                <p>Use the navigation menu above to access different sections of the system. Each section provides comprehensive tools for managing your educational content and staff.</p>
+                <hr>
+                <p class="mb-0">
+                    <strong>Quick Actions:</strong>
+                    <a href="/coaches" class="btn btn-sm btn-outline-primary me-2">Add Coach</a>
+                    <a href="/courses" class="btn btn-sm btn-outline-success">Add Course</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,66 +1,76 @@
 @page "/coaches"
 @using HorsesForCourses.Blazor.Pages.CoachComponents
 
-<PageTitle>Coaches</PageTitle>
+<PageTitle>Coach Management - Horses for Courses</PageTitle>
 
-<h1>Coaches</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Coach Management</h1>
+        <button class="btn btn-primary" @onclick="ShowAddCoachModal">
+            <i class="fas fa-plus me-2"></i>Add New Coach
+        </button>
+    </div>
 
-<button class="btn btn-primary mb-3" @onclick="ShowAddCoachModal">Add Coach</button>
+    @if (error != null)
+    {
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle me-2"></i>@error
+        </div>
+    }
+    else if (coaches == null)
+    {
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading coaches...</p>
+        </div>
+    }
+    else if (!coaches.Any())
+    {
+        <div class="text-center py-5">
+            <i class="fas fa-users fa-4x text-muted mb-3"></i>
+            <h4 class="text-muted">No Coaches Found</h4>
+            <p class="text-muted">Get started by adding your first coach to the system.</p>
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Courses Assigned</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var coach in coaches)
+                            {
+                                <CoachRow Coach="coach"
+                                          OnToggleDetails="() => ToggleCoachDetails(coach.Id)"
+                                          OnEdit="() => ShowEditCoachModal(coach.Id)"
+                                          OnDelete="() => ShowDeleteConfirmModal(coach.Id)" />
 
-@if (error != null)
-{
-    <p class="text-danger">@error</p>
-}
-else if (coaches == null)
-{
-    <p><em>Loading...</em></p>
-    @* <p> - paragraph *@
-    @* <em> - emphasis -> change style to (default) italics (наклон) *@
-}
-else
-{
-    <table class="table table-hover">
-
-        <thead>                      @* `thead` - table head for columns headers *@
-            <tr>                        @* table row *@
-                <th>Name</th>               @* table header *@
-                <th>Email</th>              @* table header *@
-                <th>Courses Assigned</th>   @* table header *@
-                <th>Actions</th>            @* table header *@
-            </tr>
-        </thead>
-
-
-        <tbody>
-            @* This loop iterates through the collection of coaches to display them in the table *@
-            @foreach (var coach in coaches)
-            {
-                @* For each coach, the `CoachRow` component is rendered, which represents a single row in the table *@
-                <CoachRow Coach="coach" 
-                          OnToggleDetails="() => ToggleCoachDetails(coach.Id)"
-                          OnEdit="() => ShowEditCoachModal(coach.Id)"
-                          OnDelete="() => ShowDeleteConfirmModal(coach.Id)" />
-                        @* 1. OnToggleDetails: An event callback that triggers the ToggleCoachDetails method in this parent component *@
-                        @* 2. OnEdit: Triggers the ShowEditCoachModal method to open the edit dialog *@
-                        @* 3. OnDelete: Triggers the ShowDeleteConfirmModal method to open the delete confirmation dialog *@
-
-                @* This condition checks if the details for the current coach should be expanded *@
-                @if (expandedCoachIds.Contains(coach.Id))
-                {
-                    @* If the details are expanded, a new table row is rendered below the coach's main row *@
-                    <tr>
-                        @* <td> - Table Data -> This cell spans all columns of the table to hold the details view *@
-                        <td colspan="4" style="background-color: #f8f9fa;">
-                            @* The `CoachDetails` component is rendered here, passing the cached details *@
-                            @* `GetValueOrDefault` is used to safely get the details, returning null if not found, which the `CoachDetails` component handles *@
-                            <CoachDetails Details="coachDetailsCache.GetValueOrDefault(coach.Id)" />
-                        </td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
-}
+                                @if (expandedCoachIds.Contains(coach.Id))
+                                {
+                                    <tr>
+                                        <td colspan="4" class="bg-light">
+                                            <CoachDetails Details="coachDetailsCache.GetValueOrDefault(coach.Id)" />
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
 
 @if (showAddCoachModal)
 {
@@ -81,3 +91,4 @@ else
                    OnConfirm="HandleDeleteConfirmed"
                    OnCancel="HideDeleteConfirmModal" />
 }
+</div>

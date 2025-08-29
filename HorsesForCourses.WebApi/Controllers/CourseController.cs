@@ -124,9 +124,23 @@ public class CourseController : ControllerBase
         if (coach == null)
             return NotFound("Coach not found.");
 
-        course.AssignCoach(coach);
-
-        await _courseService.UpdateAsync(course);
+        try
+        {
+            course.AssignCoach(coach);
+            await _courseService.UpdateAsync(course);
+        }
+        catch (ArgumentException ex) when (ex.Message.Contains("Course is already assigned"))
+        {
+            return BadRequest("Сhoose another coach. This course is already assigned by this coach.");
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest($"Unable to assign coach: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An unexpected error occurred while assigning the coach: {ex.Message}");
+        }
 
         return NoContent();
     }

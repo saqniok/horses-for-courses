@@ -128,12 +128,24 @@ namespace HorsesForCourses.Blazor.Pages
         // --- Events for editing the coach ---
 
         //shows a modal window for editing a coach.
-        private void ShowEditCoachModal(int coachId)
+        private async void ShowEditCoachModal(int coachId)
         {
-            //Trying to get the data of the coach from the cache. If they are not there, we create a new empty object.
-            editingCoach = coachDetailsCache.GetValueOrDefault(coachId) ?? new CoachDetailsDto { Id = coachId, Email = string.Empty, Name = string.Empty };
+            try
+            {
+                // Always load fresh coach data from the server to ensure we have the latest information
+                editingCoach = await CoachService!.GetCoachDetailsAsync(coachId);
 
-            showEditCoachModal = true;
+                // Update the cache with the fresh data
+                coachDetailsCache[coachId] = editingCoach;
+
+                showEditCoachModal = true;
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                error = $"Error loading coach details for editing: {ex.Message}";
+                StateHasChanged();
+            }
         }
 
         private void HideEditCoachModal()

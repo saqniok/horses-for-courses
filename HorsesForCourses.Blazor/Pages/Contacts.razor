@@ -1,5 +1,177 @@
 @page "/contacts"
+@inject Microsoft.JSInterop.IJSRuntime JSRuntime
 
-<h1>Contacts</h1>
+<PageTitle>Contact Information</PageTitle>
 
-<p>This is the contacts page.</p>
+<div class="container-fluid py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-6">
+            <!-- Header Section -->
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-primary mb-3">Contact Information</h1>
+                <p class="lead text-muted">Get in touch with Aleksandr Svedov</p>
+                <hr class="my-4">
+            </div>
+
+            <!-- Main Contact Card -->
+            <div class="card shadow-lg border-0 mb-4">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-4 text-center mb-3 mb-md-0">
+                            <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
+                                <i class="fas fa-user-circle fa-3x text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <h2 class="h3 mb-1">Aleksandr Svedov</h2>
+                            <p class="text-muted mb-3">Software Developer & Technology Enthusiast</p>
+                            <p class="mb-0">Feel free to reach out for collaboration, questions, or just to connect!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Methods -->
+            <div class="row g-4">
+                <!-- Email -->
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm border-0 hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="fas fa-envelope fa-2x text-success"></i>
+                            </div>
+                            <h5 class="card-title mb-2">Email</h5>
+                            <a href="mailto:sansved@gmail.com" class="text-decoration-none">
+                                <p class="mb-2 fw-bold text-primary">sansved@gmail.com</p>
+                            </a>
+                            <small class="text-muted">Click to send email</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phone -->
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm border-0 hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="fas fa-phone fa-2x text-info"></i>
+                            </div>
+                            <h5 class="card-title mb-2">Phone</h5>
+                            <a href="tel:+3270551613" class="text-decoration-none">
+                                <p class="mb-2 fw-bold text-primary">+32 70 55 16 13</p>
+                            </a>
+                            <small class="text-muted">Click to call</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LinkedIn -->
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm border-0 hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="fab fa-linkedin fa-2x text-primary"></i>
+                            </div>
+                            <h5 class="card-title mb-2">LinkedIn</h5>
+                            <a href="https://www.linkedin.com/in/aleksandr-svedov/" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                                <p class="mb-2 fw-bold text-primary">linkedin.com/in/aleksandr-svedov</p>
+                            </a>
+                            <small class="text-muted">Professional network</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GitHub -->
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm border-0 hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-dark bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="fab fa-github fa-2x text-dark"></i>
+                            </div>
+                            <h5 class="card-title mb-2">GitHub</h5>
+                            <a href="https://github.com/saqniok" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                                <p class="mb-2 fw-bold text-primary">github.com/saqniok</p>
+                            </a>
+                            <small class="text-muted">View my code</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Facebook -->
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm border-0 hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="fab fa-facebook fa-2x text-primary"></i>
+                            </div>
+                            <h5 class="card-title mb-2">Facebook</h5>
+                            <a href="https://www.facebook.com/aleksandr.svedov" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                                <p class="mb-2 fw-bold text-primary">facebook.com/aleksandr.svedov</p>
+                            </a>
+                            <small class="text-muted">Social profile</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Discord -->
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm border-0 hover-card">
+                        <div class="card-body text-center p-4">
+                            <div class="bg-secondary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="fab fa-discord fa-2x text-secondary"></i>
+                            </div>
+                            <h5 class="card-title mb-2">Discord</h5>
+                            <p class="mb-2 fw-bold text-primary">free2c0ma</p>
+                            <small class="text-muted">Gaming & chat</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Message -->
+            <div class="text-center mt-5">
+                <div class="card bg-light border-0">
+                    <div class="card-body py-4">
+                        <h5 class="mb-2">Let's Connect!</h5>
+                        <p class="text-muted mb-0">I'm always open to discussing new opportunities, sharing knowledge, or just having a friendly chat about technology.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+    }
+
+    .card {
+        border-radius: 15px;
+    }
+
+    .bg-primary.bg-opacity-10 {
+        background-color: rgba(13, 110, 253, 0.1) !important;
+    }
+
+    .bg-success.bg-opacity-10 {
+        background-color: rgba(25, 135, 84, 0.1) !important;
+    }
+
+    .bg-info.bg-opacity-10 {
+        background-color: rgba(13, 202, 240, 0.1) !important;
+    }
+
+    .bg-dark.bg-opacity-10 {
+        background-color: rgba(33, 37, 41, 0.1) !important;
+    }
+
+    .bg-secondary.bg-opacity-10 {
+        background-color: rgba(108, 117, 125, 0.1) !important;
+    }
+</style>
