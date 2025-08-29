@@ -1,9 +1,9 @@
 @using HorsesForCourses.Blazor.Dtos
 
 <tr @onclick="ToggleDetails" style="cursor: pointer;">
-    <td>@Coach.Name</td>
-    <td>@Coach.Email</td>
-    <td>@Coach.NumberOfCoursesAssignedTo</td>
+    <td>@(Coach?.Name ?? "N/A")</td>
+    <td>@(Coach?.Email ?? "N/A")</td>
+    <td>@(Coach?.NumberOfCoursesAssignedTo ?? 0)</td>
     <td>
         <div style="display: flex; gap: 0.5rem;"> @* Holds buttons in one row, independently from window size*@
 

@@ -33,9 +33,9 @@ else
         <tbody>
             @foreach (var course in courses)
             {
-                <CourseRow Course="course" 
-                           OnDelete="DeleteCourse" 
-                           OnConfirm="ConfirmCourse" 
+                <CourseRow Course="course"
+                           OnShowDeleteConfirm="ShowDeleteConfirmModal"
+                           OnConfirm="ConfirmCourse"
                            OnEdit="() => ShowEditCourseModal(course.Id)"
                            OnAssignCoach="() => ShowAssignCoachModal(course.Id)"
                            ShowDetails="@(expandedCourseId == course.Id)"
@@ -69,7 +69,15 @@ else
 @if (showAssignCoachModal && assigningCourse != null)
 {
     <AssignCoachForm Course="assigningCourse"
-                    EligibleCoaches="eligibleCoaches"
-                    OnAssignCoach="AssignCoachToCourse"
-                    OnClose="HideAssignCoachModal" />
+                     EligibleCoaches="eligibleCoaches"
+                     OnAssignCoach="AssignCoachToCourse"
+                     OnClose="HideAssignCoachModal" />
+}
+
+@if (showDeleteConfirmModal)
+{
+    <ConfirmDialog Title="Delete Course"
+                   Message=@($"Are you sure you want to delete this course?")
+                   OnConfirm="HandleDeleteConfirmed"
+                   OnCancel="HideDeleteConfirmModal" />
 }

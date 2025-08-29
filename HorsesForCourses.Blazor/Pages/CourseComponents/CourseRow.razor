@@ -30,36 +30,9 @@
                         @(Course.Coach == null ? "Assign Coach" : "Change Coach")
                     </button>
                 }
-                <button class="btn btn-sm btn-danger" @onclick="() => OnDelete.InvokeAsync(Course.Id)">Delete</button>
+                <button class="btn btn-sm btn-danger" @onclick="() => OnShowDeleteConfirm.InvokeAsync(Course.Id)">Delete</button>
             </div>
         </td>
     </tr>
 }
 
-@code {
-    [Parameter]
-    public CourseDto? Course { get; set; }
-
-    [Parameter]
-    public EventCallback<int> OnDelete { get; set; }
-
-    [Parameter]
-    public EventCallback<int> OnConfirm { get; set; }
-
-    [Parameter]
-    public EventCallback<int> OnEdit { get; set; }
-
-    [Parameter]
-    public EventCallback<int> OnAssignCoach { get; set; }
-
-    [Parameter]
-    public bool ShowDetails { get; set; }
-
-    [Parameter]
-    public EventCallback OnToggleDetails { get; set; }
-
-    private async Task ToggleDetails()
-    {
-        await OnToggleDetails.InvokeAsync();
-    }
-}

@@ -143,7 +143,7 @@ namespace HorsesForCourses.Blazor.Pages
         }
 
         // This method is called after a successful update of the coach data.
-        private async void HandleCoachUpdated(CoachDetailsDto updatedCoach)
+        private async void HandleCoachUpdated()
         {
             HideEditCoachModal();
 

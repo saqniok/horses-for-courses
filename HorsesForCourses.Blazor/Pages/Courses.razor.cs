@@ -35,6 +35,10 @@ namespace HorsesForCourses.Blazor.Pages
         // fields for course details expansion
         private int? expandedCourseId = null;
 
+        // fields for delete confirmation modal
+        private bool showDeleteConfirmModal = false;
+        private int courseIdToDelete;
+
         protected override async Task OnInitializedAsync()
         {
             await LoadCourses();
@@ -161,6 +165,33 @@ namespace HorsesForCourses.Blazor.Pages
             showAssignCoachModal = false;
             assigningCourse = null;
             eligibleCoaches = null;
+        }
+
+        // methods for delete confirmation modal
+        private void ShowDeleteConfirmModal(int courseId)
+        {
+            courseIdToDelete = courseId;
+            showDeleteConfirmModal = true;
+        }
+
+        private void HideDeleteConfirmModal()
+        {
+            showDeleteConfirmModal = false;
+        }
+
+        private async void HandleDeleteConfirmed()
+        {
+            try
+            {
+                await CourseService.DeleteCourseAsync(courseIdToDelete);
+                showDeleteConfirmModal = false;
+                await LoadCourses(); // Refresh the list
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message;
+                showDeleteConfirmModal = false;
+            }
         }
 
         protected async Task DeleteCourse(int id)
