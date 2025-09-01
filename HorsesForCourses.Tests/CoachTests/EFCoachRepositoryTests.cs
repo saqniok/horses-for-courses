@@ -1,5 +1,6 @@
 using HorsesForCourses.Core;
-using HorsesForCourses.WebApi.Data;
+using HorsesForCourses.Service.Data;
+using HorsesForCourses.Service.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 

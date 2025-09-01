@@ -1,6 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using HorsesForCourses.Core;
 using HorsesForCourses.Service.Data.Mapping;
-using Microsoft.EntityFrameworkCore;
 
 namespace HorsesForCourses.Service.Data;
 

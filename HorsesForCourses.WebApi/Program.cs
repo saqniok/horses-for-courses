@@ -1,7 +1,9 @@
 using System.Text.Json.Serialization;
 using HorsesForCourses.Core;
-using HorsesForCourses.WebApi.Data;
-using HorsesForCourses.WebApi.Service;
+using HorsesForCourses.Service.Data;
+using HorsesForCourses.Service;
+using HorsesForCourses.Service.Interfaces;
+using HorsesForCourses.Service.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;

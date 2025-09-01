@@ -18,6 +18,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HorsesForCourses.Core\HorsesForCourses.Core.csproj" />
+    <ProjectReference Include="..\HorsesForCourses.Service\HorsesForCourses.Service.csproj" />
   </ItemGroup>
 
 </Project>
+

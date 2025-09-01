@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using HorsesForCourses.Core;
-using HorsesForCourses.WebApi.DTOs;
-using HorsesForCourses.WebApi.Service;
+using HorsesForCourses.Service.DTOs;
+using HorsesForCourses.Service;
 using HorsesForCourses.WebApi.Controllers;
 
 public class CourseControllerTests

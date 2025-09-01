@@ -1,6 +1,8 @@
 using HorsesForCourses.Core;
 using Microsoft.AspNetCore.Mvc;
-using HorsesForCourses.WebApi.Service;
+using HorsesForCourses.Service;
+using HorsesForCourses.Service.DTOs;
+
 namespace HorsesForCourses.WebApi.Controllers;
 
 [ApiController]
@@ -99,3 +101,5 @@ public class CoachController : ControllerBase
         }
     }
 }
+
+

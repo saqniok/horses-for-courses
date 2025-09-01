@@ -1,7 +1,7 @@
 // using Microsoft.EntityFrameworkCore;
 // using Microsoft.EntityFrameworkCore.Design;
 
-// namespace HorsesForCourses.WebApi.Data
+// namespace HorsesForCourses.Service.Data
 // {
 // public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 // {

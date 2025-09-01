@@ -1,10 +1,10 @@
 
 using HorsesForCourses.Core;
-using HorsesForCourses.WebApi.DTOs;
+using HorsesForCourses.Service.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using HorsesForCourses.WebApi.Controllers;
-using HorsesForCourses.WebApi.Service;
+using HorsesForCourses.Service;
 
 public class CoachControllerTests
 {
