@@ -47,27 +47,27 @@
                             <table class="table table-bordered table-sm schedule-table">
                                 <thead>
                                     <tr>
-                                        <th style="width: 80px;">Time</th>
-                                        <th>Monday</th>
-                                        <th>Tuesday</th>
-                                        <th>Wednesday</th>
-                                        <th>Thursday</th>
-                                        <th>Friday</th>
+                                        <th class="time-header">Time</th>
+                                        <th class="day-header">Monday</th>
+                                        <th class="day-header">Tuesday</th>
+                                        <th class="day-header">Wednesday</th>
+                                        <th class="day-header">Thursday</th>
+                                        <th class="day-header">Friday</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @for (int hour = 9; hour <= 17; hour++)
                                     {
-                                        <tr>
+                                        <tr class="schedule-row">
                                             <td class="time-cell">@hour:00</td>
                                             @for (int day = 1; day <= 5; day++)
                                             {
                                                 var weekDay = (WeekDay)day;
                                                 var isScheduled = IsHourScheduled(weekDay, hour);
-                                                <td class="@(isScheduled ? "scheduled-hour" : "free-hour")">
+                                                <td class="day-cell @(isScheduled ? "scheduled-hour" : "free-hour")">
                                                     @if (isScheduled)
                                                     {
-                                                        <span class="scheduled-indicator">●</span>
+                                                        <span class="scheduled-indicator" title="Scheduled for @(weekDay) at @hour:00">●</span>
                                                     }
                                                 </td>
                                             }
@@ -99,34 +99,152 @@
 <style>
     .schedule-table {
         font-size: 0.85rem;
+        width: 100%;
+        table-layout: fixed;
+        margin-bottom: 0;
     }
-    
-    .time-cell {
-        background-color: #e9ecef;
-        font-weight: bold;
+
+    .time-header {
+        width: 80px;
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+        font-weight: 700;
         text-align: center;
+        padding: 10px 4px;
     }
-    
+
+    .day-header {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+        font-weight: 600;
+        text-align: center;
+        padding: 10px 4px;
+    }
+
+    .schedule-row:hover {
+        background-color: #f8f9fa;
+    }
+
+    .time-cell {
+        width: 80px;
+        background-color: #e9ecef;
+        font-weight: 700;
+        text-align: center;
+        padding: 8px 4px;
+        border-right: 2px solid #dee2e6;
+    }
+
+    .day-cell {
+        height: 45px;
+        text-align: center;
+        vertical-align: middle;
+        padding: 4px;
+        border: 1px solid #dee2e6;
+        transition: all 0.2s ease;
+    }
+
+    .day-cell:hover {
+        background-color: #f8f9fa !important;
+    }
+
     .scheduled-hour {
         background-color: #d4edda !important;
-        text-align: center;
-        vertical-align: middle;
+        border: 2px solid #28a745 !important;
+        position: relative;
     }
-    
+
+    .scheduled-hour:hover {
+        background-color: #c3e6cb !important;
+        transform: scale(1.1);
+    }
+
     .free-hour {
         background-color: #ffffff;
-        text-align: center;
-        vertical-align: middle;
+        border: 1px solid #dee2e6;
     }
-    
+
     .scheduled-indicator {
         color: #28a745;
-        font-size: 1.2rem;
+        font-size: 1.4rem;
+        display: block;
+        line-height: 1;
+        font-weight: bold;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
-    
-    .schedule-table td {
-        height: 35px;
-        vertical-align: middle;
+
+    /* Ensure all day columns have equal width */
+    .schedule-table th:nth-child(2), /* Monday */
+    .schedule-table th:nth-child(3), /* Tuesday */
+    .schedule-table th:nth-child(4), /* Wednesday */
+    .schedule-table th:nth-child(5), /* Thursday */
+    .schedule-table th:nth-child(6) { /* Friday */
+        width: calc((100% - 80px) / 5);
+    }
+
+    .schedule-table td:nth-child(2), /* Monday cells */
+    .schedule-table td:nth-child(3), /* Tuesday cells */
+    .schedule-table td:nth-child(4), /* Wednesday cells */
+    .schedule-table td:nth-child(5), /* Thursday cells */
+    .schedule-table td:nth-child(6) { /* Friday cells */
+        width: calc((100% - 80px) / 5);
+    }
+
+    /* Add subtle grid lines for better readability */
+    .schedule-table tbody tr:nth-child(even) {
+        background-color: rgba(0,0,0,0.02);
+    }
+
+    .schedule-table tbody tr:nth-child(even) .time-cell {
+        background-color: #f1f3f4;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .schedule-table {
+            font-size: 0.75rem;
+        }
+
+        .time-header,
+        .time-cell {
+            width: 60px;
+            font-size: 0.7rem;
+            padding: 4px 2px;
+        }
+
+        .day-cell {
+            height: 35px;
+            padding: 2px;
+        }
+
+        .day-header {
+            padding: 6px 2px;
+            font-size: 0.75rem;
+        }
+
+        .scheduled-indicator {
+            font-size: 1.1rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .schedule-table {
+            font-size: 0.7rem;
+        }
+
+        .time-header,
+        .time-cell {
+            width: 50px;
+            font-size: 0.65rem;
+        }
+
+        .day-cell {
+            height: 30px;
+            padding: 1px;
+        }
+
+        .scheduled-indicator {
+            font-size: 1rem;
+        }
     }
 </style>
 

@@ -1,0 +1,27 @@
+@using HorsesForCourses.Core
+@using HorsesForCourses.Service.DTOs
+@model PagedResult<CoachSummaryResponse>
+
+<h2>Coaches</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th># Courses Assigned</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var coach in Model.Items)
+        {
+            <tr>
+                <td>@coach.Id</td>
+                <td>@coach.Name</td>
+                <td>@coach.Email</td>
+                <td>@coach.NumberOfCoursesAssignedTo</td>
+            </tr>
+        }
+    </tbody>
+</table>
