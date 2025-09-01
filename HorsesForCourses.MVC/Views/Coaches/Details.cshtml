@@ -1,0 +1,57 @@
+@model HorsesForCourses.Service.DTOs.CoachDetailsDto
+
+@{
+    ViewData["Title"] = "Coach Details";
+}
+
+<h1>Coach Details</h1>
+
+<div>
+    <h4>Coach</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Skills)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Skills != null && Model.Skills.Any())
+            {
+                <ul>
+                    @foreach (var skill in Model.Skills)
+                    {
+                        <li>
+                            @skill
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span>No skills assigned.</span>
+            }
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-modern">Edit</a> |
+    <a asp-action="Index" class="btn btn-secondary btn-modern">Back to List</a>
+</div>

@@ -2,7 +2,15 @@
 @using HorsesForCourses.Service.DTOs
 @model PagedResult<CoachSummaryResponse>
 
+@{
+    ViewData["Title"] = "Coaches";
+}
+
 <h2>Coaches</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary btn-modern">Create New</a>
+</p>
 
 <table class="table table-striped">
     <thead>
@@ -11,6 +19,7 @@
             <th>Name</th>
             <th>Email</th>
             <th># Courses Assigned</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -21,6 +30,11 @@
                 <td>@coach.Name</td>
                 <td>@coach.Email</td>
                 <td>@coach.NumberOfCoursesAssignedTo</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@coach.Id" class="btn btn-info btn-sm btn-modern">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@coach.Id" class="btn btn-warning btn-sm btn-modern">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@coach.Id" class="btn btn-danger btn-sm btn-modern">Delete</a>
+                </td>
             </tr>
         }
     </tbody>
