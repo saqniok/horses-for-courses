@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\HorsesForCourses.WebApi\HorsesForCourses.WebApi.csproj" />
     <ProjectReference Include="..\HorsesForCourses.Core\HorsesForCourses.Core.csproj" />
+    <ProjectReference Include="..\HorsesForCourses.MVC\HorsesForCourses.MVC.csproj" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.8" />
 
   </ItemGroup>

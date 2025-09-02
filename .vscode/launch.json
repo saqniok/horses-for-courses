@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+    
+        {
+            "name": ".NET Core Launch (test)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/HorsesForCourses.Tests/bin/Debug/net8.0/HorsesForCourses.Tests.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        }
+    ]
+}
