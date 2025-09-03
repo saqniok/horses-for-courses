@@ -20,6 +20,7 @@ builder.Services
     .AddScoped<ICoachService, CoachService>()
     .AddScoped<ICourseRepository, EFCourseRepository>()
     .AddScoped<ICourseService, CourseService>()
+    .AddScoped<IGetCourseSummariesQuery, GetCourseSummariesQuery>()
     .AddScoped<IGetCoachSummariesQuery, GetCoachSummariesQuery>();
 
 var app = builder.Build();

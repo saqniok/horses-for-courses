@@ -29,7 +29,7 @@ namespace HorsesForCourses.MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
         {
-            return View(await _courseService.GetPagedAsync(new PageRequest(page, pageSize)));
+            return View(await _getCoursesQuery.All(new PageRequest(page, pageSize)));
         }
 
         // GET: Course/Details/5
