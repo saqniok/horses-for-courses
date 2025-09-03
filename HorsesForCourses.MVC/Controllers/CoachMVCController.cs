@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HorsesForCourses.MVC.Controllers
 {
-    public class CoachesController : Controller
+    public class CoachMVCController : Controller
     {
         private readonly IGetCoachSummariesQuery _getCoachSummaries;
         private readonly ICoachService _coachService;
 
-        public CoachesController(IGetCoachSummariesQuery getCoachSummaries, ICoachService coachService)
+        public CoachMVCController(IGetCoachSummariesQuery getCoachSummaries, ICoachService coachService)
         {
             _getCoachSummaries = getCoachSummaries;
             _coachService = coachService;
@@ -161,3 +161,5 @@ namespace HorsesForCourses.MVC.Controllers
         }
     }
 }
+
+

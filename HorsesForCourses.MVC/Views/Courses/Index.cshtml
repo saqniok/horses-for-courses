@@ -1,0 +1,42 @@
+@using HorsesForCourses.Service.DTOs
+@model PagedResultDto<CourseDto>
+
+@{
+    ViewData["Title"] = "Courses";
+}
+
+<h2>Courses</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary btn-modern">Create New</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Assigned Coach</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var course in Model.Items)
+        {
+            <tr>
+                <td>@course.Id</td>
+                <td>@course.Title</td>
+                <td>@course.StartDate.ToShortDateString()</td>
+                <td>@course.EndDate.ToShortDateString()</td>
+                <td>@course.AssignedCoach</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-info btn-sm btn-modern">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@course.Id" class="btn btn-warning btn-sm btn-modern">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@course.Id" class="btn btn-danger btn-sm btn-modern">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

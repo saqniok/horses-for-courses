@@ -1,25 +1,24 @@
 using HorsesForCourses.Core;
-using HorsesForCourses.Service;
 using HorsesForCourses.Service.DTOs;
 using HorsesForCourses.Service.Queries;
 using HorsesForCourses.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Xunit;
+using HorsesForCourses.MVC.Controllers;
 
 namespace HorsesForCourses.Tests
 {
     public class CoachesMVCControllerTest
-    {
+    { 
         private readonly Mock<IGetCoachSummariesQuery> _getCoachSummariesMock;
         private readonly Mock<ICoachService> _coachServiceMock;
-        private readonly HorsesForCourses.MVC.Controllers.CoachesController _controller;
+        private readonly CoachMVCController _controller;
 
         public CoachesMVCControllerTest()
         {
             _getCoachSummariesMock = new Mock<IGetCoachSummariesQuery>();
             _coachServiceMock = new Mock<ICoachService>();
-            _controller = new HorsesForCourses.MVC.Controllers.CoachesController(_getCoachSummariesMock.Object, _coachServiceMock.Object);
+            _controller = new CoachMVCController(_getCoachSummariesMock.Object, _coachServiceMock.Object);
         }
 
         [Fact]

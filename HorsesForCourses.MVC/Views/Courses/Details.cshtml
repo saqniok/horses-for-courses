@@ -1,0 +1,49 @@
+@model HorsesForCourses.Core.Course
+
+@{
+    ViewData["Title"] = "Course Details";
+}
+
+<h1>Course Details</h1>
+
+<div>
+    <h4>Course</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-2">
+            Start Date
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Period.StartDate.ToShortDateString()
+        </dd>
+        <dt class="col-sm-2">
+            End Date
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Period.EndDate.ToShortDateString()
+        </dd>
+        <dt class="col-sm-2">
+            Assigned Coach
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.AssignedCoachId.HasValue ? Model.AssignedCoachId.Value.ToString() : "Not Assigned")
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-modern">Edit</a> |
+    <a asp-action="Index" class="btn btn-secondary btn-modern">Back to List</a>
+</div>

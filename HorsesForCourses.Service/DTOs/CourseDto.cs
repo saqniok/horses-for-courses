@@ -52,6 +52,17 @@ public record CoachShortDto(
     string Name
 );
 
+public class CourseSummaryResponse
+{
+    public int Id { get; set; }
+    public string? Title { get; set; }
+    public DateOnly StartDate { get; set; }
+    public DateOnly EndDate { get; set; }
+    public bool IsConfirmed { get; set; }
+    public string? AssignedCoachName { get; set; }
+    public int NumberOfLessons { get; set; }
+}
+
 /**
     Это объекты передачи данных (DTO) для сущности Course. DTO используются для обмена данными между API и внешними клиентами. Они могут отличаться от доменных моделей, чтобы:
 
