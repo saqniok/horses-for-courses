@@ -254,7 +254,7 @@ namespace HorsesForCourses.Tests
 
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("Edit", redirectResult.ActionName);
-            Assert.Equal(1, redirectResult.RouteValues["id"]);
+            Assert.Equal(1, redirectResult.RouteValues!["id"]);
         }
 
         [Fact]
@@ -277,7 +277,7 @@ namespace HorsesForCourses.Tests
 
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("Edit", redirectResult.ActionName);
-            Assert.Equal(1, redirectResult.RouteValues["id"]);
+            Assert.Equal(1, redirectResult.RouteValues!["id"]);
         }
     }
 }
