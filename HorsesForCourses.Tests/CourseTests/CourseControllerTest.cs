@@ -4,6 +4,7 @@ using Moq;
 using HorsesForCourses.Core;
 using HorsesForCourses.Service.DTOs;
 using HorsesForCourses.Service;
+using HorsesForCourses.Service.Interfaces;
 using HorsesForCourses.WebApi.Controllers;
 
 public class CourseControllerTests

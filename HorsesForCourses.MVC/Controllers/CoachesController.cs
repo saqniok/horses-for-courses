@@ -2,6 +2,7 @@ using HorsesForCourses.Core;
 using HorsesForCourses.Service;
 using HorsesForCourses.Service.DTOs;
 using HorsesForCourses.Service.Queries;
+using HorsesForCourses.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HorsesForCourses.MVC.Controllers

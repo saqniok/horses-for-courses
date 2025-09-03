@@ -2,6 +2,7 @@ using HorsesForCourses.Core;
 using Microsoft.AspNetCore.Mvc;
 using HorsesForCourses.Service;
 using HorsesForCourses.Service.DTOs;
+using HorsesForCourses.Service.Interfaces;
 
 namespace HorsesForCourses.WebApi.Controllers;
 

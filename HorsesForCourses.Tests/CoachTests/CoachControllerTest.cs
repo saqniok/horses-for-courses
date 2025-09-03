@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using HorsesForCourses.WebApi.Controllers;
 using HorsesForCourses.Service;
+using HorsesForCourses.Service.Interfaces;
 
 public class CoachControllerTests
 {
