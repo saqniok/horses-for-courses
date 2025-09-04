@@ -30,6 +30,7 @@
                 <td>@course.Title</td>
                 <td>@course.StartDate.ToShortDateString()</td>
                 <td>@course.EndDate.ToShortDateString()</td>
+                <td>@(string.IsNullOrEmpty(course.AssignedCoachName) ? "None" : course.AssignedCoachName)</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-info btn-sm btn-modern">Details</a> |
                     <a asp-action="Edit" asp-route-id="@course.Id" class="btn btn-warning btn-sm btn-modern">Edit</a> |
@@ -38,47 +39,48 @@
             </tr>
         }
     </tbody>
-    @if (Model.TotalPages > 1)
-    {
-        <nav aria-label="Course pagination">
-            <ul class="pagination justify-content-center">
-                @if (Model.HasPrevious)
-                {
-                    <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)" asp-route-pageSize="@Model.PageSize">Previous</a>
-                    </li>
-                }
-                else
-                {
-                    <li class="page-item disabled">
-                        <span class="page-link">Previous</span>
-                    </li>
-                }
-
-                @for (int i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.TotalPages, Model.PageNumber + 2); i++)
-                {
-                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-pageSize="@Model.PageSize">@i</a>
-                    </li>
-                }
-
-                @if (Model.HasNext)
-                {
-                    <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)" asp-route-pageSize="@Model.PageSize">Next</a>
-                    </li>
-                }
-                else
-                {
-                    <li class="page-item disabled">
-                        <span class="page-link">Next</span>
-                    </li>
-                }
-            </ul>
-        </nav>
-    }
-
-    <div class="mt-3">
-        <p>Showing @Model.Items.Count of @Model.TotalCount courses (Page @Model.PageNumber of @Model.TotalPages)</p>
-    </div>
 </table>
+
+@if (Model.TotalPages > 1)
+{
+    <nav aria-label="Course pagination">
+        <ul class="pagination justify-content-center">
+            @if (Model.HasPrevious)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)" asp-route-pageSize="@Model.PageSize">Previous</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+            }
+
+            @for (int i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.TotalPages, Model.PageNumber + 2); i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-pageSize="@Model.PageSize">@i</a>
+                </li>
+            }
+
+            @if (Model.HasNext)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)" asp-route-pageSize="@Model.PageSize">Next</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+<div class="mt-3">
+    <p>Showing @Model.Items.Count of @Model.TotalCount courses (Page @Model.PageNumber of @Model.TotalPages)</p>
+</div>

@@ -48,6 +48,26 @@
                 <span>No skills assigned.</span>
             }
         </dd>
+        <dt class="col-sm-2">
+            Assigned Courses
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Courses != null && Model.Courses.Any())
+            {
+                <ul>
+                    @foreach (var course in Model.Courses)
+                    {
+                        <li>
+                            <a asp-controller="CourseMVC" asp-action="Details" asp-route-id="@course.Id">@course.Title</a>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span>No courses assigned.</span>
+            }
+        </dd>
     </dl>
 </div>
 

@@ -35,8 +35,67 @@
             @Model.Period.EndDate.ToShortDateString()
         </dd>
         <dt class="col-sm-2">
+            Status
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.IsConfirmed)
+            {
+                <span class="badge bg-success">Confirmed</span>
+            }
+            else
+            {
+                <span class="badge bg-warning">Draft</span>
+            }
+        </dd>
+        <dt class="col-sm-2">
             Assigned Coach
         </dt>
+        <dd class="col-sm-10">
+            @if (Model.AssignedCoach != null)
+            {
+                <span>@Model.AssignedCoach.Name (@Model.AssignedCoach.Email)</span>
+            }
+            else
+            {
+                <span class="text-muted">No coach assigned</span>
+            }
+        </dd>
+        <dt class="col-sm-2">
+            Required Skills
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.RequiredSkills != null && Model.RequiredSkills.Any())
+            {
+                <ul>
+                    @foreach (var skill in Model.RequiredSkills)
+                    {
+                        <li>@skill</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span class="text-muted">No skills required</span>
+            }
+        </dd>
+        <dt class="col-sm-2">
+            Schedule
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Schedule != null && Model.Schedule.Any())
+            {
+                <ul>
+                    @foreach (var timeSlot in Model.Schedule)
+                    {
+                        <li>@timeSlot.Day: @timeSlot.Start:00 - @timeSlot.End:00</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span class="text-muted">No schedule defined</span>
+            }
+        </dd>
     </dl>
 </div>
 

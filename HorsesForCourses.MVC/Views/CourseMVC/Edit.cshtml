@@ -1,3 +1,4 @@
+@using HorsesForCourses.Core
 @model HorsesForCourses.Service.DTOs.CourseDto
 
 @{
@@ -13,24 +14,46 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+
+            @* Title field - only editable if not confirmed *@
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+                @if (!Model.IsConfirmed)
+                {
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                }
+                else
+                {
+                    <input asp-for="Title" class="form-control" readonly />
+                    <small class="form-text text-muted">Cannot modify confirmed course</small>
+                }
             </div>
-            <div class="form-group">
-                <label asp-for="StartDate" class="control-label"></label>
-                <input asp-for="StartDate" class="form-control" type="date" />
-                <span asp-validation-for="StartDate" class="text-danger"></span>
+
+            @* Date fields - Read only as they cannot be changed *@
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label">Start Date</label>
+                        <input class="form-control" type="date" value="@Model.StartDate.ToString("yyyy-MM-dd")" readonly />
+                        <small class="form-text text-muted">Dates cannot be modified</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label">End Date</label>
+                        <input class="form-control" type="date" value="@Model.EndDate.ToString("yyyy-MM-dd")" readonly />
+                        <small class="form-text text-muted">Dates cannot be modified</small>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" class="form-control" type="date" />
-                <span asp-validation-for="EndDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save Details" class="btn btn-primary btn-modern" />
-            </div>
+
+            @if (!Model.IsConfirmed)
+            {
+                <div class="form-group">
+                    <input type="submit" value="Save Details" class="btn btn-primary btn-modern" />
+                </div>
+            }
         </form>
     </div>
 </div>
@@ -41,59 +64,197 @@
 <div class="row">
     <div class="col-md-6">
         <dl class="row">
-            <dt class="col-sm-4">Confirmed:</dt>
-            <dd class="col-sm-8">@(Model.IsConfirmed ? "Yes" : "No")</dd>
+            <dt class="col-sm-4">Status:</dt>
+            <dd class="col-sm-8">
+                @if (Model.IsConfirmed)
+                {
+                    <span class="badge bg-success">Confirmed</span>
+                }
+                else
+                {
+                    <span class="badge bg-warning">Draft</span>
+                }
+            </dd>
             <dt class="col-sm-4">Assigned Coach:</dt>
-            <dd class="col-sm-8">@(Model.Coach?.Name ?? "None")</dd>
+            <dd class="col-sm-8">
+                @if (Model.Coach != null)
+                {
+                    <span>@Model.Coach.Name</span>
+                    @if (Model.IsConfirmed)
+                    {
+                        <a asp-action="AssignCoach" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary ms-2">Change Coach</a>
+                    }
+                }
+                else
+                {
+                    <span class="text-muted">None</span>
+                    @if (Model.IsConfirmed)
+                    {
+                        <a asp-action="AssignCoach" asp-route-id="@Model.Id" class="btn btn-sm btn-primary ms-2">Assign Coach</a>
+                    }
+                }
+            </dd>
         </dl>
+
+        @if (!Model.IsConfirmed)
+        {
+            <form asp-action="Confirm" asp-route-id="@Model.Id" method="post">
+                <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to confirm this course? This action cannot be undone.')">
+                    Confirm Course
+                </button>
+                <small class="form-text text-muted d-block">Once confirmed, most changes will be locked</small>
+            </form>
+        }
     </div>
 </div>
 
 <hr />
 
 <h3>Manage Required Skills</h3>
-@if (Model.RequiredSkills != null && Model.RequiredSkills.Any())
+@if (!Model.IsConfirmed)
 {
-    <ul>
-        @foreach (var skill in Model.RequiredSkills)
-        {
-            <li>@skill</li>
-        }
-    </ul>
+    <dl class="row">
+        <dt class="col-sm-2">
+            Current Skills
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.RequiredSkills != null && Model.RequiredSkills.Any())
+            {
+                <ul>
+                    @foreach (var skill in Model.RequiredSkills)
+                    {
+                        <li>
+                            @skill
+                            <form asp-action="RemoveSkill" asp-route-id="@Model.Id" method="post" style="display:inline;">
+                                <input type="hidden" name="skill" value="@skill" />
+                                <button type="submit" class="btn btn-danger btn-sm btn-modern">Remove</button>
+                            </form>
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span>No skills assigned.</span>
+            }
+        </dd>
+    </dl>
+
+    <form asp-action="AddSkill" asp-route-id="@Model.Id" method="post">
+        <div class="form-group">
+            <label for="skill">Add New Skill:</label>
+            <input type="text" id="skill" name="skill" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-modern">Add Skill</button>
+    </form>
 }
 else
 {
-    <p>No required skills defined.</p>
+    <dl class="row">
+        <dt class="col-sm-2">
+            Required Skills
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.RequiredSkills != null && Model.RequiredSkills.Any())
+            {
+                <ul>
+                    @foreach (var skill in Model.RequiredSkills)
+                    {
+                        <span class="badge bg-info me-1">@skill</span>
+                    }
+                </ul>
+                <small class="form-text text-muted">Skills cannot be modified for confirmed courses</small>
+            }
+            else
+            {
+                <span>No required skills defined.</span>
+            }
+        </dd>
+    </dl>
 }
 
 <hr />
 
 <h3>Schedule</h3>
-@if (Model.Schedule != null && Model.Schedule.Any())
+@if (!Model.IsConfirmed)
 {
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Day</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var slot in Model.Schedule)
+    <dl class="row">
+        <dt class="col-sm-2">
+            Current Schedule
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Schedule != null && Model.Schedule.Any())
             {
-                <tr>
-                    <td>@slot.Day</td>
-                    <td>@slot.Start</td>
-                    <td>@slot.End</td>
-                </tr>
+                <ul>
+                    @foreach (var timeSlot in Model.Schedule)
+                    {
+                        <li>
+                            @timeSlot.Day: @FormatTime(timeSlot.Start) - @FormatTime(timeSlot.End)
+                            <form asp-action="RemoveTimeSlot" asp-route-id="@Model.Id" method="post" style="display:inline;">
+                                <input type="hidden" name="day" value="@timeSlot.Day" />
+                                <input type="hidden" name="startTime" value="@timeSlot.Start" />
+                                <input type="hidden" name="endTime" value="@timeSlot.End" />
+                                <button type="submit" class="btn btn-danger btn-sm btn-modern">Remove</button>
+                            </form>
+                        </li>
+                    }
+                </ul>
             }
-        </tbody>
-    </table>
+            else
+            {
+                <span>No schedule defined.</span>
+            }
+        </dd>
+    </dl>
+
+    <form asp-action="AddTimeSlot" asp-route-id="@Model.Id" method="post">
+        <div class="row">
+            <div class="col-md-4">
+                <label class="form-label">Day</label>
+                <select name="day" class="form-select">
+                    @foreach (WeekDay day in Enum.GetValues<WeekDay>())
+                    {
+                        <option value="@day">@day</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Start Time</label>
+                <input type="number" name="startTime" class="form-control" min="0" max="23" value="9" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">End Time</label>
+                <input type="number" name="endTime" class="form-control" min="0" max="23" value="10" />
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary btn-modern">Add</button>
+            </div>
+        </div>
+    </form>
 }
 else
 {
-    <p>No schedule defined.</p>
+    <dl class="row">
+        <dt class="col-sm-2">
+            Schedule
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Schedule != null && Model.Schedule.Any())
+            {
+                <ul>
+                    @foreach (var timeSlot in Model.Schedule)
+                    {
+                        <li>@timeSlot.Day: @FormatTime(timeSlot.Start) - @FormatTime(timeSlot.End)</li>
+                    }
+                </ul>
+                <small class="form-text text-muted">Schedule cannot be modified for confirmed courses</small>
+            }
+            else
+            {
+                <span>No schedule defined.</span>
+            }
+        </dd>
+    </dl>
 }
 
 <hr />
@@ -104,4 +265,11 @@ else
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+@functions {
+    private string FormatTime(int hour)
+    {
+        return $"{hour:D2}:00";
+    }
 }

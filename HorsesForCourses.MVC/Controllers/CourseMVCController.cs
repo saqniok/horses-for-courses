@@ -18,11 +18,13 @@ namespace HorsesForCourses.MVC.Controllers
     {
         private readonly IGetCourseSummariesQuery _getCoursesQuery;
         private readonly ICourseService _courseService;
+        private readonly ICoachService _coachService;
 
-        public CourseMVCController(IGetCourseSummariesQuery getCoursesQuery, ICourseService courseService)
+        public CourseMVCController(IGetCourseSummariesQuery getCoursesQuery, ICourseService courseService, ICoachService coachService)
         {
             _getCoursesQuery = getCoursesQuery;
             _courseService = courseService;
+            _coachService = coachService;
         }
 
         // GET: Courses
@@ -88,7 +90,7 @@ namespace HorsesForCourses.MVC.Controllers
         // POST: Course/Edit/5
         [HttpPost("Course/Edit/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Title,StartDate,EndDate")] CreateCourseRequest request)
+        public async Task<IActionResult> Edit(int id, [Bind("Title")] CourseDto courseDto)
         {
             var courseToUpdate = await _courseService.GetByIdAsync(id);
             if (courseToUpdate == null)
@@ -100,7 +102,7 @@ namespace HorsesForCourses.MVC.Controllers
             {
                 try
                 {
-                    courseToUpdate.UpdateTitle(request.Title);
+                    courseToUpdate.UpdateTitle(courseDto.Title);
                     await _courseService.UpdateAsync(courseToUpdate);
                     return RedirectToAction(nameof(Index));
                 }
@@ -109,7 +111,169 @@ namespace HorsesForCourses.MVC.Controllers
                     ModelState.AddModelError(string.Empty, "Unable to save changes. " + ex.Message);
                 }
             }
-            return View(request);
+            return View(courseDto);
+        }
+
+        // POST: Course/AddSkill/5
+        [HttpPost("Course/AddSkill/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddSkill(int id, [FromForm] string skill)
+        {
+            var course = await _courseService.GetByIdAsync(id);
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            if (!string.IsNullOrWhiteSpace(skill))
+            {
+                course.AddRequiredSkill(skill);
+                await _courseService.UpdateAsync(course);
+            }
+
+            return RedirectToAction(nameof(Edit), new { id = id });
+        }
+
+        // POST: Course/RemoveSkill/5
+        [HttpPost("Course/RemoveSkill/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveSkill(int id, [FromForm] string skill)
+        {
+            var course = await _courseService.GetByIdAsync(id);
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            if (!string.IsNullOrWhiteSpace(skill))
+            {
+                course.RemoveRequiredSkill(skill);
+                await _courseService.UpdateAsync(course);
+            }
+
+            return RedirectToAction(nameof(Edit), new { id = id });
+        }
+
+        // POST: Course/AddTimeSlot/5
+        [HttpPost("Course/AddTimeSlot/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddTimeSlot(int id, [FromForm] WeekDay day, [FromForm] int startTime, [FromForm] int endTime)
+        {
+            var course = await _courseService.GetByIdAsync(id);
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            if (startTime < endTime && startTime >= 0 && endTime <= 24)
+            {
+                var timeSlot = new TimeSlot(day, startTime, endTime);
+                course.AddTimeSlot(timeSlot);
+                await _courseService.UpdateAsync(course);
+            }
+
+            return RedirectToAction(nameof(Edit), new { id = id });
+        }
+
+        // POST: Course/RemoveTimeSlot/5
+        [HttpPost("Course/RemoveTimeSlot/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveTimeSlot(int id, [FromForm] WeekDay day, [FromForm] int startTime, [FromForm] int endTime)
+        {
+            var course = await _courseService.GetByIdAsync(id);
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            if (!course.IsConfirmed)
+            {
+                // Find and remove the time slot
+                var timeSlotToRemove = course.Schedule.FirstOrDefault(ts =>
+                    ts.Day == day && ts.Start == startTime && ts.End == endTime);
+
+                if (timeSlotToRemove != null)
+                {
+                    // Note: This is a simplified approach. In a real implementation,
+                    // you might want to add a RemoveTimeSlot method to the Course class
+                    // For now, we'll clear and re-add all except the one to remove
+                    var schedule = course.Schedule.ToList();
+                    schedule.Remove(timeSlotToRemove);
+                    course.UpdateTimeSlot(schedule);
+                    await _courseService.UpdateAsync(course);
+                }
+            }
+
+            return RedirectToAction(nameof(Edit), new { id = id });
+        }
+
+        // POST: Course/Confirm/5
+        [HttpPost("Course/Confirm/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Confirm(int id)
+        {
+            var course = await _courseService.GetByIdAsync(id);
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            if (!course.IsConfirmed)
+            {
+                course.Confirm();
+                await _courseService.UpdateAsync(course);
+            }
+
+            return RedirectToAction(nameof(Edit), new { id = id });
+        }
+
+        // GET: Course/AssignCoach/5
+        [HttpGet("Course/AssignCoach/{id}")]
+        public async Task<IActionResult> AssignCoach(int id)
+        {
+            var course = await _courseService.GetDtoByIdAsync(id);
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            // Get all coaches for assignment
+            var coaches = await _coachService.GetAllAsync();
+            ViewBag.Coaches = coaches;
+
+            return View(course);
+        }
+
+        // POST: Course/AssignCoach/5
+        [HttpPost("Course/AssignCoach/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignCoachPost(int id, [FromForm] int coachId)
+        {
+            var course = await _courseService.GetByIdAsync(id);
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            var coach = await _coachService.GetByIdAsync(coachId);
+            if (coach == null)
+            {
+                ModelState.AddModelError("", "Selected coach not found.");
+                return RedirectToAction(nameof(AssignCoach), new { id = id });
+            }
+
+            try
+            {
+                course.AssignCoach(coach);
+                await _courseService.UpdateAsync(course);
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return RedirectToAction(nameof(AssignCoach), new { id = id });
+            }
+
+            return RedirectToAction(nameof(Edit), new { id = id });
         }
 
         // GET: Course/Delete/5
