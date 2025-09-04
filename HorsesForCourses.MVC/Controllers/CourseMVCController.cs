@@ -267,7 +267,7 @@ namespace HorsesForCourses.MVC.Controllers
                 course.AssignCoach(coach);
                 await _courseService.UpdateAsync(course);
             }
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
                 ModelState.AddModelError("", ex.Message);
                 return RedirectToAction(nameof(AssignCoach), new { id = id });
