@@ -21,6 +21,7 @@ public interface ICourseRepository
 {
     Task AddAsync(Course course);
     Task<Course?> GetByIdAsync(int id);
+    Task<CourseDto?> GetDtoByIdAsync(int id);
     Task<IEnumerable<CourseDto>> GetAllAsync();
     Task<PagedResult<Course>> GetPagedAsync(PageRequest request, CancellationToken ct = default);
     Task DeleteAsync(int id);

@@ -29,6 +29,23 @@ namespace HorsesForCourses.Service.Repositories
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
+        public async Task<CourseDto?> GetDtoByIdAsync(int id)
+        {
+            return await _context.Courses
+                .AsNoTracking()
+                .Where(c => c.Id == id)
+                .Select(c => new CourseDto(
+                    c.Id,
+                    c.Title,
+                    c.Period.StartDate,
+                    c.Period.EndDate,
+                    c.RequiredSkills.ToList(),
+                    c.Schedule.Select(ts => new TimeSlotDto { Day = ts.Day, Start = ts.Start, End = ts.End }).ToList(),
+                    c.IsConfirmed,
+                    c.AssignedCoach != null ? new CoachShortDto(c.AssignedCoach.Id, c.AssignedCoach.Name) : null))
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<CourseDto>> GetAllAsync()
         {
             return await _context.Courses
@@ -50,13 +67,13 @@ namespace HorsesForCourses.Service.Repositories
         {
             return await _context.Courses
                 .Include(c => c.AssignedCoach)
-                .OrderBy(c => c.Id)                
-                .ToPagedResultAsync(request, ct); 
+                .OrderBy(c => c.Id)
+                .ToPagedResultAsync(request, ct);
         }
 
         public void Clear()
         {
-            _context.Courses.RemoveRange(_context.Courses); 
+            _context.Courses.RemoveRange(_context.Courses);
         }
 
         public async Task SaveChangesAsync()

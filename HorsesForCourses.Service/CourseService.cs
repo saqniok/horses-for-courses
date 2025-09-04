@@ -24,6 +24,11 @@ namespace HorsesForCourses.Service
             return await _courseRepository.GetByIdAsync(id);
         }
 
+        public async Task<CourseDto?> GetDtoByIdAsync(int id)
+        {
+            return await _courseRepository.GetDtoByIdAsync(id);
+        }
+
         public async Task CreateAsync(Course course)
         {
             await _courseRepository.AddAsync(course);

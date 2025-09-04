@@ -52,7 +52,7 @@ namespace HorsesForCourses.MVC.Controllers
         }
 
         // POST: Course/Create
-        [HttpPost]
+        [HttpPost("Course/Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Title,StartDate,EndDate")] CreateCourseRequest request)
         {
@@ -77,22 +77,16 @@ namespace HorsesForCourses.MVC.Controllers
         [HttpGet("Course/Edit/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
-            var course = await _courseService.GetByIdAsync(id);
+            var course = await _courseService.GetDtoByIdAsync(id);
             if (course == null)
             {
                 return NotFound();
             }
-            var request = new CreateCourseRequest
-            {
-                Title = course.Title,
-                StartDate = course.Period.StartDate,
-                EndDate = course.Period.EndDate
-            };
-            return View(request);
+            return View(course);
         }
 
         // POST: Course/Edit/5
-        [HttpPost]
+        [HttpPost("Course/Edit/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Title,StartDate,EndDate")] CreateCourseRequest request)
         {
