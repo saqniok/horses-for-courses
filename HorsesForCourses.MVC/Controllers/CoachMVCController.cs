@@ -111,7 +111,8 @@ namespace HorsesForCourses.MVC.Controllers
         }
 
         // POST: Coaches/Delete/5
-        [HttpPost("Coaches/DeleteConfirmed/{id}")]
+        [HttpPost("Coaches/Delete/{id}")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var coach = await _coachService.GetByIdAsync(id);

@@ -131,7 +131,8 @@ namespace HorsesForCourses.MVC.Controllers
         }
 
         // POST: Course/Delete/5
-        [HttpPost("Courses/DeleteConfirmed/{id}")]
+        [HttpPost("Course/Delete/{id}")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _courseService.DeleteAsync(id);
