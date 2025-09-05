@@ -6,12 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HorsesForCourses.MVC.Controllers
 {
-    public class CreateCourseRequest
-    {
-        public string Title { get; set; }
-        public DateOnly StartDate { get; set; }
-        public DateOnly EndDate { get; set; }
-    }
 
     public class CourseMVCController : Controller
     {
@@ -61,7 +55,7 @@ namespace HorsesForCourses.MVC.Controllers
             {
                 try
                 {
-                    var timeDay = new TimeDay(request.StartDate, request.EndDate);
+                    var timeDay = new TimeDay(request.startDate, request.endDate);
                     var course = new Course(request.Title, timeDay);
                     await _courseService.CreateAsync(course);
                     return RedirectToAction(nameof(Index));

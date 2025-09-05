@@ -1,10 +1,11 @@
-using HorsesForCourses.Core;
+
 using HorsesForCourses.Service.DTOs;
 using HorsesForCourses.Service.Queries;
 using HorsesForCourses.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using HorsesForCourses.MVC.Controllers;
+using HorsesForCourses.Core;
 
 namespace HorsesForCourses.Tests
 {
@@ -59,7 +60,7 @@ namespace HorsesForCourses.Tests
                 Title: "C",
                 StartDate: default,
                 EndDate: default,
-                IsConfirmed: false, 
+                IsConfirmed: false,
                 Coach: new CoachShortDto(1, "John"),
                 Schedule: new List<TimeSlotDto>()
             );
@@ -70,6 +71,48 @@ namespace HorsesForCourses.Tests
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<CourseDto>(viewResult.Model);
             Assert.Equal("C", model.Title);
+        }
+
+        [Fact]
+        public async Task Details_ReturnsNotFound_WhenCourseDoesNotExist()
+        {
+            _courseServiceMock.Setup(s => s.GetDtoByIdAsync(1)).ReturnsAsync((CourseDto?)null);
+
+            var result = await _controller.Details(1);
+
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public void Create_Get_ReturnCourseView()
+        {
+            var result = _controller.Create();
+
+            Assert.IsType<ViewResult>(result);
+        }
+
+        [Fact]
+        public async Task Create_Post_ReturnsCourseView_WhenModelValid()
+        {
+            var request = new CreateCourseRequest(Title: "C", startDate: default, endDate: default);
+            _courseServiceMock.Setup(s => s.CreateAsync(It.IsAny<Course>())).Returns(Task.CompletedTask);
+
+            var result = await _controller.Create(request);
+
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Index", redirectResult.ActionName);
+        }
+
+        [Fact]
+        public async Task Create_Post_ReturnsCourseView_WhenModelInvalid()
+        {
+            var request = new CreateCourseRequest(Title: "", startDate: default, endDate: default);
+            _controller.ModelState.AddModelError("Title", "Required");
+
+            var result = await _controller.Create(request);
+
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.Equal(request, viewResult.Model);
         }
     }
 }
