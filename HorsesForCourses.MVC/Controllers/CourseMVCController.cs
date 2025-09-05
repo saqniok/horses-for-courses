@@ -1,5 +1,4 @@
 using HorsesForCourses.Core;
-using HorsesForCourses.Service;
 using HorsesForCourses.Service.DTOs;
 using HorsesForCourses.Service.Queries;
 using HorsesForCourses.Service.Interfaces;
@@ -38,7 +37,7 @@ namespace HorsesForCourses.MVC.Controllers
         [HttpGet("Course/Details/{id}")]
         public async Task<IActionResult> Details(int id)
         {
-            var course = await _courseService.GetByIdAsync(id);
+            var course = await _courseService.GetDtoByIdAsync(id);
             if (course == null)
             {
                 return NotFound();
