@@ -13,6 +13,10 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">@TempData["Error"]</div>
+            }
             <input type="hidden" asp-for="Id" />
 
             @* Title field - only editable if not confirmed *@

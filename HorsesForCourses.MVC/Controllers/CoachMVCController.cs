@@ -52,9 +52,16 @@ namespace HorsesForCourses.MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var coach = new Coach(request.Name, request.Email);
-                await _coachService.CreateAsync(coach);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    var coach = new Coach(request.Name, request.Email);
+                    await _coachService.CreateAsync(coach);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ArgumentException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
             }
             return View(request);
         }
@@ -77,7 +84,7 @@ namespace HorsesForCourses.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Name,Email")] CreateCoachRequest request)
         {
-            if (id == 0) 
+            if (id == 0)
             {
                 return NotFound();
             }
@@ -89,9 +96,16 @@ namespace HorsesForCourses.MVC.Controllers
                 {
                     return NotFound();
                 }
-                coach.UpdateDetails(request.Name, request.Email);
-                await _coachService.UpdateAsync(coach);
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    coach.UpdateDetails(request.Name, request.Email);
+                    await _coachService.UpdateAsync(coach);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ArgumentException ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
             }
             // If model state is not valid, re-fetch coach details to display skills correctly
             var coachDetails = await _coachService.GetDtoByIdAsync(id);
@@ -137,8 +151,15 @@ namespace HorsesForCourses.MVC.Controllers
 
             if (!string.IsNullOrWhiteSpace(skill))
             {
-                coach.AddSkill(skill);
-                await _coachService.UpdateAsync(coach);
+                try
+                {
+                    coach.AddSkill(skill);
+                    await _coachService.UpdateAsync(coach);
+                }
+                catch (ArgumentException ex)
+                {
+                    TempData["Error"] = ex.Message;
+                }
             }
 
             return RedirectToAction(nameof(Edit), new { id = id }); // Redirect to Edit
@@ -153,28 +174,11 @@ namespace HorsesForCourses.MVC.Controllers
             {
                 await _coachService.RemoveSkillAsync(id, skill);
             }
-            catch (InvalidOperationException)
+            catch (ArgumentException ex)
             {
-                // Handle case where skill doesn't exist or other errors
+                TempData["Error"] = ex.Message;
             }
             return RedirectToAction(nameof(Edit), new { id = id }); // Redirect to Edit
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

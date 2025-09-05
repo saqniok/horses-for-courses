@@ -67,7 +67,7 @@ namespace HorsesForCourses.MVC.Controllers
                     await _courseService.CreateAsync(course);
                     return RedirectToAction(nameof(Index));
                 }
-                catch (ArgumentException ex)
+                catch (InvalidOperationException ex)
                 {
                     ModelState.AddModelError(string.Empty, ex.Message);
                 }
@@ -106,9 +106,9 @@ namespace HorsesForCourses.MVC.Controllers
                     await _courseService.UpdateAsync(courseToUpdate);
                     return RedirectToAction(nameof(Index));
                 }
-                catch (Exception ex)
+                catch (InvalidOperationException ex)
                 {
-                    ModelState.AddModelError(string.Empty, "Unable to save changes. " + ex.Message);
+                    ModelState.AddModelError(string.Empty, ex.Message);
                 }
             }
             return View(courseDto);
@@ -127,8 +127,15 @@ namespace HorsesForCourses.MVC.Controllers
 
             if (!string.IsNullOrWhiteSpace(skill))
             {
-                course.AddRequiredSkill(skill);
-                await _courseService.UpdateAsync(course);
+                try
+                {
+                    course.AddRequiredSkill(skill);
+                    await _courseService.UpdateAsync(course);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    TempData["Error"] = ex.Message;
+                }
             }
 
             return RedirectToAction(nameof(Edit), new { id = id });
@@ -147,8 +154,15 @@ namespace HorsesForCourses.MVC.Controllers
 
             if (!string.IsNullOrWhiteSpace(skill))
             {
-                course.RemoveRequiredSkill(skill);
-                await _courseService.UpdateAsync(course);
+                try
+                {
+                    course.RemoveRequiredSkill(skill);
+                    await _courseService.UpdateAsync(course);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    TempData["Error"] = ex.Message;
+                }
             }
 
             return RedirectToAction(nameof(Edit), new { id = id });
@@ -167,9 +181,16 @@ namespace HorsesForCourses.MVC.Controllers
 
             if (startTime < endTime && startTime >= 0 && endTime <= 24)
             {
-                var timeSlot = new TimeSlot(day, startTime, endTime);
-                course.AddTimeSlot(timeSlot);
-                await _courseService.UpdateAsync(course);
+                try
+                {
+                    var timeSlot = new TimeSlot(day, startTime, endTime);
+                    course.AddTimeSlot(timeSlot);
+                    await _courseService.UpdateAsync(course);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    TempData["Error"] = ex.Message;
+                }
             }
 
             return RedirectToAction(nameof(Edit), new { id = id });
@@ -188,19 +209,26 @@ namespace HorsesForCourses.MVC.Controllers
 
             if (!course.IsConfirmed)
             {
-                // Find and remove the time slot
-                var timeSlotToRemove = course.Schedule.FirstOrDefault(ts =>
-                    ts.Day == day && ts.Start == startTime && ts.End == endTime);
-
-                if (timeSlotToRemove != null)
+                try
                 {
-                    // Note: This is a simplified approach. In a real implementation,
-                    // you might want to add a RemoveTimeSlot method to the Course class
-                    // For now, we'll clear and re-add all except the one to remove
-                    var schedule = course.Schedule.ToList();
-                    schedule.Remove(timeSlotToRemove);
-                    course.UpdateTimeSlot(schedule);
-                    await _courseService.UpdateAsync(course);
+                    // Find and remove the time slot
+                    var timeSlotToRemove = course.Schedule.FirstOrDefault(ts =>
+                        ts.Day == day && ts.Start == startTime && ts.End == endTime);
+
+                    if (timeSlotToRemove != null)
+                    {
+                        // Note: This is a simplified approach. In a real implementation,
+                        // you might want to add a RemoveTimeSlot method to the Course class
+                        // For now, we'll clear and re-add all except the one to remove
+                        var schedule = course.Schedule.ToList();
+                        schedule.Remove(timeSlotToRemove);
+                        course.UpdateTimeSlot(schedule);
+                        await _courseService.UpdateAsync(course);
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    TempData["Error"] = ex.Message;
                 }
             }
 
@@ -220,8 +248,15 @@ namespace HorsesForCourses.MVC.Controllers
 
             if (!course.IsConfirmed)
             {
-                course.Confirm();
-                await _courseService.UpdateAsync(course);
+                try
+                {
+                    course.Confirm();
+                    await _courseService.UpdateAsync(course);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    TempData["Error"] = ex.Message;
+                }
             }
 
             return RedirectToAction(nameof(Edit), new { id = id });
@@ -258,7 +293,7 @@ namespace HorsesForCourses.MVC.Controllers
             var coach = await _coachService.GetByIdAsync(coachId);
             if (coach == null)
             {
-                ModelState.AddModelError("", "Selected coach not found.");
+                TempData["Error"] = "Selected coach not found.";
                 return RedirectToAction(nameof(AssignCoach), new { id = id });
             }
 
@@ -267,9 +302,9 @@ namespace HorsesForCourses.MVC.Controllers
                 course.AssignCoach(coach);
                 await _courseService.UpdateAsync(course);
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
-                ModelState.AddModelError("", ex.Message);
+                TempData["Error"] = ex.Message;
                 return RedirectToAction(nameof(AssignCoach), new { id = id });
             }
 
