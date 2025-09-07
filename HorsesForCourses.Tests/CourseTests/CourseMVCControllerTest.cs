@@ -116,7 +116,7 @@ namespace HorsesForCourses.Tests
         }
 
         [Fact]
-        public async Task Edit_Get_ReturnsView_WhenCourseExists()
+        public async Task Edit_Get_ReturnsCourseView_WhenCourseExists()
         {
             var courseDto = new CourseDto(
                 Id: 1,
@@ -134,6 +134,16 @@ namespace HorsesForCourses.Tests
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsType<CourseDto>(viewResult.Model);
             Assert.Equal("C", model.Title);
+        }
+
+        [Fact]
+        public async Task Edit_Get_ReturnsNotFound_WhenCourseDoesNotExist()
+        {
+            _courseServiceMock.Setup(s => s.GetDtoByIdAsync(1)).ReturnsAsync((CourseDto?)null);
+
+            var result = await _controller.Edit(1);
+
+            Assert.IsType<NotFoundResult>(result);
         }
     }
 }
