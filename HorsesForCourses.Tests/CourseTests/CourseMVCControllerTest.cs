@@ -360,5 +360,85 @@ namespace HorsesForCourses.Tests
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("Index", redirectResult.ActionName);
         }
+
+        [Fact]
+        public async Task AddSkill_ReturnsNotFound_WhenCourseDoesNotExist()
+        {
+            _courseServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync((Course?)null);
+
+            var result = await _controller.AddSkill(1, "C#");
+
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task RemoveSkill_ReturnsNotFound_WhenCourseDoesNotExist()
+        {
+            _courseServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync((Course?)null);
+
+            var result = await _controller.RemoveSkill(1, "C#");
+
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task AddTimeSlot_ReturnsNotFound_WhenCourseDoesNotExist()
+        {
+            _courseServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync((Course?)null);
+
+            var result = await _controller.AddTimeSlot(1, WeekDay.Monday, 9, 12);
+
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task RemoveTimeSlot_ReturnsNotFound_WhenCourseDoesNotExist()
+        {
+            _courseServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync((Course?)null);
+
+            var result = await _controller.RemoveTimeSlot(1, WeekDay.Monday, 9, 12);
+
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task Confirm_ReturnsNotFound_WhenCourseDoesNotExist()
+        {
+            _courseServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync((Course?)null);
+
+            var result = await _controller.Confirm(1);
+
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task AssignCoach_Get_ReturnsNotFound_WhenCourseDoesNotExist()
+        {
+            _courseServiceMock.Setup(s => s.GetDtoByIdAsync(1)).ReturnsAsync((CourseDto?)null);
+
+            var result = await _controller.AssignCoach(1);
+
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task AssignCoach_Post_ReturnsNotFound_WhenCourseDoesNotExist()
+        {
+            _courseServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync((Course?)null);
+
+            var result = await _controller.AssignCoachPost(1, 1);
+
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+                [Fact]
+        public async Task Delete_Get_ReturnsNotFound_WhenCourseDoesNotExist()
+        {
+            _courseServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync((Course?)null);
+
+            var result = await _controller.Delete(1);
+
+            Assert.IsType<NotFoundResult>(result);
+        }
     }
 }
