@@ -145,5 +145,20 @@ namespace HorsesForCourses.Tests
 
             Assert.IsType<NotFoundResult>(result);
         }
+
+        [Fact]
+        public async Task Edit_Post_ReturnsRedirect_WhenModelValid()
+        {
+            var request = new CourseDto(Id: 1, Title: "C Updated", StartDate: default, EndDate: default, IsConfirmed: false, Coach: null, Schedule: new List<TimeSlotDto>());
+            var course = new Course("C", new TimeDay(default, default)) { Id = 1 };
+
+            _courseServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(course);
+            _courseServiceMock.Setup(s => s.UpdateAsync(course)).Returns(Task.CompletedTask);
+
+            var result = await _controller.Edit(1, request);
+
+            var redirectResult = Assert.IsType<RedirectToActionResult>(result);
+            Assert.Equal("Index", redirectResult.ActionName);
+        }
     }
 }
