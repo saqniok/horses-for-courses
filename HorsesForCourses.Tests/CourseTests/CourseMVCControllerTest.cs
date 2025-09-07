@@ -114,5 +114,26 @@ namespace HorsesForCourses.Tests
             var viewResult = Assert.IsType<ViewResult>(result);
             Assert.Equal(request, viewResult.Model);
         }
+
+        [Fact]
+        public async Task Edit_Get_ReturnsView_WhenCourseExists()
+        {
+            var courseDto = new CourseDto(
+                Id: 1,
+                Title: "C",
+                StartDate: default,
+                EndDate: default,
+                IsConfirmed: false,
+                Coach: new CoachShortDto(1, "John"),
+                Schedule: new List<TimeSlotDto>()
+            );
+            _courseServiceMock.Setup(s => s.GetDtoByIdAsync(1)).ReturnsAsync(courseDto);
+
+            var result = await _controller.Edit(1);
+
+            var viewResult = Assert.IsType<ViewResult>(result);
+            var model = Assert.IsType<CourseDto>(viewResult.Model);
+            Assert.Equal("C", model.Title);
+        }
     }
 }
