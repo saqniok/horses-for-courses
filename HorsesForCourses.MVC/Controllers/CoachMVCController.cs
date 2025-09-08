@@ -4,9 +4,11 @@ using HorsesForCourses.Service.DTOs;
 using HorsesForCourses.Service.Queries;
 using HorsesForCourses.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HorsesForCourses.MVC.Controllers
 {
+    [Authorize]
     public class CoachMVCController : Controller
     {
         private readonly IGetCoachSummariesQuery _getCoachSummaries;
@@ -20,6 +22,7 @@ namespace HorsesForCourses.MVC.Controllers
 
         // GET: Coaches
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Index(int page = 1, int pageSize = 25)
         {
             var coaches = await _getCoachSummaries.All(new PageRequest(page, pageSize));
@@ -182,3 +185,4 @@ namespace HorsesForCourses.MVC.Controllers
         }
     }
 }
+

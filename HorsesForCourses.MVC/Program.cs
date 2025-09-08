@@ -23,6 +23,11 @@ builder.Services
     .AddScoped<IGetCourseSummariesQuery, GetCourseSummariesQuery>()
     .AddScoped<IGetCoachSummariesQuery, GetCoachSummariesQuery>();
 
+// Authentication
+builder.Services.AddAuthentication("Cookies")
+    .AddCookie("Cookies", o => { o.LoginPath = "/Account/Login"; });
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -34,7 +39,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "default",
