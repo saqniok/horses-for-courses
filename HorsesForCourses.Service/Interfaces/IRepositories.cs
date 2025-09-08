@@ -29,3 +29,12 @@ public interface ICourseRepository
     void Update(Course course);
     Task SaveChangesAsync();
 }
+
+public interface IUserRepository
+{
+    Task AddAsync(User user);
+    Task<User?> GetByIdAsync(int id);
+    Task<User?> GetByEmailAsync(string email);
+    Task<bool> EmailExistsAsync(string email);
+    Task SaveChangesAsync();
+}

@@ -8,6 +8,7 @@ public class AppDbContext : DbContext
 {
     public DbSet<Coach> Coaches { get; set; } = null!;
     public DbSet<Course> Courses { get; set; } = null!;
+    public DbSet<User> Users { get; set; } = null!;
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -19,6 +20,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.ApplyConfiguration(new CoachConfiguration());
         modelBuilder.ApplyConfiguration(new CourseConfiguration());
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
     }
 
 }

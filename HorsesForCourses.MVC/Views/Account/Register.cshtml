@@ -1,0 +1,35 @@
+@model HorsesForCourses.MVC.Models.ViewModels.RegisterAccountViewModel
+
+<h2>Register</h2>
+
+<form asp-action="Register" method="post">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Pass"></label>
+        <input asp-for="Pass" class="form-control" />
+        <span asp-validation-for="Pass" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PassConfirm"></label>
+        <input asp-for="PassConfirm" class="form-control" />
+        <span asp-validation-for="PassConfirm" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+
+<div>
+    <a asp-action="Login">Already have an account? Login here</a>
+</div>
