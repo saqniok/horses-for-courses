@@ -1,39 +1,52 @@
 using System.Security.Cryptography;
+using System.Text;
 
 namespace HorsesForCourses.Core;
 
 public class Pbkdf2PasswordHasher : IPasswordHasher
 {
-    private const int SaltSize = 16; // 128-bit
-    private const int KeySize = 32;  // 256-bit
-    private const int Iterations = 100_000; // good trade-off between speed & security
+    private const int SaltSize = 16; // 128 bits
+    private const int KeySize = 32; // 256 bits
+    private const int Iterations = 10000; // Number of iterations for PBKDF2
 
     public string Hash(string password)
     {
-        using var rng = RandomNumberGenerator.Create();
-        byte[] salt = new byte[SaltSize];
-        rng.GetBytes(salt);
+        using (var algorithm = new Rfc2898DeriveBytes(
+            password,
+            SaltSize,
+            Iterations,
+            HashAlgorithmName.SHA256))
+        {
+            var salt = algorithm.Salt;
+            var key = algorithm.GetBytes(KeySize);
 
-        using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, Iterations, HashAlgorithmName.SHA256);
-        byte[] key = pbkdf2.GetBytes(KeySize);
+            // Combine salt and key, then convert to base64 for storage
+            var hashBytes = new byte[SaltSize + KeySize];
+            Buffer.BlockCopy(salt, 0, hashBytes, 0, SaltSize);
+            Buffer.BlockCopy(key, 0, hashBytes, SaltSize, KeySize);
 
-        // Store as: {iterations}.{base64Salt}.{base64Key}
-        return $"{Iterations}.{Convert.ToBase64String(salt)}.{Convert.ToBase64String(key)}";
+            return Convert.ToBase64String(hashBytes);
+        }
     }
 
     public bool Verify(string password, string hash)
     {
-        var parts = hash.Split('.', 3);
-        if (parts.Length != 3)
-            return false;
+        var hashBytes = Convert.FromBase64String(hash);
 
-        int iterations = Convert.ToInt32(parts[0]);
-        byte[] salt = Convert.FromBase64String(parts[1]);
-        byte[] key = Convert.FromBase64String(parts[2]);
+        var salt = new byte[SaltSize];
+        Buffer.BlockCopy(hashBytes, 0, salt, 0, SaltSize);
 
-        using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterations, HashAlgorithmName.SHA256);
-        byte[] attemptedKey = pbkdf2.GetBytes(KeySize);
+        var storedKey = new byte[KeySize];
+        Buffer.BlockCopy(hashBytes, SaltSize, storedKey, 0, KeySize);
 
-        return CryptographicOperations.FixedTimeEquals(attemptedKey, key);
+        using (var algorithm = new Rfc2898DeriveBytes(
+            password,
+            salt,
+            Iterations,
+            HashAlgorithmName.SHA256))
+        {
+            var keyToCheck = algorithm.GetBytes(KeySize);
+            return keyToCheck.SequenceEqual(storedKey);
+        }
     }
 }

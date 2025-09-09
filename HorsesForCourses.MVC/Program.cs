@@ -46,6 +46,13 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Apply migrations on startup
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate();
+}
+
 
 app.MapControllerRoute(
     name: "default",
