@@ -31,22 +31,38 @@ public class Pbkdf2PasswordHasher : IPasswordHasher
 
     public bool Verify(string password, string hash)
     {
-        var hashBytes = Convert.FromBase64String(hash);
-
-        var salt = new byte[SaltSize];
-        Buffer.BlockCopy(hashBytes, 0, salt, 0, SaltSize);
-
-        var storedKey = new byte[KeySize];
-        Buffer.BlockCopy(hashBytes, SaltSize, storedKey, 0, KeySize);
-
-        using (var algorithm = new Rfc2898DeriveBytes(
-            password,
-            salt,
-            Iterations,
-            HashAlgorithmName.SHA256))
+        try
         {
-            var keyToCheck = algorithm.GetBytes(KeySize);
-            return keyToCheck.SequenceEqual(storedKey);
+            var hashBytes = Convert.FromBase64String(hash);
+
+            if (hashBytes.Length != SaltSize + KeySize)
+            {
+                return false; // Invalid hash length
+            }
+
+            var salt = new byte[SaltSize];
+            Buffer.BlockCopy(hashBytes, 0, salt, 0, SaltSize);
+
+            var storedKey = new byte[KeySize];
+            Buffer.BlockCopy(hashBytes, SaltSize, storedKey, 0, KeySize);
+
+            using (var algorithm = new Rfc2898DeriveBytes(
+                password,
+                salt,
+                Iterations,
+                HashAlgorithmName.SHA256))
+            {
+                var keyToCheck = algorithm.GetBytes(KeySize);
+                return keyToCheck.SequenceEqual(storedKey);
+            }
+        }
+        catch (FormatException)
+        {
+            return false; // Invalid Base64 string
+        }
+        catch (ArgumentException)
+        {
+            return false; // Invalid arguments (e.g., null password or hash)
         }
     }
 }
