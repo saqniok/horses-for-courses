@@ -185,4 +185,3 @@ namespace HorsesForCourses.MVC.Controllers
         }
     }
 }
-

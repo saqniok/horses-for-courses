@@ -3,10 +3,11 @@ using HorsesForCourses.Service.DTOs;
 using HorsesForCourses.Service.Queries;
 using HorsesForCourses.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HorsesForCourses.MVC.Controllers
 {
-
+    [Authorize]
     public class CourseMVCController : Controller
     {
         private readonly IGetCourseSummariesQuery _getCoursesQuery;
@@ -22,6 +23,7 @@ namespace HorsesForCourses.MVC.Controllers
 
         // GET: Courses
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
         {
             return View(await _getCoursesQuery.All(new PageRequest(page, pageSize)));

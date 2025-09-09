@@ -4,6 +4,7 @@ using HorsesForCourses.Service;
 using HorsesForCourses.Service.Data;
 using HorsesForCourses.Service.Interfaces;
 using HorsesForCourses.Service.Repositories;
+using HorsesForCourses.Core; // Added for IPasswordHasher and Pbkdf2PasswordHasher
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +22,10 @@ builder.Services
     .AddScoped<ICourseRepository, EFCourseRepository>()
     .AddScoped<ICourseService, CourseService>()
     .AddScoped<IGetCourseSummariesQuery, GetCourseSummariesQuery>()
-    .AddScoped<IGetCoachSummariesQuery, GetCoachSummariesQuery>();
+    .AddScoped<IGetCoachSummariesQuery, GetCoachSummariesQuery>()
+    .AddScoped<IUserRepository, EFUserRepository>() 
+    .AddScoped<IUserService, UserService>() 
+    .AddScoped<IPasswordHasher, Pbkdf2PasswordHasher>(); 
 
 // Authentication
 builder.Services.AddAuthentication("Cookies")
