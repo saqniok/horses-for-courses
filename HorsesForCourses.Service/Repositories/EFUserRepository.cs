@@ -36,6 +36,15 @@ namespace HorsesForCourses.Service.Repositories
                 .AnyAsync(u => u.Email == email);
         }
 
+        public async Task DeleteAsync(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+            }
+        }
+
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();

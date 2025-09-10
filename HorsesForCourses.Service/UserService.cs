@@ -1,5 +1,6 @@
 using HorsesForCourses.Core;
 using HorsesForCourses.Service.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 
 namespace HorsesForCourses.Service;
 
@@ -26,5 +27,16 @@ public class UserService : IUserService
     {
         await _userRepository.AddAsync(user);
         await _userRepository.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(int userId)
+    {
+        await _userRepository.DeleteAsync(userId);
+        await _userRepository.SaveChangesAsync();
+    }
+
+    public AuthenticationProperties ConfigureExternalAuthenticationProperties(string provider, string redirectUrl)
+    {
+        return new AuthenticationProperties { RedirectUri = redirectUrl };
     }
 }
