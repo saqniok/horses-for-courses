@@ -5,6 +5,8 @@ using HorsesForCourses.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using HorsesForCourses.MVC.Controllers;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace HorsesForCourses.Tests
 {
@@ -19,6 +21,19 @@ namespace HorsesForCourses.Tests
             _getCoachSummariesMock = new Mock<IGetCoachSummariesQuery>();
             _coachServiceMock = new Mock<ICoachService>();
             _controller = new CoachMVCController(_getCoachSummariesMock.Object, _coachServiceMock.Object);
+
+            // Mock HttpContext and User for controller tests
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, "1"), // Example user ID
+                new Claim(ClaimTypes.Name, "test@example.com"),
+                new Claim(ClaimTypes.Role, UserRole.Admin.ToString()) // Default to Admin for tests
+            }, "mock"));
+
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user }
+            };
         }
 
         [Fact]
@@ -250,6 +265,19 @@ namespace HorsesForCourses.Tests
             _coachServiceMock.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(coach);
             _coachServiceMock.Setup(s => s.UpdateAsync(coach)).Returns(Task.CompletedTask);
 
+            // Set up a mock user for the controller context
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, "1"),
+                new Claim(ClaimTypes.Role, UserRole.Admin.ToString())
+            };
+            var identity = new ClaimsIdentity(claims, "TestAuthType");
+            var principal = new ClaimsPrincipal(identity);
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = principal }
+            };
+
             var result = await _controller.AddSkill(1, "NewSkill");
 
             var redirectResult = Assert.IsType<RedirectToActionResult>(result);
@@ -270,6 +298,18 @@ namespace HorsesForCourses.Tests
         [Fact]
         public async Task RemoveSkill_ReturnsRedirect()
         {
+            // Set up a mock user for the controller context
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, "1"),
+                new Claim(ClaimTypes.Role, UserRole.Admin.ToString())
+            };
+            var identity = new ClaimsIdentity(claims, "TestAuthType");
+            var principal = new ClaimsPrincipal(identity);
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = principal }
+            };
 
             _coachServiceMock.Setup(s => s.RemoveSkillAsync(1, "Skill")).Returns(Task.CompletedTask);
 
