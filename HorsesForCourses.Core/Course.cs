@@ -103,28 +103,24 @@ namespace HorsesForCourses.Core
             ConfirmConfrimation();
             Title = title;
         }
+
+        public IEnumerable<ConcreteTimeSlot> GetConcreteTimeSlots()
+        {
+            var concreteTimeSlots = new List<ConcreteTimeSlot>();
+            for (var date = Period.StartDate; date <= Period.EndDate; date = date.AddDays(1))
+            {
+                foreach (var slot in Schedule)
+                {
+                    if (date.DayOfWeek == (DayOfWeek)slot.Day)
+                    {
+                        concreteTimeSlots.Add(new ConcreteTimeSlot(date, slot.Start, slot.End));
+                    }
+                }
+            }
+            return concreteTimeSlots;
+        }
     }
 }
-
-
-/**
-    Свойства:
-        Id: Уникальный идентификатор курса.
-        Title: Название курса.
-        Period: Период, в течение которого проводится курс (вероятно, содержит начальную и конечную даты).
-        RequiredSkills: Набор навыков, необходимых для прохождения курса (или навыков, которыми должен обладать тренер для ведения курса).
-        Schedule: Список временных слотов (TimeSlot), составляющих расписание курса.
-        IsConfirmed: Флаг, указывающий, подтвержден ли курс.
-        AssignedCoach: Тренер, назначенный на этот курс.
-    Методы:
-        Confirm(): Подтверждает курс. Имеет проверку, что курс не может быть подтвержден без уроков.
-        ConfirmConfrimation(): Внутренний метод для проверки, что курс не был подтвержден, прежде чем вносить изменения. Это предотвращает изменение подтвержденных курсов.
-        AddRequiredSkill(), RemoveRequiredSkill(), UpdateRequiredSkills(): Методы для управления необходимыми навыками курса.
-        AddTimeSlot(), RemoveTimeSlot(), UpdateTimeSlot(): Методы для управления расписанием курса.
-        AssignCoach(): Назначает тренера на курс. Включает проверки, что курс подтвержден и что тренер обладает всеми необходимыми навыками.
-
-        Этот класс инкапсулирует бизнес-логику, связанную с курсами, и обеспечивает соблюдение доменных инвариантов.
-*/
 
 
 /**
