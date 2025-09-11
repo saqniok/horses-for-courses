@@ -52,21 +52,63 @@ public class AccountController : Controller
         */
         {
             var user = await _userService.GetByEmailAsync(model.Email);
+            /*
+                _userService.GetByEmailAsync(model.Email) ищет пользователя в базе данных 
+                по предоставленному email. await приостанавливает выполнение метода, 
+                пока асинхронная операция не завершится, не блокируя при этом поток
+            */
 
             if (user != null && _passwordHasher.Verify(model.Password, user.PasswordHash))
             {
+                /*
+                    _passwordHasher.Verify(...)
+                    Проверяет, соответствует ли предоставленный пароль (model.Password)
+                    хешированному паролю пользователя (user.PasswordHash), 
+                    хранящемуся в базе данных. 
+                    Использование password hashing критически важно для безопасности
+                */
                 var claims = new List<Claim>
+                /*
+                    Если аутентификация прошла успешно, 
+                    создается список claims. Claims — это утверждения (statement) 
+                    о пользователе, которые используются для идентификации и авторизации
+                */
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    // ClaimTypes.NameIdentifier — это стандартный тип claim для уникального идентификатора пользователя. 
+                    // user.Id.ToString() преобразует ID пользователя в строку
                     new Claim(ClaimTypes.Name, user.Email)
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, "Cookies");
+                /*
+                    Создается ClaimsIdentity, который представляет личность пользователя. 
+                    Он содержит список claims и указывает, какой тип аутентификации используется 
+                    ("Cookies"). Это необходимо для создания authentication cookie
+                */
+
                 await HttpContext.SignInAsync("Cookies", new ClaimsPrincipal(claimsIdentity));
+                /*
+                    Метод принимает ClaimsPrincipal (который, в свою очередь, содержит ClaimsIdentity)
+                    и схему аутентификации ("Cookies"). ASP.NET Core создает 
+                    authentication cookie и отправляет его в браузер пользователя. 
+                    Теперь пользователь считается аутентифицированным
+                */
+
                 return RedirectToAction("Index", "Home");
+                /*
+                    После успешного входа метод возвращает RedirectToAction, 
+                    который перенаправляет пользователя на страницу с именем Index в контроллере Home
+                */
             }
 
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            /*
+                Если проверка if (сравнение пароля) не прошла, 
+                эта строка добавляет сообщение об ошибке в ModelState. 
+                Это сообщение можно отобразить на странице входа, 
+                используя Validation Summary или validation tags в Razor View
+            */
         }
         return View(model);
     }
