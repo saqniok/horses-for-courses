@@ -129,10 +129,17 @@ public class AccountController : Controller
             if (existingUser != null)
             {
                 ModelState.AddModelError("Email", "User with this email already exists.");
+                // Добавляет ошибку в ModelState, привязывая её к полю "Email".
+
                 return View(model);
             }
 
             var hashedPassword = _passwordHasher.Hash(model.Pass);
+            /*
+                Хеширует пароль, введенный пользователем. 
+                Это критически важно для безопасности, так как 
+                в базу данных нельзя хранить пароли в открытом виде
+            */
             UserRole selectedRole = UserRole.User; // Default
 
             if (model.IsAdmin)
@@ -205,7 +212,7 @@ public class AccountController : Controller
             user!.Id,
             user.Name,
             user.Email,
-            user.Role
+            Role = user.Role.ToString()
         };
 
         var jsonUserData = JsonSerializer.Serialize(userData, new JsonSerializerOptions { WriteIndented = true });
