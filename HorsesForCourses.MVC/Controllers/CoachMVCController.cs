@@ -5,6 +5,7 @@ using HorsesForCourses.Service.Queries;
 using HorsesForCourses.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace HorsesForCourses.MVC.Controllers
 {
@@ -36,14 +37,14 @@ namespace HorsesForCourses.MVC.Controllers
             var coach = await _coachService.GetDtoByIdAsync(id);
 
             if (coach == null)
-            {
                 return NotFound();
-            }
+
             return View(coach);
         }
 
         // GET: Coaches/Create
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -52,6 +53,7 @@ namespace HorsesForCourses.MVC.Controllers
         // POST: Coaches/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Name,Email")] CreateCoachRequest request)
         {
             if (ModelState.IsValid)
@@ -72,14 +74,14 @@ namespace HorsesForCourses.MVC.Controllers
 
         // GET: Coaches/Edit/5
         [HttpGet("Coaches/Edit/{id}")]
+        [Authorize(Roles = "Admin,Coach")]
         public async Task<IActionResult> Edit(int id)
         {
             var coach = await _coachService.GetDtoByIdAsync(id);
             
             if (coach == null)
-            {
                 return NotFound();
-            }
+
             // Pass CoachDetailsDto directly to the view
             return View(coach);
         }
@@ -87,20 +89,19 @@ namespace HorsesForCourses.MVC.Controllers
         // POST: Coaches/Edit/5
         [HttpPost("Coaches/Edit/{id}")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Coach")]
         public async Task<IActionResult> Edit(int id, [Bind("Name,Email")] CreateCoachRequest request)
         {
             if (id == 0)
-            {
                 return NotFound();
-            }
+
 
             if (ModelState.IsValid)
             {
                 var coach = await _coachService.GetByIdAsync(id);
                 if (coach == null)
-                {
                     return NotFound();
-                }
+
                 try
                 {
                     coach.UpdateDetails(request.Name, request.Email);
@@ -112,6 +113,7 @@ namespace HorsesForCourses.MVC.Controllers
                     ModelState.AddModelError("", ex.Message);
                 }
             }
+
             // If model state is not valid, re-fetch coach details to display skills correctly
             var coachDetails = await _coachService.GetDtoByIdAsync(id);
             return View(coachDetails);
@@ -119,26 +121,26 @@ namespace HorsesForCourses.MVC.Controllers
 
         // GET: Coaches/Delete/5
         [HttpGet("Coaches/Delete/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var coach = await _coachService.GetDtoByIdAsync(id);
             if (coach == null)
-            {
                 return NotFound();
-            }
+
             return View(coach);
         }
 
         // POST: Coaches/Delete/5
         [HttpPost("Coaches/Delete/{id}")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var coach = await _coachService.GetByIdAsync(id);
             if (coach == null)
-            {
                 return NotFound();
-            }
+
             await _coachService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
@@ -146,13 +148,15 @@ namespace HorsesForCourses.MVC.Controllers
         // POST: Coaches/AddSkill/5
         [HttpPost("Coaches/AddSkill/{id}")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Coach")]
         public async Task<IActionResult> AddSkill(int id, [FromForm] string skill)
         {
             var coach = await _coachService.GetByIdAsync(id);
             if (coach == null)
-            {
                 return NotFound();
-            }
+
+            if (User.IsInRole(UserRole.Coach.ToString()) && User.FindFirst(ClaimTypes.NameIdentifier)?.Value != id.ToString())
+                return Forbid();
 
             if (!string.IsNullOrWhiteSpace(skill))
             {
@@ -173,8 +177,14 @@ namespace HorsesForCourses.MVC.Controllers
         // POST: Coaches/RemoveSkill/5
         [HttpPost("Coaches/RemoveSkill/{id}")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Coach")]
         public async Task<IActionResult> RemoveSkill(int id, [FromForm] string skill)
         {
+            if (User.IsInRole(UserRole.Coach.ToString()) && User.FindFirst(ClaimTypes.NameIdentifier)?.Value != id.ToString())
+            {
+                return Forbid();
+            }
+
             try
             {
                 await _coachService.RemoveSkillAsync(id, skill);
@@ -183,6 +193,7 @@ namespace HorsesForCourses.MVC.Controllers
             {
                 TempData["Error"] = ex.Message;
             }
+            
             return RedirectToAction(nameof(Edit), new { id = id }); // Redirect to Edit
         }
     }

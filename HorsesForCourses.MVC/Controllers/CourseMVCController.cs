@@ -31,18 +31,19 @@ namespace HorsesForCourses.MVC.Controllers
 
         // GET: Course/Details/5
         [HttpGet("Course/Details/{id}")]
+        [Authorize(Roles = "Admin,Coach")]
         public async Task<IActionResult> Details(int id)
         {
             var course = await _courseService.GetDtoByIdAsync(id);
             if (course == null)
-            {
                 return NotFound();
-            }
+
             return View(course);
         }
 
         // GET: Course/Create
         [HttpGet("Course/Create")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -51,6 +52,7 @@ namespace HorsesForCourses.MVC.Controllers
         // POST: Course/Create
         [HttpPost("Course/Create")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Title,startDate,endDate")] CreateCourseRequest request)
         {
             if (ModelState.IsValid)
@@ -72,26 +74,25 @@ namespace HorsesForCourses.MVC.Controllers
 
         // GET: Course/Edit/5
         [HttpGet("Course/Edit/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             var course = await _courseService.GetDtoByIdAsync(id);
             if (course == null)
-            {
                 return NotFound();
-            }
+
             return View(course);
         }
 
         // POST: Course/Edit/5
         [HttpPost("Course/Edit/{id}")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Title")] CourseDto courseDto)
         {
             var courseToUpdate = await _courseService.GetByIdAsync(id);
             if (courseToUpdate == null)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
@@ -112,13 +113,12 @@ namespace HorsesForCourses.MVC.Controllers
         // POST: Course/AddSkill/5
         [HttpPost("Course/AddSkill/{id}")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddSkill(int id, [FromForm] string skill)
         {
             var course = await _courseService.GetByIdAsync(id);
             if (course == null)
-            {
                 return NotFound();
-            }
 
             if (!string.IsNullOrWhiteSpace(skill))
             {
@@ -139,13 +139,12 @@ namespace HorsesForCourses.MVC.Controllers
         // POST: Course/RemoveSkill/5
         [HttpPost("Course/RemoveSkill/{id}")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveSkill(int id, [FromForm] string skill)
         {
             var course = await _courseService.GetByIdAsync(id);
             if (course == null)
-            {
                 return NotFound();
-            }
 
             if (!string.IsNullOrWhiteSpace(skill))
             {
@@ -166,13 +165,12 @@ namespace HorsesForCourses.MVC.Controllers
         // POST: Course/AddTimeSlot/5
         [HttpPost("Course/AddTimeSlot/{id}")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddTimeSlot(int id, [FromForm] WeekDay day, [FromForm] int startTime, [FromForm] int endTime)
         {
             var course = await _courseService.GetByIdAsync(id);
             if (course == null)
-            {
                 return NotFound();
-            }
 
             if (startTime < endTime && startTime >= 0 && endTime <= 24)
             {
@@ -194,13 +192,12 @@ namespace HorsesForCourses.MVC.Controllers
         // POST: Course/RemoveTimeSlot/5
         [HttpPost("Course/RemoveTimeSlot/{id}")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveTimeSlot(int id, [FromForm] WeekDay day, [FromForm] int startTime, [FromForm] int endTime)
         {
             var course = await _courseService.GetByIdAsync(id);
             if (course == null)
-            {
                 return NotFound();
-            }
 
             if (!course.IsConfirmed)
             {
@@ -233,13 +230,12 @@ namespace HorsesForCourses.MVC.Controllers
         // POST: Course/Confirm/5
         [HttpPost("Course/Confirm/{id}")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Confirm(int id)
         {
             var course = await _courseService.GetByIdAsync(id);
             if (course == null)
-            {
                 return NotFound();
-            }
 
             if (!course.IsConfirmed)
             {
@@ -259,13 +255,12 @@ namespace HorsesForCourses.MVC.Controllers
 
         // GET: Course/AssignCoach/5
         [HttpGet("Course/AssignCoach/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AssignCoach(int id)
         {
             var course = await _courseService.GetDtoByIdAsync(id);
             if (course == null)
-            {
                 return NotFound();
-            }
 
             // Get all coaches for assignment
             var coaches = await _coachService.GetAllAsync();
@@ -277,13 +272,12 @@ namespace HorsesForCourses.MVC.Controllers
         // POST: Course/AssignCoach/5
         [HttpPost("Course/AssignCoach/{id}")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AssignCoachPost(int id, [FromForm] int coachId)
         {
             var course = await _courseService.GetByIdAsync(id);
             if (course == null)
-            {
                 return NotFound();
-            }
 
             var coach = await _coachService.GetByIdAsync(coachId);
             if (coach == null)
@@ -299,7 +293,7 @@ namespace HorsesForCourses.MVC.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                TempData["Error"] = ex.Message;
+                    TempData["Error"] = ex.Message;
                 return RedirectToAction(nameof(AssignCoach), new { id = id });
             }
 
@@ -308,19 +302,20 @@ namespace HorsesForCourses.MVC.Controllers
 
         // GET: Course/Delete/5
         [HttpGet("Course/Delete/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var course = await _courseService.GetByIdAsync(id);
             if (course == null)
-            {
                 return NotFound();
-            }
+
             return View(course);
         }
 
         // POST: Course/Delete/5
         [HttpPost("Course/Delete/{id}")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _courseService.DeleteAsync(id);

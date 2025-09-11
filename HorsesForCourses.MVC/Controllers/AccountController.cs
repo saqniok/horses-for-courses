@@ -157,6 +157,8 @@ public class AccountController : Controller
             await _userService.CreateAsync(newUser);
 
             // Automatically log in the user after registration
+            // Это основа современного подхода к аутентификации и авторизации в ASP.NET Core и других фреймворках, 
+            // который называется Claims-based identity
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, newUser.Id.ToString()),
@@ -165,7 +167,23 @@ public class AccountController : Controller
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, "Cookies");
+            /*
+                ClaimsIdentity представляет личность пользователя. 
+                Она собирает все его клеймы в одну логическую сущность. 
+                Второй параметр, "Cookies", — это имя схемы аутентификации (authentication scheme). 
+                Оно указывает, что эта личность будет использоваться в контексте аутентификации через файлы cookies
+            */
             await HttpContext.SignInAsync("Cookies", new ClaimsPrincipal(claimsIdentity));
+            /*
+                "Cookies"
+                    — это снова имя схемы аутентификации, которое должно совпадать с тем, что было указано в ClaimsIdentity.
+
+                new ClaimsPrincipal(claimsIdentity) 
+                    — это ClaimsPrincipal, который является основным представлением пользователя в приложении. 
+                    Он "объединяет" все его личности (ClaimsIdentity) в единое целое. 
+                    В большинстве случаев у пользователя будет только одна личность, 
+                    поэтому мы просто оборачиваем наш claimsIdentity в ClaimsPrincipal
+            */
 
             return RedirectToAction("Index", "Home");
         }
@@ -183,28 +201,19 @@ public class AccountController : Controller
     public async Task<IActionResult> DownloadUserData()
     {
         if (!User.Identity!.IsAuthenticated)
-        {
             return Unauthorized();
-        }
 
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
-        {
             return BadRequest("User ID not found.");
-        }
 
         var userEmail = User.FindFirst(ClaimTypes.Name)?.Value;
         if (string.IsNullOrEmpty(userEmail))
-        {
             return BadRequest("User email not found.");
-        }
 
         var user = await _userService.GetByEmailAsync(userEmail);
-
         if (user == null)
-        {
             return NotFound("User not found.");
-        }
 
         // Create an anonymous object with the desired user data, excluding sensitive information like PasswordHash
         var userData = new
@@ -225,10 +234,9 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult DeleteAccountConfirmation()
     {
-        if (!User.Identity!.IsAuthenticated)
-        {
+        if (User.Identity!.IsAuthenticated)
             return RedirectToAction("Login");
-        }
+
         return View();
     }
 
@@ -236,21 +244,23 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteAccount()
     {
-        if (!User.Identity!.IsAuthenticated)
-        {
+        if (!User.Identity!.IsAuthenticated) // Corrected condition
             return Unauthorized();
-        }
 
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
-        {
             return BadRequest("User ID not found.");
-        }
 
         await _userService.DeleteAsync(userId);
         await HttpContext.SignOutAsync("Cookies");
 
         return RedirectToAction("Index", "Home");
+    }
+
+    [HttpGet]
+    public IActionResult AccessDenied()
+    {
+        return View();
     }
 
     [HttpPost]

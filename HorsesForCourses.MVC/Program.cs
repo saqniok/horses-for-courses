@@ -29,7 +29,7 @@ builder.Services
 
 // Authentication
 builder.Services.AddAuthentication("Cookies")
-    .AddCookie("Cookies", o => { o.LoginPath = "/Account/Login"; })
+    .AddCookie("Cookies", o => { o.LoginPath = "/Account/Login"; o.AccessDeniedPath = "/Account/AccessDenied"; })
     .AddGoogle(googleOptions =>
     {
         googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
