@@ -29,9 +29,27 @@ public class AccountController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    /*
+        Когда сервер отдает страницу с формой, в ней с помощью `@Html.AntiForgeryToken()` 
+        (или asp-antiforgery="true") вставляется скрытое поле __RequestVerificationToken.
+
+        Дополнительно этот же токен сохраняется в cookie пользователя
+    */
+    
+    // IActionResult — это interface, который представляет результат действия контроллера (например, возврат View, RedirectToAction, JsonResult и т.д.)
     public async Task<IActionResult> Login(LoginViewModel model)
+    /*
+        Имя метода — Login. Он принимает один параметр model типа LoginViewModel, который 
+        обычно содержит данные, отправленные из формы входа (например, Email и Password). 
+        Model binding в ASP.NET Core автоматически заполняет этот объект данными из запроса
+    */
     {
         if (ModelState.IsValid)
+        /*
+            Это условие проверяет, действительны ли данные, отправленные в LoginViewModel, 
+            согласно правилам data annotations (например, [Required], [EmailAddress]) в модели. 
+            Если какие-то поля не прошли валидацию, это условие будет false
+        */
         {
             var user = await _userService.GetByEmailAsync(model.Email);
 
@@ -47,6 +65,7 @@ public class AccountController : Controller
                 await HttpContext.SignInAsync("Cookies", new ClaimsPrincipal(claimsIdentity));
                 return RedirectToAction("Index", "Home");
             }
+
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
         }
         return View(model);

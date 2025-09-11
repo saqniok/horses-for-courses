@@ -34,6 +34,7 @@ namespace HorsesForCourses.MVC.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var coach = await _coachService.GetDtoByIdAsync(id);
+
             if (coach == null)
             {
                 return NotFound();
@@ -74,6 +75,7 @@ namespace HorsesForCourses.MVC.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var coach = await _coachService.GetDtoByIdAsync(id);
+            
             if (coach == null)
             {
                 return NotFound();
