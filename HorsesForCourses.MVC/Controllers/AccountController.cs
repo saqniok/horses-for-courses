@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using HorsesForCourses.Service.Interfaces;
 using HorsesForCourses.MVC.Models.ViewModels;
+using System.Text.Json;
 using HorsesForCourses.Core;
 
 namespace HorsesForCourses.MVC.Controllers;
@@ -100,7 +101,7 @@ public class AccountController : Controller
     [HttpGet]
     public async Task<IActionResult> DownloadUserData()
     {
-        if (!User.Identity.IsAuthenticated)
+        if (!User.Identity!.IsAuthenticated)
         {
             return Unauthorized();
         }
@@ -112,6 +113,11 @@ public class AccountController : Controller
         }
 
         var userEmail = User.FindFirst(ClaimTypes.Name)?.Value;
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            return BadRequest("User email not found.");
+        }
+
         var user = await _userService.GetByEmailAsync(userEmail);
 
         if (user == null)
@@ -119,17 +125,25 @@ public class AccountController : Controller
             return NotFound("User not found.");
         }
 
-        var userData = $"Name: {user.Name}\nEmail: {user.Email}";
-        var fileName = $"user_data_{user.Id}.txt";
-        var contentType = "text/plain";
+        // Create an anonymous object with the desired user data, excluding sensitive information like PasswordHash
+        var userData = new
+        {
+            user!.Id,
+            user.Name,
+            user.Email
+        };
 
-        return File(System.Text.Encoding.UTF8.GetBytes(userData), contentType, fileName);
+        var jsonUserData = JsonSerializer.Serialize(userData, new JsonSerializerOptions { WriteIndented = true });
+        var fileName = $"user_data_{user.Id}.json";
+        var contentType = "application/json";
+
+        return File(System.Text.Encoding.UTF8.GetBytes(jsonUserData), contentType, fileName);
     }
 
     [HttpGet]
     public IActionResult DeleteAccountConfirmation()
     {
-        if (!User.Identity.IsAuthenticated)
+        if (!User.Identity!.IsAuthenticated)
         {
             return RedirectToAction("Login");
         }
@@ -140,7 +154,7 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteAccount()
     {
-        if (!User.Identity.IsAuthenticated)
+        if (!User.Identity!.IsAuthenticated)
         {
             return Unauthorized();
         }
@@ -158,15 +172,15 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public IActionResult ExternalLogin(string provider, string returnUrl = null)
+    public IActionResult ExternalLogin(string provider, string? returnUrl = null)
     {
         var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
-        var properties = _userService.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+        var properties = _userService.ConfigureExternalAuthenticationProperties(provider, redirectUrl!);
         return new ChallengeResult(provider, properties);
     }
 
     [HttpGet]
-    public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
+    public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null, string? remoteError = null)
     {
         if (remoteError != null)
         {
@@ -204,7 +218,7 @@ public class AccountController : Controller
         // Sign in the user with application cookies
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, user!.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Email)
         };
 
@@ -216,15 +230,12 @@ public class AccountController : Controller
         return RedirectToLocal(returnUrl);
     }
 
-    private IActionResult RedirectToLocal(string returnUrl)
+    private IActionResult RedirectToLocal(string? returnUrl)
     {
-        if (Url.IsLocalUrl(returnUrl))
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
         {
             return Redirect(returnUrl);
         }
-        else
-        {
-            return RedirectToAction("Index", "Home");
-        }
+        return RedirectToAction("Index", "Home");
     }
 }

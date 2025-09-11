@@ -51,7 +51,7 @@ namespace HorsesForCourses.MVC.Controllers
         // POST: Course/Create
         [HttpPost("Course/Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,StartDate,EndDate")] CreateCourseRequest request)
+        public async Task<IActionResult> Create([Bind("Title,startDate,endDate")] CreateCourseRequest request)
         {
             if (ModelState.IsValid)
             {

@@ -39,4 +39,5 @@ public class UserService : IUserService
     {
         return new AuthenticationProperties { RedirectUri = redirectUrl };
     }
+
 }

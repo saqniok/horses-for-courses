@@ -32,18 +32,18 @@ builder.Services.AddAuthentication("Cookies")
     .AddCookie("Cookies", o => { o.LoginPath = "/Account/Login"; })
     .AddGoogle(googleOptions =>
     {
-        googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-        googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+        googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
     })
     .AddFacebook(facebookOptions =>
     {
-        facebookOptions.AppId = builder.Configuration["Authentication:Facebook:AppId"];
-        facebookOptions.ClientSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
+        facebookOptions.AppId = builder.Configuration["Authentication:Facebook:AppId"]!;
+        facebookOptions.ClientSecret = builder.Configuration["Authentication:Facebook:AppSecret"]!;
     })
     .AddGitHub(githubOptions =>
     {
-        githubOptions.ClientId = builder.Configuration["Authentication:GitHub:ClientId"];
-        githubOptions.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"];
+        githubOptions.ClientId = builder.Configuration["Authentication:GitHub:ClientId"]!;
+        githubOptions.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"]!;
     });
 builder.Services.AddAuthorization();
 
