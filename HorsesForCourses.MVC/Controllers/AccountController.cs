@@ -72,7 +72,19 @@ public class AccountController : Controller
             }
 
             var hashedPassword = _passwordHasher.Hash(model.Pass);
-            var newUser = new User(model.Name, model.Email, hashedPassword);
+            UserRole selectedRole = UserRole.User; // Default
+
+            if (model.IsAdmin)
+            {
+                selectedRole = UserRole.Admin;
+            }
+            else if (model.IsCoach)
+            {
+                selectedRole = UserRole.Coach;
+            }
+            // If neither Admin nor Coach is selected, it defaults to User (which is already set)
+
+            var newUser = new User(model.Name, model.Email, hashedPassword, selectedRole);
 
             await _userService.CreateAsync(newUser);
 
@@ -80,7 +92,8 @@ public class AccountController : Controller
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, newUser.Id.ToString()),
-                new Claim(ClaimTypes.Name, newUser.Email)
+                new Claim(ClaimTypes.Name, newUser.Email),
+                new Claim(ClaimTypes.Role, newUser.Role.ToString())
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, "Cookies");
@@ -130,7 +143,8 @@ public class AccountController : Controller
         {
             user!.Id,
             user.Name,
-            user.Email
+            user.Email,
+            user.Role
         };
 
         var jsonUserData = JsonSerializer.Serialize(userData, new JsonSerializerOptions { WriteIndented = true });

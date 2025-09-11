@@ -27,9 +27,66 @@
         <span asp-validation-for="PassConfirm" class="text-danger"></span>
     </div>
 
+    <div class="form-group">
+        <label>Select Role:</label><br />
+        <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input" id="isUser" asp-for="IsUser" checked />
+            <label class="form-check-label" for="isUser">User</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input" id="isCoach" asp-for="IsCoach" />
+            <label class="form-check-label" for="isCoach">Coach</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input" id="isAdmin" asp-for="IsAdmin" />
+            <label class="form-check-label" for="isAdmin">Admin</label>
+        </div>
+    </div>
+
     <button type="submit" class="btn btn-primary">Register</button>
 </form>
 
 <div>
     <a asp-action="Login">Already have an account? Login here</a>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const userCheckbox = document.getElementById('isUser');
+            const coachCheckbox = document.getElementById('isCoach');
+            const adminCheckbox = document.getElementById('isAdmin');
+
+            function handleCheckboxChange(changedCheckbox) {
+                if (changedCheckbox.checked) {
+                    if (changedCheckbox === userCheckbox) {
+                        coachCheckbox.checked = false;
+                        adminCheckbox.checked = false;
+                    } else if (changedCheckbox === coachCheckbox) {
+                        userCheckbox.checked = false;
+                        adminCheckbox.checked = false;
+                    } else if (changedCheckbox === adminCheckbox) {
+                        userCheckbox.checked = false;
+                        coachCheckbox.checked = false;
+                    }
+                } else {
+                    // If no checkbox is checked, default to User
+                    if (!userCheckbox.checked && !coachCheckbox.checked && !adminCheckbox.checked) {
+                        userCheckbox.checked = true;
+                    }
+                }
+            }
+
+            userCheckbox.addEventListener('change', () => handleCheckboxChange(userCheckbox));
+            coachCheckbox.addEventListener('change', () => handleCheckboxChange(coachCheckbox));
+            adminCheckbox.addEventListener('change', () => handleCheckboxChange(adminCheckbox));
+
+            // Ensure only one is selected on load, default to User
+            if (coachCheckbox.checked || adminCheckbox.checked) {
+                userCheckbox.checked = false;
+            } else if (!userCheckbox.checked && !coachCheckbox.checked && !adminCheckbox.checked) {
+                userCheckbox.checked = true;
+            }
+        });
+    </script>
+}

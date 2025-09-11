@@ -1,20 +1,29 @@
 namespace HorsesForCourses.Core;
 
+public enum UserRole
+{
+    User,
+    Coach,
+    Admin
+}
+
 public class User
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
+    public UserRole Role { get; set; } = UserRole.User; // Default role
 
     // For EF
     protected User() { }
 
-    public User(string name, string email, string passwordHash)
+    public User(string name, string email, string passwordHash, UserRole role = UserRole.User)
     {
         Name = name ?? throw new ArgumentNullException(nameof(name));
         Email = email ?? throw new ArgumentNullException(nameof(email));
         PasswordHash = passwordHash ?? throw new ArgumentNullException(nameof(passwordHash));
+        Role = role;
     }
 
     public static User From(string name, string email, string pass, string confirmPass, IPasswordHasher hasher)

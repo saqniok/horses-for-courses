@@ -22,4 +22,8 @@ public class RegisterAccountViewModel
     [DataType(DataType.Password)]
     [Compare("Pass", ErrorMessage = "Passwords do not match")]
     public string PassConfirm { get; set; } = string.Empty;
+
+    public bool IsCoach { get; set; }
+    public bool IsAdmin { get; set; }
+    public bool IsUser { get; set; } = true; // Default to User role
 }
