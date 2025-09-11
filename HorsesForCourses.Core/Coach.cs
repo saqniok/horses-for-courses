@@ -71,19 +71,37 @@ public class Coach
         AssignedCourses.Add(course);
     }
 
-    private bool isOverlappingTime(Course course)
+    private bool isOverlappingTime(Course newCourse)
     {
-        return AssignedCourses
-            .Where(existing => course.Period.OverlapsWith(existing.Period))         // check if date is overlaping
-            .Any(existing => course.Schedule
-                .Any(newSlot => existing.Schedule
-                    .Any(existingSlot => AreTimeSlotsOverlapping(newSlot, existingSlot))));
+        var newCourseConcreteSlots = newCourse.GetConcreteTimeSlots().ToList();
+
+        foreach (var existingCourse in AssignedCourses)
+        {
+            // First, check if the course periods overlap at all
+            if (!newCourse.Period.OverlapsWith(existingCourse.Period))
+            {
+                continue;
+            }
+
+            var existingCourseConcreteSlots = existingCourse.GetConcreteTimeSlots().ToList();
+
+            foreach (var newSlot in newCourseConcreteSlots)
+            {
+                foreach (var existingSlot in existingCourseConcreteSlots)
+                {
+                    if (AreConcreteTimeSlotsOverlapping(newSlot, existingSlot))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
-
-    private bool AreTimeSlotsOverlapping(TimeSlot slot1, TimeSlot slot2)
+    private bool AreConcreteTimeSlotsOverlapping(ConcreteTimeSlot slot1, ConcreteTimeSlot slot2)
     {
-        if (slot1.Day != slot2.Day) return false;
+        if (slot1.Date != slot2.Date) return false;
 
         return slot1.Start < slot2.End && slot1.End > slot2.Start;
     }

@@ -37,4 +37,28 @@ public class SchedulingEdges
 
         Assert.Equal("Cannot add a time slot for a day that is not included in the course duration.", ex.Message);
     }
+
+    [Fact]
+    public void No_overlap_if_same_weekday_but_different_dates()
+    {
+        var coach = new Coach("Test Coach", "test@example.com");
+
+        // Course One: Tuesday, August 20, 2025, 9-10 AM
+        var courseOnePeriod = new TimeDay(new DateOnly(2025, 8, 18), new DateOnly(2025, 8, 24)); // Week of Aug 18-24
+        var courseOne = new Course("Course Alpha", courseOnePeriod);
+        courseOne.AddTimeSlot(new TimeSlot(WeekDay.Tuesday, 9, 10));
+        courseOne.Confirm();
+        coach.AssignCourse(courseOne);
+
+        // Course Two: Tuesday, August 27, 2025, 9-10 AM (different week)
+        var courseTwoPeriod = new TimeDay(new DateOnly(2025, 8, 25), new DateOnly(2025, 8, 31)); // Week of Aug 25-31
+        var courseTwo = new Course("Course Beta", courseTwoPeriod);
+        courseTwo.AddTimeSlot(new TimeSlot(WeekDay.Tuesday, 9, 10));
+        courseTwo.Confirm();
+
+        // This assignment should NOT throw an exception
+        var exception = Record.Exception(() => coach.AssignCourse(courseTwo));
+        Assert.Null(exception);
+        Assert.Contains(courseTwo, coach.AssignedCourses);
+    }
 }
