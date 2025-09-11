@@ -79,25 +79,6 @@
                     <span class="badge bg-warning">Draft</span>
                 }
             </dd>
-            <dt class="col-sm-4">Assigned Coach:</dt>
-            <dd class="col-sm-8">
-                @if (Model.Coach != null)
-                {
-                    <span>@Model.Coach.Name</span>
-                    @if (Model.IsConfirmed)
-                    {
-                        <a asp-action="AssignCoach" asp-route-id="@Model.Id" class="btn btn-sm btn-outline-primary ms-2">Change Coach</a>
-                    }
-                }
-                else
-                {
-                    <span class="text-muted">None</span>
-                    @if (Model.IsConfirmed)
-                    {
-                        <a asp-action="AssignCoach" asp-route-id="@Model.Id" class="btn btn-sm btn-primary ms-2">Assign Coach</a>
-                    }
-                }
-            </dd>
         </dl>
 
         @if (!Model.IsConfirmed)

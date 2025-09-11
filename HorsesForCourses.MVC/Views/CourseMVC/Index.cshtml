@@ -19,6 +19,7 @@
             <th>Start Date</th>
             <th>End Date</th>
             <th>Assigned Coach</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -31,9 +32,17 @@
                 <td>@course.StartDate.ToShortDateString()</td>
                 <td>@course.EndDate.ToShortDateString()</td>
                 <td>@(string.IsNullOrEmpty(course.AssignedCoachName) ? "None" : course.AssignedCoachName)</td>
+                <td>@(course.IsConfirmed ? "Confirmed" : "Pending")</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@course.Id" class="btn btn-info btn-sm btn-modern">Details</a> |
-                    <a asp-action="Edit" asp-route-id="@course.Id" class="btn btn-warning btn-sm btn-modern">Edit</a> |
+                    @if (course.IsConfirmed)
+                    {
+                        <a asp-action="AssignCoach" asp-route-id="@course.Id" class="btn btn-success btn-sm btn-modern">Assign Coach</a>
+                    }
+                    else
+                    {
+                        <a asp-action="Edit" asp-route-id="@course.Id" class="btn btn-warning btn-sm btn-modern">Edit</a>
+                    } |
                     <a asp-action="Delete" asp-route-id="@course.Id" class="btn btn-danger btn-sm btn-modern">Delete</a>
                 </td>
             </tr>

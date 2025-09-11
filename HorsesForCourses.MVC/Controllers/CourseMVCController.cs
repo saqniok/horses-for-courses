@@ -303,7 +303,7 @@ namespace HorsesForCourses.MVC.Controllers
                 return RedirectToAction(nameof(AssignCoach), new { id = id });
             }
 
-            return RedirectToAction(nameof(Edit), new { id = id });
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Course/Delete/5
