@@ -31,22 +31,30 @@ builder.Services
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); // Register IHttpContextAccessor
 
 // Authentication
-builder.Services.AddAuthentication("Cookies")
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = "Cookies";
+        options.DefaultChallengeScheme = "External"; // Challenge external providers with 'External' scheme
+    })
     .AddCookie("Cookies", o => { o.LoginPath = "/Account/Login"; o.AccessDeniedPath = "/Account/AccessDenied"; })
+    .AddCookie("External", o => { o.Cookie.Name = "External"; o.ExpireTimeSpan = TimeSpan.FromMinutes(5); }) // Temporary cookie for external claims
     .AddGoogle(googleOptions =>
     {
         googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
         googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+        googleOptions.SignInScheme = "External"; // Google will sign in to the 'External' scheme
     })
     .AddFacebook(facebookOptions =>
     {
         facebookOptions.AppId = builder.Configuration["Authentication:Facebook:AppId"]!;
         facebookOptions.ClientSecret = builder.Configuration["Authentication:Facebook:AppSecret"]!;
+        facebookOptions.SignInScheme = "External"; // Facebook will sign in to the 'External' scheme
     })
     .AddGitHub(githubOptions =>
     {
         githubOptions.ClientId = builder.Configuration["Authentication:GitHub:ClientId"]!;
         githubOptions.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"]!;
+        githubOptions.SignInScheme = "External"; // GitHub will sign in to the 'External' scheme
     });
 builder.Services.AddAuthorization();
 

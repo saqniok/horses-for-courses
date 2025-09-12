@@ -199,7 +199,7 @@ public class AccountController : Controller
         return View();
     }
 
-    [HttpPost]
+    [HttpGet]
     public IActionResult ExternalLogin(string provider, string? returnUrl = null)
     {
         var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
