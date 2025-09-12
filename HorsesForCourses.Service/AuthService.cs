@@ -1,7 +1,5 @@
 using System.Security.Claims;
 using HorsesForCourses.Core;
-using System.Security.Claims;
-using HorsesForCourses.Core;
 using HorsesForCourses.Service.DTOs;
 using HorsesForCourses.Service.Interfaces;
 using Microsoft.AspNetCore.Authentication;
@@ -64,13 +62,10 @@ namespace HorsesForCourses.Service
             UserRole selectedRole = UserRole.User;
 
             if (model.IsAdmin)
-            {
                 selectedRole = UserRole.Admin;
-            }
+
             else if (model.IsCoach)
-            {
                 selectedRole = UserRole.Coach;
-            }
 
             var newUser = new User(model.Name, model.Email, hashedPassword, selectedRole);
             await _userService.CreateAsync(newUser);

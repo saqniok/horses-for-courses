@@ -55,25 +55,21 @@ public class AccountController : Controller
             var loginDto = new LoginDto
             {
                 Email = model.Email,
-                Password = model.Password,
-                RememberMe = model.RememberMe 
+                Password = model.Password
             };
 
             var (claimsPrincipal, errors) = await _authService.LoginAsync(loginDto);
 
             if (claimsPrincipal != null)
-            {
+                return RedirectToAction("Index", "Home");
                 /*
                     После успешного входа метод возвращает RedirectToAction, 
                     который перенаправляет пользователя на страницу с именем Index в контроллере Home
                 */
-                return RedirectToAction("Index", "Home");
-            }
+
 
             foreach (var error in errors)
-            {
                 ModelState.AddModelError(error.Key, error.Value);
-            }
             /*
                 Если проверка if (сравнение пароля) не прошла, 
                 эта строка добавляет сообщение об ошибке в ModelState. 
@@ -95,6 +91,11 @@ public class AccountController : Controller
     public async Task<IActionResult> Register(RegisterAccountViewModel model)
     {
         if (ModelState.IsValid)
+        /*
+            Это условие проверяет, прошли ли данные из model первичную валидацию, 
+            определённую через data annotations в RegisterAccountViewModel. 
+            Например, оно проверит, что email имеет правильный формат, а пароль не пуст        
+        */
         {
             var registerDto = new RegisterAccountDto
             {
@@ -105,18 +106,22 @@ public class AccountController : Controller
                 IsAdmin = model.IsAdmin,
                 IsCoach = model.IsCoach
             };
+            /*
+                Создаётся (DTO), который служит для передачи данных 
+                от контроллера к сервису. Это важный шаг, так как он отделяет логику 
+                представления (ViewModel) от бизнес-логики (DTO). 
+                `ConfirmPassword` из `ViewModel` также копируется в DTO, 
+                что подразумевает, что логика проверки совпадения паролей 
+                находится внутри _authService
+            */
 
             var (claimsPrincipal, errors) = await _authService.RegisterAsync(registerDto);
 
             if (claimsPrincipal != null)
-            {
                 return RedirectToAction("Index", "Home");
-            }
 
             foreach (var error in errors)
-            {
                 ModelState.AddModelError(error.Key, error.Value);
-            }
         }
         return View(model);
     }
@@ -208,23 +213,19 @@ public class AccountController : Controller
         var (claimsPrincipal, errors) = await _authService.ExternalLoginCallbackAsync(returnUrl, remoteError);
 
         if (claimsPrincipal != null)
-        {
             return RedirectToLocal(returnUrl);
-        }
 
         foreach (var error in errors)
-        {
             ModelState.AddModelError(error.Key, error.Value);
-        }
+
         return View(nameof(Login));
     }
 
     private IActionResult RedirectToLocal(string? returnUrl)
     {
         if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-        {
             return Redirect(returnUrl);
-        }
+
         return RedirectToAction("Index", "Home");
     }
 }
