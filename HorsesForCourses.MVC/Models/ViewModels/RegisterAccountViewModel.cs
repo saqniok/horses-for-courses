@@ -21,7 +21,7 @@ public class RegisterAccountViewModel
     [Required(ErrorMessage = "Password confirmation is required")]
     [DataType(DataType.Password)]
     [Compare("Pass", ErrorMessage = "Passwords do not match")]
-    public string PassConfirm { get; set; } = string.Empty;
+    public string ConfirmPass { get; set; } = string.Empty;
 
     public bool IsCoach { get; set; }
     public bool IsAdmin { get; set; }

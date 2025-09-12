@@ -7,18 +7,19 @@ using HorsesForCourses.Service.Interfaces;
 using HorsesForCourses.MVC.Models.ViewModels;
 using System.Text.Json;
 using HorsesForCourses.Core;
+using HorsesForCourses.Service.DTOs;
 
 namespace HorsesForCourses.MVC.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly IUserService _userService;
-    private readonly IPasswordHasher _passwordHasher;
+    private readonly IAuthService _authService;
+    private readonly IUserService _userService; // Keep for DownloadUserData
 
-    public AccountController(IUserService userService, IPasswordHasher passwordHasher)
+    public AccountController(IAuthService authService, IUserService userService)
     {
+        _authService = authService;
         _userService = userService;
-        _passwordHasher = passwordHasher;
     }
 
     [HttpGet]
@@ -51,58 +52,28 @@ public class AccountController : Controller
             Если какие-то поля не прошли валидацию, это условие будет false
         */
         {
-            var user = await _userService.GetByEmailAsync(model.Email);
-            /*
-                _userService.GetByEmailAsync(model.Email) ищет пользователя в базе данных 
-                по предоставленному email. await приостанавливает выполнение метода, 
-                пока асинхронная операция не завершится, не блокируя при этом поток
-            */
-
-            if (user != null && _passwordHasher.Verify(model.Password, user.PasswordHash))
+            var loginDto = new LoginDto
             {
-                /*
-                    _passwordHasher.Verify(...)
-                    Проверяет, соответствует ли предоставленный пароль (model.Password)
-                    хешированному паролю пользователя (user.PasswordHash), 
-                    хранящемуся в базе данных. 
-                    Использование password hashing критически важно для безопасности
-                */
-                var claims = new List<Claim>
-                /*
-                    Если аутентификация прошла успешно, 
-                    создается список claims. Claims — это утверждения (statement) 
-                    о пользователе, которые используются для идентификации и авторизации
-                */
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    // ClaimTypes.NameIdentifier — это стандартный тип claim для уникального идентификатора пользователя. 
-                    // user.Id.ToString() преобразует ID пользователя в строку
-                    new Claim(ClaimTypes.Name, user.Email)
-                };
+                Email = model.Email,
+                Password = model.Password,
+                RememberMe = model.RememberMe 
+            };
 
-                var claimsIdentity = new ClaimsIdentity(claims, "Cookies");
-                /*
-                    Создается ClaimsIdentity, который представляет личность пользователя. 
-                    Он содержит список claims и указывает, какой тип аутентификации используется 
-                    ("Cookies"). Это необходимо для создания authentication cookie
-                */
+            var (claimsPrincipal, errors) = await _authService.LoginAsync(loginDto);
 
-                await HttpContext.SignInAsync("Cookies", new ClaimsPrincipal(claimsIdentity));
-                /*
-                    Метод принимает ClaimsPrincipal (который, в свою очередь, содержит ClaimsIdentity)
-                    и схему аутентификации ("Cookies"). ASP.NET Core создает 
-                    authentication cookie и отправляет его в браузер пользователя. 
-                    Теперь пользователь считается аутентифицированным
-                */
-
-                return RedirectToAction("Index", "Home");
+            if (claimsPrincipal != null)
+            {
                 /*
                     После успешного входа метод возвращает RedirectToAction, 
                     который перенаправляет пользователя на страницу с именем Index в контроллере Home
                 */
+                return RedirectToAction("Index", "Home");
             }
 
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            foreach (var error in errors)
+            {
+                ModelState.AddModelError(error.Key, error.Value);
+            }
             /*
                 Если проверка if (сравнение пароля) не прошла, 
                 эта строка добавляет сообщение об ошибке в ModelState. 
@@ -125,67 +96,27 @@ public class AccountController : Controller
     {
         if (ModelState.IsValid)
         {
-            var existingUser = await _userService.GetByEmailAsync(model.Email);
-            if (existingUser != null)
+            var registerDto = new RegisterAccountDto
             {
-                ModelState.AddModelError("Email", "User with this email already exists.");
-                // Добавляет ошибку в ModelState, привязывая её к полю "Email".
-
-                return View(model);
-            }
-
-            var hashedPassword = _passwordHasher.Hash(model.Pass);
-            /*
-                Хеширует пароль, введенный пользователем. 
-                Это критически важно для безопасности, так как 
-                в базу данных нельзя хранить пароли в открытом виде
-            */
-            UserRole selectedRole = UserRole.User; // Default
-
-            if (model.IsAdmin)
-            {
-                selectedRole = UserRole.Admin;
-            }
-            else if (model.IsCoach)
-            {
-                selectedRole = UserRole.Coach;
-            }
-            // If neither Admin nor Coach is selected, it defaults to User (which is already set)
-
-            var newUser = new User(model.Name, model.Email, hashedPassword, selectedRole);
-
-            await _userService.CreateAsync(newUser);
-
-            // Automatically log in the user after registration
-            // Это основа современного подхода к аутентификации и авторизации в ASP.NET Core и других фреймворках, 
-            // который называется Claims-based identity
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, newUser.Id.ToString()),
-                new Claim(ClaimTypes.Name, newUser.Email),
-                new Claim(ClaimTypes.Role, newUser.Role.ToString())
+                Name = model.Name,
+                Email = model.Email,
+                Password = model.Pass,
+                ConfirmPassword = model.ConfirmPass, // Assuming RegisterAccountViewModel has ConfirmPass
+                IsAdmin = model.IsAdmin,
+                IsCoach = model.IsCoach
             };
 
-            var claimsIdentity = new ClaimsIdentity(claims, "Cookies");
-            /*
-                ClaimsIdentity представляет личность пользователя. 
-                Она собирает все его клеймы в одну логическую сущность. 
-                Второй параметр, "Cookies", — это имя схемы аутентификации (authentication scheme). 
-                Оно указывает, что эта личность будет использоваться в контексте аутентификации через файлы cookies
-            */
-            await HttpContext.SignInAsync("Cookies", new ClaimsPrincipal(claimsIdentity));
-            /*
-                "Cookies"
-                    — это снова имя схемы аутентификации, которое должно совпадать с тем, что было указано в ClaimsIdentity.
+            var (claimsPrincipal, errors) = await _authService.RegisterAsync(registerDto);
 
-                new ClaimsPrincipal(claimsIdentity) 
-                    — это ClaimsPrincipal, который является основным представлением пользователя в приложении. 
-                    Он "объединяет" все его личности (ClaimsIdentity) в единое целое. 
-                    В большинстве случаев у пользователя будет только одна личность, 
-                    поэтому мы просто оборачиваем наш claimsIdentity в ClaimsPrincipal
-            */
+            if (claimsPrincipal != null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
 
-            return RedirectToAction("Index", "Home");
+            foreach (var error in errors)
+            {
+                ModelState.AddModelError(error.Key, error.Value);
+            }
         }
         return View(model);
     }
@@ -193,14 +124,14 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> Logout()
     {
-        await HttpContext.SignOutAsync("Cookies");
+        await _authService.SignOutAsync();
         return RedirectToAction("Index", "Home");
     }
 
     [HttpGet]
     public async Task<IActionResult> DownloadUserData()
     {
-        if (!User.Identity!.IsAuthenticated)
+        if (!User.Identity!.IsAuthenticated) // Corrected condition
             return Unauthorized();
 
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -211,7 +142,7 @@ public class AccountController : Controller
         if (string.IsNullOrEmpty(userEmail))
             return BadRequest("User email not found.");
 
-        var user = await _userService.GetByEmailAsync(userEmail);
+        var user = await _authService.GetUserByEmailAsync(userEmail); // Using AuthService
         if (user == null)
             return NotFound("User not found.");
 
@@ -234,7 +165,7 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult DeleteAccountConfirmation()
     {
-        if (User.Identity!.IsAuthenticated)
+        if (!User.Identity!.IsAuthenticated)
             return RedirectToAction("Login");
 
         return View();
@@ -244,15 +175,15 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteAccount()
     {
-        if (!User.Identity!.IsAuthenticated) // Corrected condition
+        if (!User.Identity!.IsAuthenticated)
             return Unauthorized();
 
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
             return BadRequest("User ID not found.");
 
-        await _userService.DeleteAsync(userId);
-        await HttpContext.SignOutAsync("Cookies");
+        await _authService.DeleteAccountAsync(userId);
+        await _authService.SignOutAsync();
 
         return RedirectToAction("Index", "Home");
     }
@@ -267,59 +198,25 @@ public class AccountController : Controller
     public IActionResult ExternalLogin(string provider, string? returnUrl = null)
     {
         var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
-        var properties = _userService.ConfigureExternalAuthenticationProperties(provider, redirectUrl!);
+        var properties = _authService.ConfigureExternalAuthenticationProperties(provider, redirectUrl!);
         return new ChallengeResult(provider, properties);
     }
 
     [HttpGet]
     public async Task<IActionResult> ExternalLoginCallback(string? returnUrl = null, string? remoteError = null)
     {
-        if (remoteError != null)
+        var (claimsPrincipal, errors) = await _authService.ExternalLoginCallbackAsync(returnUrl, remoteError);
+
+        if (claimsPrincipal != null)
         {
-            ModelState.AddModelError(string.Empty, $"Error from external provider: {remoteError}");
-            return View(nameof(Login));
+            return RedirectToLocal(returnUrl);
         }
 
-        var info = await HttpContext.AuthenticateAsync("External");
-        if (info?.Principal == null)
+        foreach (var error in errors)
         {
-            return RedirectToAction(nameof(Login));
+            ModelState.AddModelError(error.Key, error.Value);
         }
-
-        var emailClaim = info.Principal.FindFirst(ClaimTypes.Email);
-        if (emailClaim == null)
-        {
-            ModelState.AddModelError(string.Empty, "External authentication provider did not provide an email address.");
-            return View(nameof(Login));
-        }
-
-        var email = emailClaim.Value;
-        var user = await _userService.GetByEmailAsync(email);
-
-        if (user == null)
-        {
-            // User does not exist, create a new one
-            var nameClaim = info.Principal.FindFirst(ClaimTypes.Name);
-            var name = nameClaim?.Value ?? email; // Use email as name if name claim is not available
-
-            var newUser = new User(name, email, _passwordHasher.Hash(Guid.NewGuid().ToString())); // Generate a random password for social login users
-            await _userService.CreateAsync(newUser);
-            user = newUser;
-        }
-
-        // Sign in the user with application cookies
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user!.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Email)
-        };
-
-        var claimsIdentity = new ClaimsIdentity(claims, "Cookies");
-        await HttpContext.SignInAsync("Cookies", new ClaimsPrincipal(claimsIdentity));
-
-        await HttpContext.SignOutAsync("External"); // Sign out from external cookie
-
-        return RedirectToLocal(returnUrl);
+        return View(nameof(Login));
     }
 
     private IActionResult RedirectToLocal(string? returnUrl)

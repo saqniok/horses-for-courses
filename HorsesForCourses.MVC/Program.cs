@@ -25,7 +25,10 @@ builder.Services
     .AddScoped<IGetCoachSummariesQuery, GetCoachSummariesQuery>()
     .AddScoped<IUserRepository, EFUserRepository>() 
     .AddScoped<IUserService, UserService>() 
-    .AddScoped<IPasswordHasher, Pbkdf2PasswordHasher>(); // check this after
+    .AddScoped<IPasswordHasher, Pbkdf2PasswordHasher>()
+    .AddScoped<IAuthService, AuthService>(); // Register AuthService
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); // Register IHttpContextAccessor
 
 // Authentication
 builder.Services.AddAuthentication("Cookies")
