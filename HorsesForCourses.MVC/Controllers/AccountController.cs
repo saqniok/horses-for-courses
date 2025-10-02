@@ -23,9 +23,9 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public IActionResult Login()
+    public Task<IActionResult> Login()
     {
-        return View();
+        return Task.FromResult<IActionResult>(View());
     }
 
     [HttpPost]

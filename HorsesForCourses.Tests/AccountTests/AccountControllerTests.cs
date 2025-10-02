@@ -49,9 +49,9 @@ namespace HorsesForCourses.Tests.AccountTests
         }
 
         [Fact]
-        public void Login_GET_ReturnsViewResult()
+        public async Task Login_GET_ReturnsViewResult()
         {
-            var result = _controller.Login();
+            var result = await _controller.Login();
             Assert.IsType<ViewResult>(result);
         }
 
